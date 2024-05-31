@@ -1,8 +1,9 @@
 
+
 import { Outlet, Route, Routes } from "react-router-dom";
 import EventList from "./pages/event/EventList";
-import HomePages from "./pages";
 import { DashboardLayout, LandingPageLayout } from "./components/layout";
+import HomePage from "@/pages/home/HomePage";
 
 function App() {
   return (
