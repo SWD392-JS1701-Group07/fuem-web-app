@@ -311,7 +311,7 @@ const EventList = () => {
     console.log(table)
     return (
         <div className="w-full">
-            <h1 className="text-2xl font-semibold w-full my-2 mx-auto text-center">Events</h1>
+            <h1 className="text-4xl font-semibold w-full py-2 pl-5 mx-auto bg-purple-400 text-gray-50">Events</h1>
             {/* <div className="flex items-center py-4">
                 <Input
                     placeholder="Filter emails..."

@@ -1,13 +1,8 @@
-import Footer from '@/components/ui/footer'
-import NavBar from '@/components/ui/navbar'
 import { Link } from 'react-router-dom'
 
 const HomePage = () => {
   return (
     <div>
-      <header>
-        <NavBar />
-      </header>
       <div id="main ">
         <article>
           <div id="content">
@@ -158,9 +153,6 @@ const HomePage = () => {
           </div>
         </article>
       </div>
-      <footer>
-        <Footer />
-      </footer>
     </div>
   )
 }
