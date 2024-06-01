@@ -1,11 +1,16 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Link } from "react-router-dom";
 
 const Siderbar = () => {
     return (
         <div className="min-h-screen bg-purple-400 w-1/6 text-gray-50 shadow-2xl">
             <Accordion type="single" collapsible className="mx-3">
                 <AccordionItem value="item-1">
-                    <AccordionTrigger>Event</AccordionTrigger>
+                    <AccordionTrigger>
+                        <Link to={"/dashboard/event"}>
+                            Event
+                        </Link>
+                    </AccordionTrigger>
                     {/* <AccordionContent>
                         Yes. It adheres to the WAI-ARIA design pattern.
                     </AccordionContent> */}
