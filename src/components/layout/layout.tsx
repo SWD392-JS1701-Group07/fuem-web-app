@@ -18,10 +18,11 @@ const DashboardLayout = () => {
 const LandingPageLayout = () => {
     return (
         <>
-            <DashBoardNavBar></DashBoardNavBar>
-            {/* <MainNavBar></MainNavBar> */}
+            {/* <DashBoardNavBar></DashBoardNavBar> */}
+            <MainNavBar></MainNavBar>
             <Outlet></Outlet>
-            <DashBoardFooter></DashBoardFooter>
+            <MainFooter></MainFooter>
+            {/* <DashBoardFooter></DashBoardFooter> */}
         </>
     );
 }
