@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 const HomePage = () => {
   return (
     <div>
-      <div id="main ">
+      <div id="main">
         <article>
           <div id="content">
             <div id="inner-content" className="relative">
@@ -12,9 +12,7 @@ const HomePage = () => {
                   id="parallax-wrap"
                   className="absolute bottom-0 left-0 right-0 top-0 overflow-hidden"
                 >
-                  <span className="absolute bottom-0 left-0 z-0 block h-full w-full bg-home-dots bg-cover bg-fixed bg-top bg-no-repeat">
-                    {' '}
-                  </span>
+                  <span className="absolute bottom-0 left-0 z-0 block h-full w-full bg-home-dots bg-cover bg-fixed bg-top bg-no-repeat"></span>
                 </span>
 
                 <div
@@ -23,7 +21,7 @@ const HomePage = () => {
                 >
                   <div>
                     <div id="line-container">
-                      <h1 className="font-jura text-9xl font-bold text-yellow-500">
+                      <h1 className="text-yellow-sun font-jura text-9xl font-bold">
                         FPTU Event Page
                       </h1>
                     </div>
@@ -45,7 +43,7 @@ const HomePage = () => {
                   >
                     <div
                       id="text-container"
-                      className="relative mb-7 bg-yellow-500 bg-column-blob bg-cover bg-top bg-no-repeat pb-10 pl-10 pr-10 pt-24"
+                      className="bg-yellow-sun relative mb-7 bg-column-blob bg-cover bg-top bg-no-repeat pb-10 pl-10 pr-10 pt-24"
                     >
                       <div id="text-inner">
                         <h2 className="pb-3 font-jura text-6xl font-light text-black">
