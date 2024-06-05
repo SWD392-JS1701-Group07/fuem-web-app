@@ -21,11 +21,15 @@ export default {
       },
     },
     extend: {
+      colors: {
+        'yellow-sun': '#fff424'
+      },
       backgroundImage: {
         'home-dots': "url('http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-31.png')",
         'column-blob': "url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-36.png)",
         'column-dots': "url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/04/virtual-conference-03.png)",
-        'footer': "url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/04/virtual-conference-07.png)"
+        'footer': "url('http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/04/virtual-conference-07.png')",
+        'footer-column': "url('http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-37.png');"
       },
       keyframes: {
         "accordion-down": {

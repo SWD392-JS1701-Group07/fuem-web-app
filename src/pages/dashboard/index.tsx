@@ -15,6 +15,7 @@ const DashBoard: React.FC = () => {
             </div>
             <div className="flex">
                 <ColumnDiagram />
+                <div className=''></div>
                 <InfoBox title="incoming events" value="100" percent={10} options={options} />
             </div>
         </div>
