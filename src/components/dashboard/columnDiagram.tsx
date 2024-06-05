@@ -6,7 +6,10 @@ import {
     XAxis,
     YAxis,
     Bar,
-    ResponsiveContainer
+    ResponsiveContainer,
+    CartesianGrid,
+    Tooltip,
+    Legend
 } from "recharts";
 
 type Props = {};
@@ -63,11 +66,10 @@ const data = [
 ];
 
 const ColumnDiagram = ({ }: Props) => {
-    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
 
     return (
-        <div className="w-8/12 m-2 mx-7">
+        <div className="w-4/6 m-2 mx-5">
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-md font-medium">
@@ -75,25 +77,16 @@ const ColumnDiagram = ({ }: Props) => {
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    {/* <ResponsiveContainer width={"100%"} height={350}>
-                        <BarChart data={data}>
-                            <XAxis
-                                dataKey={"name"}
-                                tickLine={false}
-                                axisLine={false}
-                                stroke="#000000"
-                                fontSize={12}
-                            />
-                            <YAxis
-                                tickLine={false}
-                                axisLine={false}
-                                stroke="#888888"
-                                fontSize={12}
-                                tickFormatter={(value) => `$${value}`}
-                            />
-                            <Bar dataKey={"total"} radius={[4, 4, 0, 0]} />
+                    <ResponsiveContainer width="100%" height={400}>
+                        <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                            <Bar dataKey="total" fill="#888888" />
                         </BarChart>
-                    </ResponsiveContainer> */}
+                    </ResponsiveContainer>
                 </CardContent>
             </Card>
         </div>
