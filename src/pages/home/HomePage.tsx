@@ -21,7 +21,7 @@ const HomePage = () => {
                 >
                   <div>
                     <div id="line-container">
-                      <h1 className="text-yellow-sun font-jura text-9xl font-bold">
+                      <h1 className="font-jura text-9xl font-bold text-yellow-sun">
                         FPTU Event Page
                       </h1>
                     </div>
@@ -43,7 +43,7 @@ const HomePage = () => {
                   >
                     <div
                       id="text-container"
-                      className="bg-yellow-sun relative mb-7 bg-column-blob bg-cover bg-top bg-no-repeat pb-10 pl-10 pr-10 pt-24"
+                      className="relative mb-7 bg-yellow-sun bg-column-blob bg-cover bg-top bg-no-repeat pb-10 pl-10 pr-10 pt-24"
                     >
                       <div id="text-inner">
                         <h2 className="pb-3 font-jura text-6xl font-light text-black">
@@ -59,11 +59,11 @@ const HomePage = () => {
                   </div>
                   <div
                     id="column"
-                    className="bg-initial relative min-h-px w-full max-w-xl flex-1 border-8 border-purple-700 bg-column-dots bg-cover bg-center bg-repeat-round pb-32 pl-16 pr-16 pt-56"
+                    className="bg-initial border-electric-indigo relative min-h-px w-full max-w-xl flex-1 border-8 bg-column-dots bg-cover bg-center bg-repeat-round pb-32 pl-16 pr-16 pt-56"
                   >
                     <div
                       id="clickable"
-                      className="absolute bottom-auto left-auto right-0 top-0 mb-7 h-28 w-28 cursor-pointer bg-purple-700 pt-6 transition-all duration-300 ease-in-out"
+                      className="bg-electric-indigo absolute bottom-auto left-auto right-0 top-0 mb-7 h-28 w-28 cursor-pointer pt-6 transition-all duration-300 ease-in-out"
                     >
                       <Link to="/event">
                         <div id="clickable-content" className="relative mx-auto w-full text-center">
