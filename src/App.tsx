@@ -11,6 +11,7 @@ import DashboardEventList from "./pages/dashboard/event/EventList";
 import CreateEvent from "./pages/dashboard/event/EventCreate";
 import LoginPage from './pages/home/LoginPage'
 import SignupPage from './pages/home/SignupPage'
+import SponsorList from "./pages/dashboard/sponsor/SponsorList";
 
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
             <Route path="event" element={<DashboardEventList />} />
             <Route path="event/:id" element={<EventDetail />} />
             <Route path="event/create" element={<CreateEvent />} />
+            <Route path="sponsor" element={<SponsorList />} />
           </Route>
         </Route>
       </Routes>

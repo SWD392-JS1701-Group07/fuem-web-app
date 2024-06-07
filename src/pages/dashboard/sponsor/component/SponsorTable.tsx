@@ -23,7 +23,6 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -35,15 +34,47 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { Event } from "@/constants/models/Event"
 import { useNavigate } from "react-router-dom"
-
+import { Sponsor } from "@/constants/models/Sponsor"
 
 type Props = {
-    data: Event[]
+    data: Sponsor[]
 }
 
-export const columns: ColumnDef<Event>[] = [
+const sponsors: Sponsor[] = [{
+    id: 1,
+    name: 'hurbert',
+    email: "11@gmail.com",
+    phoneNumber: "123456",
+    avatarUrl: "#",
+    accountId: 2,
+}, {
+    id: 2,
+    name: 'Robert',
+    email: "12411@gmail.com",
+    phoneNumber: "123456",
+    avatarUrl: "#",
+    accountId: 2,
+}]
+
+export const columns: ColumnDef<Sponsor>[] = [
+    {
+        accessorKey: "id",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Id
+                    <CaretSortIcon className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+        cell: ({ row }) => (
+            <div className="capitalize">{row.getValue("id")}</div>
+        ),
+    },
     {
         accessorKey: "name",
         header: ({ column }) => {
@@ -127,91 +158,45 @@ export const columns: ColumnDef<Event>[] = [
             <div className="capitalize">{new Date((row.getValue("startDate") as string)).toLocaleDateString()}</div>
         ),
     },
-    // {
-    //     accessorKey: "endDate",
-    //     header: ({ column }) => {
-    //         return (
-    //             <Button
-    //                 variant="ghost"
-    //                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    //             >
-    //                 End Date
-    //                 <CaretSortIcon className="ml-2 h-4 w-4" />
-    //             </Button>
-    //         )
-    //     },
-    //     cell: ({ row }) => (
-    //         <div className="capitalize">{new Date((row.getValue("endDate") as string)).toLocaleDateString()}</div>
-    //     ),
-    // },
     {
-        accessorKey: "price",
+        accessorKey: "endDate",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Ticket price
+                    End Date
                     <CaretSortIcon className="ml-2 h-4 w-4" />
                 </Button>
             )
         },
         cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("price")}</div>
+            <div className="capitalize">{new Date((row.getValue("endDate") as string)).toLocaleDateString()}</div>
         ),
     },
-    // {
-    //     accessorKey: "description",
-    //     header: ({ column }) => {
-    //         return (
-    //             <Button
-    //                 variant="ghost"
-    //                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    //             >
-    //                 Desciption
-    //                 <CaretSortIcon className="ml-2 h-4 w-4" />
-    //             </Button>
-    //         )
-    //     },
-    //     cell: ({ row }) => (
-    //         <div className="capitalize">{row.getValue("description")}</div>
-    //     ),
-    // },
     {
-        accessorKey: "subjectId",
+        accessorKey: "description",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Subject
+                    Desciption
                     <CaretSortIcon className="ml-2 h-4 w-4" />
                 </Button>
             )
         },
         cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("subjectId")}</div>
+            <div className="capitalize">{row.getValue("description")}</div>
         ),
     },
     {
         id: "actions",
         enableHiding: false,
-        header: ({ column }) => {
-            return (
-                // <Button
-                //     variant="ghost"
-                //     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                // >
-                //     Subject
-                //     <CaretSortIcon className="ml-2 h-4 w-4" />
-                // </Button>
-                "Actions"
-            )
-        },
         cell: ({ row }) => {
-            const payment = row.original
+            //const payment = row.original
 
             return (
                 <DropdownMenu>
@@ -238,7 +223,7 @@ export const columns: ColumnDef<Event>[] = [
     },
 ]
 
-const EventTable = ({ data }: Props) => {
+const SponsorTable = ({ data }: Props) => {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const nav = useNavigate();
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -306,7 +291,32 @@ const EventTable = ({ data }: Props) => {
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className="ml-auto">
+                            Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        {table
+                            .getAllColumns()
+                            .filter((column) => column.getCanHide())
+                            .map((column) => {
+                                return (
+                                    <DropdownMenuCheckboxItem
+                                        key={column.id}
+                                        className="capitalize"
+                                        checked={column.getIsVisible()}
+                                        onCheckedChange={(value) =>
+                                            column.toggleVisibility(!!value)
+                                        }
+                                    >
+                                        {column.id}
+                                    </DropdownMenuCheckboxItem>
+                                )
+                            })}
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
             <div className="rounded-md border min-h-96">
                 <Table>
@@ -384,6 +394,7 @@ const EventTable = ({ data }: Props) => {
                 </div>
             </div>
         </div>
-    )
+    );
 }
-export default EventTable;
+
+export default SponsorTable;

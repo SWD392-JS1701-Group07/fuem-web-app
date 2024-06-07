@@ -107,7 +107,7 @@ export const columns: ColumnDef<Event>[] = [
                 </Button>
             )
         },
-        cell: ({ row }) => <div className="lowercase">{row.getValue("startTime")}</div>,
+        cell: ({ row }) => <div className="lowercase">{(row.getValue("startTime") as string).substring(11, 16)}</div>,
     },
     {
         accessorKey: "endTime",
@@ -123,7 +123,7 @@ export const columns: ColumnDef<Event>[] = [
             )
         },
         cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("endTime")}</div>
+            <div className="capitalize">{(row.getValue("endTime") as string).substring(11, 16)}</div>
         ),
     },
     {
@@ -140,7 +140,7 @@ export const columns: ColumnDef<Event>[] = [
             )
         },
         cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("startDate")}</div>
+            <div className="capitalize">{new Date((row.getValue("startDate") as string)).toLocaleDateString()}</div>
         ),
     },
     {
@@ -157,7 +157,7 @@ export const columns: ColumnDef<Event>[] = [
             )
         },
         cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("endDate")}</div>
+            <div className="capitalize">{new Date((row.getValue("endDate") as string)).toLocaleDateString()}</div>
         ),
     },
     {

@@ -87,10 +87,15 @@ const operatorSidebarLinks = [
         label: 'Collaborator'
     },
     {
-        icon: <Ticket className="w-6 h-6" />,
-        route: '/dashboard/tickets',
-        label: 'Tickets'
+        icon: <HandCoins className="w-6 h-6" />,
+        route: '/dashboard/sponsor',
+        label: 'Sponsor'
     },
+    // {
+    //     icon: <Ticket className="w-6 h-6" />,
+    //     route: '/dashboard/tickets',
+    //     label: 'Tickets'
+    // },
     // {
     //     icon: <Newspaper className="w-6 h-6" />,
     //     route: '/dashboard/news',
