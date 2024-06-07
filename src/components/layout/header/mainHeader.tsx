@@ -5,7 +5,7 @@ const navLinks = [
   { name: 'About', path: '#' },
   { name: 'Events', path: '/event' },
   { name: 'Contact', path: '#' },
-  { name: 'Login', path: '#' }
+  { name: 'Login', path: '/login' }
 ]
 
 const MainNavBar = () => {
