@@ -3,7 +3,7 @@ import { Facebook, Instagram, MousePointer, Youtube } from 'lucide-react'
 const MainFooter = () => {
   return (
     <div>
-      <div className="relative bg-purple-700 bg-footer bg-cover bg-center py-14">
+      <div className="bg-electric-indigo relative bg-footer bg-cover bg-center py-14">
         <div
           id="container"
           className="relative m-auto flex w-4/5 max-w-6xl bg-cover bg-center bg-no-repeat py-7"
@@ -45,7 +45,7 @@ const MainFooter = () => {
           </div>
           <div
             id="column"
-            className="bg-footer-column bg-initial bg-pos-x-right-0 relative min-h-px w-full max-w-xl flex-1 bg-white bg-cover bg-top bg-no-repeat pb-16 pl-10 pr-10 pt-40"
+            className="bg-initial bg-pos-x-right-0 relative min-h-px w-full max-w-xl flex-1 bg-white bg-footer-column bg-cover bg-top bg-no-repeat pb-16 pl-10 pr-10 pt-40"
           >
             <div id="title" className="mb-6">
               <h3 className="font-jura text-5xl font-bold leading-[3.7rem] text-black">

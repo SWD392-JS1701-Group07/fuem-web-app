@@ -18,3 +18,9 @@
 .bg-pos-x-right-0 {
   background-position-x: calc(100% - 0px);
 }
+
+@layer base {
+  html {
+    @apply font-poppins;
+  }
+}

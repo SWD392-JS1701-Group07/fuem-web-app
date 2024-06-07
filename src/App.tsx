@@ -1,3 +1,4 @@
+
 import { Route, Routes } from "react-router-dom";
 import EventList from "./pages/event/EventList";
 import { DashboardLayout, LandingPageLayout } from "./components/layout/layout";
@@ -8,6 +9,9 @@ import EventDetail from "./pages/event/EventDetail";
 import DashBoard from "./pages/dashboard";
 import DashboardEventList from "./pages/dashboard/event/EventList";
 import CreateEvent from "./pages/dashboard/event/EventCreate";
+import LoginPage from './pages/home/LoginPage'
+import SignupPage from './pages/home/SignupPage'
+
 
 function App() {
   //const { component: Component, path } = routes[3];
@@ -16,6 +20,8 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPageLayout />}>
           <Route index element={<HomePage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="signup" element={<SignupPage />} />
           <Route path="event" element={<EventList />} />
           <Route path="event/:id" element={<EventDetail />} />
           <Route path="dashboard" element={<DashboardLayout />} >
@@ -32,7 +38,7 @@ function App() {
         </Route>
       </Routes>
     </>
-  );
+  )
 }
 
 export default App
