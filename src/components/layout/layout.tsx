@@ -1,6 +1,6 @@
 import MainFooter from "./footer/mainFooter";
-import DashBoardFooter from "./footer/dashboardFooter";
-import DashBoardNavBar from "./header/dashboardHeader";
+// import DashBoardFooter from "./footer/dashboardFooter";
+// import DashBoardNavBar from "./header/dashboardHeader";
 import { Outlet, useLocation } from 'react-router-dom'
 import MainNavBar from './header/mainHeader'
 import Siderbar from './sidebar/sideBar'

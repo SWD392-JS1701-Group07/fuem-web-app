@@ -1,4 +1,4 @@
-import { Event, EventCreateModel } from "@/constants/models/Event";
+import { EventCreateModel } from "@/constants/models/Event";
 import axiosClient from "../api/axios";
 
 export const getAll = async () => {
