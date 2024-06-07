@@ -41,21 +41,21 @@ type Props = {
     data: Sponsor[]
 }
 
-const sponsors: Sponsor[] = [{
-    id: 1,
-    name: 'hurbert',
-    email: "11@gmail.com",
-    phoneNumber: "123456",
-    avatarUrl: "#",
-    accountId: 2,
-}, {
-    id: 2,
-    name: 'Robert',
-    email: "12411@gmail.com",
-    phoneNumber: "123456",
-    avatarUrl: "#",
-    accountId: 2,
-}]
+// const sponsors: Sponsor[] = [{  
+//     id: 1,
+//     name: 'hurbert',
+//     email: "11@gmail.com",
+//     phoneNumber: "123456",
+//     avatarUrl: "#",
+//     accountId: 2,
+// }, {
+//     id: 2,
+//     name: 'Robert',
+//     email: "12411@gmail.com",
+//     phoneNumber: "123456",
+//     avatarUrl: "#",
+//     accountId: 2,
+// }]
 
 export const columns: ColumnDef<Sponsor>[] = [
     {
@@ -93,7 +93,7 @@ export const columns: ColumnDef<Sponsor>[] = [
         ),
     },
     {
-        accessorKey: "place",
+        accessorKey: "email",
         header: ({ column }) => {
             return (
                 <Button
@@ -106,90 +106,58 @@ export const columns: ColumnDef<Sponsor>[] = [
             )
         },
         cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("place")}</div>
+            <div className="capitalize">{row.getValue("email")}</div>
         ),
     },
     {
-        accessorKey: "startTime",
+        accessorKey: "phoneNumber",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Start At
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-        cell: ({ row }) => <div className="lowercase">{(row.getValue("startTime") as string).substring(11, 16)}</div>,
-    },
-    {
-        accessorKey: "endTime",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    End At
+                    PhoneNumber
                     <CaretSortIcon className="ml-2 h-4 w-4" />
                 </Button>
             )
         },
         cell: ({ row }) => (
-            <div className="capitalize">{(row.getValue("endTime") as string).substring(11, 16)}</div>
+            <div className="capitalize">{row.getValue("phoneNumber")}</div>
         ),
     },
     {
-        accessorKey: "startDate",
+        accessorKey: "avatarUrl",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Start Date
+                    AvatarUrl
                     <CaretSortIcon className="ml-2 h-4 w-4" />
                 </Button>
             )
         },
         cell: ({ row }) => (
-            <div className="capitalize">{new Date((row.getValue("startDate") as string)).toLocaleDateString()}</div>
+            <div className="capitalize">{row.getValue("avatarUrl")}</div>
         ),
     },
     {
-        accessorKey: "endDate",
+        accessorKey: "accountId",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    End Date
+                    AccountId
                     <CaretSortIcon className="ml-2 h-4 w-4" />
                 </Button>
             )
         },
         cell: ({ row }) => (
-            <div className="capitalize">{new Date((row.getValue("endDate") as string)).toLocaleDateString()}</div>
-        ),
-    },
-    {
-        accessorKey: "description",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Desciption
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-        cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("description")}</div>
+            <div className="capitalize">{row.getValue("accountId")}</div>
         ),
     },
     {
@@ -224,6 +192,7 @@ export const columns: ColumnDef<Sponsor>[] = [
 ]
 
 const SponsorTable = ({ data }: Props) => {
+    console.log("data mau ne:" + data);
     const [sorting, setSorting] = React.useState<SortingState>([])
     const nav = useNavigate();
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
