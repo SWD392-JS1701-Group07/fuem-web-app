@@ -4,6 +4,7 @@ import Siderbar from "./sidebar/sideBar";
 import MainFooter from "./footer/mainFooter";
 import DashBoardFooter from "./footer/dashboardFooter";
 import DashBoardNavBar from "./header/dashboardHeader";
+import { Toaster } from "../ui/toaster";
 
 const DashboardLayout = () => {
     return (
@@ -21,6 +22,7 @@ const LandingPageLayout = () => {
             {/* <DashBoardNavBar></DashBoardNavBar> */}
             <MainNavBar></MainNavBar>
             <Outlet></Outlet>
+            <Toaster />
             <MainFooter></MainFooter>
             {/* <DashBoardFooter></DashBoardFooter> */}
         </>

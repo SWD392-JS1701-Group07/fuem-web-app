@@ -66,7 +66,40 @@ const adminSidebarLinks = [
     {
         icon: <HandCoins className="w-6 h-6" />,
         route: '/dashboard/zoo-trainers',
-        label: 'Operator'
+        label: 'Sponsor'
+    }
+]
+
+const operatorSidebarLinks = [
+    {
+        icon: <LayoutDashboard className="w-6 h-6" />,
+        route: '/dashboard',
+        label: 'Overview'
+    },
+    {
+        icon: <LandPlot className="w-6 h-6" />,
+        route: '/dashboard/event',
+        label: 'Events'
+    },
+    {
+        icon: <User className="w-6 h-6" />,
+        route: '/dashboard/collaborator',
+        label: 'Collaborator'
+    },
+    {
+        icon: <Ticket className="w-6 h-6" />,
+        route: '/dashboard/tickets',
+        label: 'Tickets'
+    },
+    // {
+    //     icon: <Newspaper className="w-6 h-6" />,
+    //     route: '/dashboard/news',
+    //     label: 'News'
+    // },
+    {
+        icon: <ShoppingBag className="w-6 h-6" />,
+        route: '/dashboard/order',
+        label: 'Orders'
     }
 ]
 
@@ -103,7 +136,7 @@ const staffSidebarLinks = [
     }
 ]
 
-const zooTrainerSidebarLinks = [
+const sponsorSidebarLinks = [
     {
         icon: <LayoutDashboard className="w-6 h-6" />,
         route: '/dashboard',
@@ -145,19 +178,22 @@ const zooTrainerSidebarLinks = [
         label: 'Diets'
     },
 ]
-//1 staff
-//2 zoo
-//3 user
-//4 admin
+//1 admin
+//2 visitor
+//3 Sponsor
+//4 Staff
+//5 Operator
+//6 collaborator
 
-function LeftSidebar({ roleId = 1 }) {
+function LeftSidebar({ roleId = 5 }) {
     const sidebarLinks = roleId === 1
-        ? adminSidebarLinks : roleId === 2
-            ? staffSidebarLinks : roleId === 3 ?
-                zooTrainerSidebarLinks : [];
+        ? adminSidebarLinks : roleId === 3
+            ? sponsorSidebarLinks : roleId === 4
+                ? staffSidebarLinks : roleId === 5
+                    ? operatorSidebarLinks : [];
     return (
         <section className='custom-scrollbar
-    sticky left-0 top-0 z-20 px-6 flex w-fit flex-col justify-between overflow-auto bg-white-500 border-r border-r-gray-200 pb-5 pt-5 max-md:hidden
+    sticky left-0 top-0 z-20 px-6 flex w-fit flex-col justify-between bg-white-500 border-r border-r-gray-200 pb-5 pt-5 max-md:hidden
     '>
             <div className='flex w-full flex-1 flex-col gap-2 px-0 xl:px-6'>
                 <div className="cursor-pointer relative w-full h-full mx-auto flex items-center justify-center lg:hidden"

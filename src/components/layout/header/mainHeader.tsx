@@ -1,3 +1,4 @@
+import { Separator } from '@/components/ui/separator'
 import { Link } from 'react-router-dom'
 
 const navLinks = [
@@ -9,7 +10,7 @@ const navLinks = [
 
 const MainNavBar = () => {
   return (
-    <div>
+    <div className='sticky top-0 z-50'>
       <header className="z-50 w-full bg-white text-black">
         <div
           id="navbar-container"
@@ -17,7 +18,7 @@ const MainNavBar = () => {
         >
           <div id="title-container">
             <h1 className="font-poppins text-3xl font-semibold">
-              <a href="#">Event Management</a>
+              <a href="/">Event Management</a>
             </h1>
           </div>
           <div id="nav">
@@ -32,6 +33,7 @@ const MainNavBar = () => {
             </ul>
           </div>
         </div>
+        <Separator />
       </header>
     </div>
   )
