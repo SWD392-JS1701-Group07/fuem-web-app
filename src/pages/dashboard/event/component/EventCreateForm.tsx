@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
     Form,
     FormControl,
@@ -14,27 +13,16 @@ import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns"
-import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react"
+import { CalendarIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { useParams } from "react-router-dom"
+//import { useParams } from "react-router-dom"
 import { create } from "@/api/eventApi"
 import { EventCreateModel } from "@/constants/models/Event"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { useToast } from "@/components/ui/use-toast"
-import { Toaster } from "@/components/ui/toaster"
-
-const items = [
-    { id: "1", label: "Monday", },
-    { id: "2", label: "Tuesday", },
-    { id: "3", label: "Wednesday", },
-    { id: "4", label: "Thursday", },
-    { id: "5", label: "Friday", },
-    { id: "6", label: "Saturday", },
-    { id: "7", label: "Sunday", },
-] as const
 
 const formDetailSchema = z.object({
     name: z.string()
@@ -72,7 +60,7 @@ const formDetailSchema = z.object({
 type FormDetailValues = z.infer<typeof formDetailSchema>
 
 export function CreateEventForm() {
-    const { dietId } = useParams();
+    //const { dietId } = useParams();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const { toast } = useToast();
@@ -132,7 +120,7 @@ export function CreateEventForm() {
             subjectId: parseInt(values.subjectId)
         };
         create(eventCreateModel)
-            .then((response) => {
+            .then(() => {
                 toast({
                     title: "Create success",
                     description: "Diet detail has been created",
