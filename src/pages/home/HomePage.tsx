@@ -1,4 +1,39 @@
+import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
+
+// Dummy hard coded data, can change logic later
+const events = [
+  {
+    date: 'June 5',
+    title: 'POST-A-TREE TRỞ LẠI VỚI MÙA 4',
+    location: 'Địa điểm: Sảnh trống đồng',
+    participants: '122 participants',
+    backgroundImage:
+      'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-35.png)',
+    backgroundColor: 'bg-[#ff6af0]',
+    textColor: 'text-black'
+  },
+  {
+    date: 'June 26',
+    title: 'FPTU JOB FAIR 2024 | RIDE WAVE - RIGHT WAY',
+    location: 'Địa điểm: Sảnh trống đồng',
+    participants: '122 participants',
+    backgroundImage:
+      'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-33.png)',
+    backgroundColor: 'bg-electric-indigo',
+    textColor: 'text-white'
+  },
+  {
+    date: 'July 7',
+    title: 'HỒ SEN CHỜ AI 34 - F&E INSIGHTS',
+    location: 'Địa điểm: Sảnh trống đồng',
+    participants: '122 participants',
+    backgroundImage:
+      'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-34.png)',
+    backgroundColor: 'bg-yellow-sun',
+    textColor: 'text-black'
+  }
+]
 
 const HomePage = () => {
   return (
@@ -59,11 +94,11 @@ const HomePage = () => {
                   </div>
                   <div
                     id="column"
-                    className="bg-initial border-electric-indigo relative min-h-px w-full max-w-xl flex-1 border-8 bg-column-dots bg-cover bg-center bg-repeat-round pb-32 pl-16 pr-16 pt-56"
+                    className="bg-initial relative min-h-px w-full max-w-xl flex-1 border-8 border-electric-indigo bg-column-dots bg-cover bg-center bg-repeat-round pb-32 pl-16 pr-16 pt-56"
                   >
                     <div
                       id="clickable"
-                      className="bg-electric-indigo absolute bottom-auto left-auto right-0 top-0 mb-7 h-28 w-28 cursor-pointer pt-6 transition-all duration-300 ease-in-out"
+                      className="absolute bottom-auto left-auto right-0 top-0 mb-7 h-28 w-28 cursor-pointer bg-electric-indigo pt-6 transition-all duration-300 ease-in-out"
                     >
                       <Link to="/event">
                         <div id="clickable-content" className="relative mx-auto w-full text-center">
@@ -144,6 +179,101 @@ const HomePage = () => {
                       viên, giáo viên hoặc khách mời, trang này là điểm đến dành cho bạn để cập nhật
                       thông tin và tham gia vào cộng đồng sôi động của FPTU.
                     </p>
+                  </div>
+                </div>
+              </div>
+              <div id="section" className="relative z-10 bg-black py-14">
+                <h1 className="py-8 text-center font-jura text-7xl font-semibold text-white">
+                  Có gì hot? 🔥
+                </h1>
+                <div
+                  id="events-container"
+                  className="relative m-auto flex w-4/5 max-w-6xl flex-row py-7 font-poppins"
+                >
+                  {events.map((event, index) => (
+                    <div
+                      key={index}
+                      id="event"
+                      className={`mr-8 flex w-1/3 flex-col justify-between bg-cover bg-bottom bg-no-repeat px-10 pb-10 pt-10 ${event.backgroundColor} ${event.textColor}`}
+                      style={{ backgroundImage: event.backgroundImage }}
+                    >
+                      <div>
+                        <h4 className="pb-3 text-lg font-medium">{event.date}</h4>
+                        <h2 className="pb-3 font-jura text-5xl font-bold">{event.title}</h2>
+                        <h4 className="pb-3 text-lg font-medium">{event.location}</h4>
+                        <h4 className="pb-3 text-lg font-medium">{event.participants}</h4>
+                      </div>
+                      <Button className="mt-10 h-14 rounded-none bg-black px-8 text-xl">
+                        Xem Chi Tiết
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div id="section" className="relative bg-black py-14 pb-28">
+                <div
+                  id="row"
+                  className="relative m-auto flex w-4/5 max-w-6xl flex-wrap bg-black bg-cover bg-center bg-no-repeat py-7"
+                >
+                  <div
+                    id="column"
+                    className="relative mr-14 min-h-px w-full max-w-xl flex-1 bg-cover bg-center bg-no-repeat"
+                  >
+                    <div
+                      id="row"
+                      className="bg-initial relative mr-14 min-h-px w-full max-w-xl flex-1 border-8 border-yellow-sun bg-column-dots bg-cover bg-center bg-repeat-round p-16"
+                    >
+                      <div id="text-inner">
+                        <h3 className="font-jura text-7xl font-bold leading-[4.5rem] text-white">
+                          Đặt Vé
+                          <br />
+                          Online
+                        </h3>
+                      </div>
+                    </div>
+
+                    <div id="row" className="relative mr-14 min-h-px w-full max-w-xl flex-1">
+                      <div
+                        id="clickable"
+                        className="absolute bottom-auto left-auto right-0 top-0 mb-7 h-28 w-28 cursor-pointer bg-yellow-sun pt-6 transition-all duration-300 ease-in-out"
+                      >
+                        <Link to="/event">
+                          <div
+                            id="clickable-content"
+                            className="relative mx-auto w-full text-center"
+                          >
+                            <div id="clickable-image" className="mb-8 inline-block max-w-full">
+                              <span className="m-auto mb-8 ml-1 block">
+                                <span className="text-6xl font-normal">➜</span>
+                              </span>
+                            </div>
+                          </div>
+                        </Link>
+                      </div>
+                      <div id="text-inner">
+                        <h1 className="mr-56 py-7 font-jura text-5xl font-bold text-white">
+                          Tiện lợi, chỉ với 1 click
+                        </h1>
+                        <p className="font-poppins text-xl leading-9 text-white">
+                          Hãy tận hưởng sự tiện lợi của việc mua vé một cách dễ dàng cho các sự kiện
+                          đặc biệt của Đại học FPT. Đảm bảo chỗ của bạn ngay bây giờ và chuẩn bị cho
+                          một cuộc phiêu lưu đang chờ đợi!
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    id="column"
+                    className="relative mr-14 min-h-px w-full max-w-xl flex-1 bg-cover bg-center bg-no-repeat"
+                  >
+                    <div id="image" className="-mr-40">
+                      <img
+                        src="http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/04/virtual-conference-15.png"
+                        alt=""
+                      ></img>
+                    </div>
                   </div>
                 </div>
               </div>
