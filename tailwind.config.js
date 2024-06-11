@@ -27,6 +27,7 @@ export default {
       },
       backgroundImage: {
         'home-dots': "url('http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-31.png')",
+        'home-dots-2': "url(https://www.elegantthemes.com/layouts/wp-content/uploads/2021/04/virtual-conference-21.png)",
         'column-blob': "url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-36.png)",
         'column-dots': "url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/04/virtual-conference-03.png)",
         'footer': "url('http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/04/virtual-conference-07.png')",
