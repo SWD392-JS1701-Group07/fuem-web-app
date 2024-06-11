@@ -2,15 +2,15 @@ import { Separator } from '@/components/ui/separator'
 import { Link } from 'react-router-dom'
 
 const navLinks = [
-  { name: 'About', path: '#' },
+  { name: 'About', path: '/about' },
   { name: 'Events', path: '/event' },
-  { name: 'Contact', path: '#' },
+  { name: 'Contact', path: '/contact' },
   { name: 'Login', path: '/login' }
 ]
 
 const MainNavBar = () => {
   return (
-    <div className='sticky top-0 z-50'>
+    <div className="sticky top-0 z-50">
       <header className="z-50 w-full bg-white text-black">
         <div
           id="navbar-container"
