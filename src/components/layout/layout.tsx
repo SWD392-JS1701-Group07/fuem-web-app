@@ -5,6 +5,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import MainNavBar from './header/mainHeader'
 import Siderbar from './sidebar/sideBar'
 import { Toaster } from "../ui/toaster";
+import PrivateRoute from "../common/PrivateRoute";
 
 const DashboardLayout = () => {
     return (

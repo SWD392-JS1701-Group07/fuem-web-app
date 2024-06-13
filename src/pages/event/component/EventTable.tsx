@@ -79,7 +79,7 @@ export const columns: ColumnDef<Event>[] = [
         ),
     },
     {
-        accessorKey: "startTime",
+        accessorKey: "startTimeOverall",
         header: ({ column }) => {
             return (
                 <Button
@@ -91,10 +91,10 @@ export const columns: ColumnDef<Event>[] = [
                 </Button>
             )
         },
-        cell: ({ row }) => <div className="lowercase">{(row.getValue("startTime") as string).substring(11, 16)}</div>,
+        cell: ({ row }) => <div className="lowercase">{(row.getValue("startTimeOverall") as string).substring(11, 16)}</div>,
     },
     {
-        accessorKey: "endTime",
+        accessorKey: "endTimeOverall",
         header: ({ column }) => {
             return (
                 <Button
@@ -107,7 +107,7 @@ export const columns: ColumnDef<Event>[] = [
             )
         },
         cell: ({ row }) => (
-            <div className="capitalize">{(row.getValue("endTime") as string).substring(11, 16)}</div>
+            <div className="capitalize">{(row.getValue("endTimeOverall") as string).substring(11, 16)}</div>
         ),
     },
     {

@@ -126,40 +126,40 @@ export const columns: ColumnDef<Sponsor>[] = [
             <div className="capitalize">{row.getValue("phoneNumber")}</div>
         ),
     },
-    {
-        accessorKey: "avatarUrl",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    AvatarUrl
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-        cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("avatarUrl")}</div>
-        ),
-    },
-    {
-        accessorKey: "accountId",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    AccountId
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-        cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("accountId")}</div>
-        ),
-    },
+    // {
+    //     accessorKey: "avatarUrl",
+    //     header: ({ column }) => {
+    //         return (
+    //             <Button
+    //                 variant="ghost"
+    //                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    //             >
+    //                 AvatarUrl
+    //                 <CaretSortIcon className="ml-2 h-4 w-4" />
+    //             </Button>
+    //         )
+    //     },
+    //     cell: ({ row }) => (
+    //         <div className="capitalize">{row.getValue("avatarUrl")}</div>
+    //     ),
+    // },
+    // {
+    //     accessorKey: "accountId",
+    //     header: ({ column }) => {
+    //         return (
+    //             <Button
+    //                 variant="ghost"
+    //                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    //             >
+    //                 AccountId
+    //                 <CaretSortIcon className="ml-2 h-4 w-4" />
+    //             </Button>
+    //         )
+    //     },
+    //     cell: ({ row }) => (
+    //         <div className="capitalize">{row.getValue("accountId")}</div>
+    //     ),
+    // },
     {
         id: "actions",
         enableHiding: false,

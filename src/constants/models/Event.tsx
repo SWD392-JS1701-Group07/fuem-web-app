@@ -1,9 +1,11 @@
+import { Schedule } from "./schedule"
+
 export type Event = {
     id: Number,
     name: string,
     place: string,
-    startTime: string,
-    endTime: string,
+    startTimeOverall: string,
+    endTimeOverall: string,
     startDate: string,
     endDate: string,
     description: string,
@@ -13,6 +15,7 @@ export type Event = {
     avatarUrl: string,
     ownerId: number,
     subjectId: number
+    "scheduleList": Schedule[]
 }
 export type EventCreateModel = {
     name: string,

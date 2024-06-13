@@ -13,6 +13,7 @@ import SignupPage from './pages/home/SignupPage'
 import SponsorList from './pages/dashboard/sponsor/SponsorList'
 import ContactPage from './pages/home/ContactPage'
 import AboutPage from './pages/home/AboutPage'
+import PrivateRoute from './components/common/PrivateRoute'
 
 function App() {
   //const { component: Component, path } = routes[3];
@@ -27,7 +28,11 @@ function App() {
           <Route path="signup" element={<SignupPage />} />
           <Route path="event" element={<EventList />} />
           <Route path="event/:id" element={<EventDetail />} />
-          <Route path="dashboard" element={<DashboardLayout />}>
+          <Route path="dashboard" element={<>
+            <PrivateRoute>
+              <DashboardLayout />
+            </PrivateRoute>
+          </>}>
             {/* <Route path={path} element={
               <Suspense fallback={<div>Loading...</div>}>
                 <Component />

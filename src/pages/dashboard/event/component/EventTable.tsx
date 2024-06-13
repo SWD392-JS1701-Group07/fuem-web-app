@@ -236,6 +236,7 @@ const DashboardEventTable = ({ data }: Props) => {
             rowSelection,
         },
     })
+    console.log("data:" + data)
     console.log(table)
     return (
         <div className="w-full">
