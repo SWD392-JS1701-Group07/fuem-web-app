@@ -1,10 +1,10 @@
-import { getAll } from "@/api/eventApi";
 import * as React from "react"
 import { useState } from "react";
 import { Event } from "@/constants/models/Event";
 import DashboardEventTable from "./component/EventTable";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { getAll } from "@/api/eventApi";
 
 const DashboardEventList = () => {
     const [data, setData] = useState<Event[]>([])
@@ -13,6 +13,7 @@ const DashboardEventList = () => {
         getEvents();
     }, [])
     const getEvents = async () => {
+        //const response = await getAll();
         const response = await getAll();
         setData(response.data);
     }

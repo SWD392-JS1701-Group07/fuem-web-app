@@ -15,10 +15,11 @@ const EventDetail = () => {
         })
     }
     return (
-        <div>
-            <h1>{
-                //@ts-expect-error
-                (event) ? event.eventName : "nothing"}</h1>
+        <div className="h-screen">
+            <div className="text-3xl self-center p-5">
+                {//@ts-expect-error
+                    (event) ? event.eventName : "nothing"}
+            </div>
         </div>
     );
 }

@@ -1,18 +1,19 @@
 import { useState, ChangeEvent, FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '@/firebaseConfig'
+import { login, logout } from '@/api/userAPI'
+import { useDispatch, useSelector } from 'react-redux'
 
 interface LoginFormState {
-  email: string
+  username: string
   password: string
 }
 
 const LoginPage = () => {
-  const [formState, setFormState] = useState<LoginFormState>({ email: '', password: '' })
+  const loginedUser = useSelector((state: any) => state.loginedUser)
+  const dispatch = useDispatch();
+  const [formState, setFormState] = useState<LoginFormState>({ username: '', password: '' })
   const [error, setError] = useState<string>('')
   const navigate = useNavigate()
-
   /**
    * Updates the form state with the new input value.
    *
@@ -36,15 +37,24 @@ const LoginPage = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
     setError('')
-
-    try {
-      await signInWithEmailAndPassword(auth, formState.email, formState.password)
-      navigate('/')
-    } catch (err) {
-      setError('Failed to log in. Please check your credentials.')
-    }
+    login(formState).then((response) => {
+      dispatch({ type: 'LOGIN', payload: response.data });
+      navigate('/dashboard');
+    }).catch((error) => { console.log(error) })
+    //   try {
+    //     await signInWithEmailAndPassword(auth, formState.email, formState.password)
+    //     navigate('/dashboard')
+    //   } catch (err) {
+    //     setError('Failed to log in. Please check your credentials.')
+    //   }
+    // if (formState.username === "operator" && formState.password === "123456") {
+    //   navigate("/dashboard");
+    // } else if ((formState.username === "visitor" && formState.password === "123456")) {
+    //   navigate("/");
+    // } else {
+    //   setError('Failed to log in. Please check your credentials.')
+    // }
   }
-
   return (
     <div className="flex h-screen w-full items-start">
       <div className="relative hidden h-full w-1/2 flex-col md:flex">
@@ -83,10 +93,10 @@ const LoginPage = () => {
             <div className="flex w-full flex-col">
               <input
                 className="my-2 w-full border-b border-white bg-transparent py-2 pl-2 text-white outline-none focus:outline-none"
-                type="email"
-                placeholder="Email"
-                name="email"
-                value={formState.email}
+                type="text"
+                placeholder="username"
+                name="username"
+                value={formState.username}
                 onChange={handleInputChange}
               />
 
