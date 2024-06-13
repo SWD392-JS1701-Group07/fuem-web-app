@@ -14,6 +14,7 @@ import SponsorList from './pages/dashboard/sponsor/SponsorList'
 import ContactPage from './pages/home/ContactPage'
 import AboutPage from './pages/home/AboutPage'
 import PrivateRoute from './components/common/PrivateRoute'
+import AuthRoute from './components/common/AuthRoute'
 
 function App() {
   //const { component: Component, path } = routes[3];
@@ -24,8 +25,8 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="about" element={<AboutPage />} />
           <Route path="contact" element={<ContactPage />} />
-          <Route path="login" element={<LoginPage />} />
-          <Route path="signup" element={<SignupPage />} />
+          <Route path="login" element={<AuthRoute><LoginPage /></AuthRoute>} />
+          <Route path="signup" element={<AuthRoute><SignupPage /></AuthRoute>} />
           <Route path="event" element={<EventList />} />
           <Route path="event/:id" element={<EventDetail />} />
           <Route path="dashboard" element={<>
@@ -33,11 +34,6 @@ function App() {
               <DashboardLayout />
             </PrivateRoute>
           </>}>
-            {/* <Route path={path} element={
-              <Suspense fallback={<div>Loading...</div>}>
-                <Component />
-              </Suspense>
-            } /> //test */}
             <Route index element={<DashBoard />} />
             <Route path="event" element={<DashboardEventList />} />
             <Route path="event/:id" element={<EventDetail />} />
