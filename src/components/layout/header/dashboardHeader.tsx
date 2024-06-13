@@ -1,6 +1,15 @@
 import { Separator } from "@/components/ui/separator"
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const DashBoardNavBar = () => {
+    const loginedUser = useSelector((state: any) => state.loginedUser);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        dispatch({ type: 'LOGOUT' });
+        navigate('/');
+    }
     return (
         <div>
             <header className="z-50 w-full bg-white">
@@ -19,7 +28,7 @@ const DashBoardNavBar = () => {
                                 <a href="#">Avatar</a>
                             </li>
                             <li className="font-poppins font-medium">
-                                <a href="#">Logout</a>
+                                <a onClick={handleLogout}>Logout</a>
                             </li>
                         </ul>
                     </div>

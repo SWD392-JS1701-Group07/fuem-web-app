@@ -1,11 +1,11 @@
 import MainFooter from "./footer/mainFooter";
-// import DashBoardFooter from "./footer/dashboardFooter";
-// import DashBoardNavBar from "./header/dashboardHeader";
+import DashBoardFooter from "./footer/dashboardFooter";
+import DashBoardNavBar from "./header/dashboardHeader";
 import { Outlet, useLocation } from 'react-router-dom'
 import MainNavBar from './header/mainHeader'
 import Siderbar from './sidebar/sideBar'
-import { Toaster } from "../ui/toaster";
-import PrivateRoute from "../common/PrivateRoute";
+import { Toaster } from "../ui/toaster"
+import { useSelector } from "react-redux";
 
 const DashboardLayout = () => {
     return (
@@ -18,16 +18,16 @@ const DashboardLayout = () => {
     )
 }
 const LandingPageLayout = () => {
+    const loginedUser = useSelector((state: any) => state.loginedUser);
     const location = useLocation()
     const isAuthPage = location.pathname === '/login' || location.pathname === '/signup'
+    console.log(loginedUser)
     return (
         <>
-            {/* <DashBoardNavBar></DashBoardNavBar> */}
-            {!isAuthPage && <MainNavBar />}
+            {(loginedUser.role === 0) ? ((!isAuthPage) ? <MainNavBar /> : "") : <DashBoardNavBar />}
             <Outlet></Outlet>
-            {!isAuthPage && <MainFooter />}
+            {(loginedUser.role === 0) ? ((!isAuthPage) ? <MainFooter /> : "") : <DashBoardFooter />}
             <Toaster />
-            {/* <DashBoardFooter></DashBoardFooter> */}
         </>
     );
 }

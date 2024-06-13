@@ -9,11 +9,11 @@ interface PrivateRouteProps {
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
     const loginedUser = useSelector((state: any) => state.loginedUser);
     const isAuthenticated = (): boolean => {
-        return ((loginedUser.accessToken !== null)
-            && (loginedUser.role === 1
-                || loginedUser.role === 3
-                || loginedUser.role === 4
-                || loginedUser.role === 5));
+        return ((loginedUser.accessToken !== "")
+            && (loginedUser.role == 1
+                || loginedUser.role == 3
+                || loginedUser.role == 4
+                || loginedUser.role == 5));
     }
     return !isAuthenticated() ? <Navigate to="/" /> : <>{children}</>;
 };

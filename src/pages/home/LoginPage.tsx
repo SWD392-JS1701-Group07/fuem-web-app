@@ -1,6 +1,6 @@
 import { useState, ChangeEvent, FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { login, logout } from '@/api/userAPI'
+import { login } from '@/api/userAPI'
 import { useDispatch, useSelector } from 'react-redux'
 
 interface LoginFormState {
@@ -14,12 +14,7 @@ const LoginPage = () => {
   const [formState, setFormState] = useState<LoginFormState>({ username: '', password: '' })
   const [error, setError] = useState<string>('')
   const navigate = useNavigate()
-  /**
-   * Updates the form state with the new input value.
-   *
-   * @param {ChangeEvent<HTMLInputElement>} e - The event object containing the new input value.
-   * @return {void}
-   */
+
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target
     setFormState((prevState) => ({
@@ -28,19 +23,12 @@ const LoginPage = () => {
     }))
   }
 
-  /**
-   * Handles the form submission for the login page.
-   *
-   * @param {FormEvent<HTMLFormElement>} e - The form event triggered by the submit button.
-   * @return {Promise<void>} A promise that resolves when the submission is complete.
-   */
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
     setError('')
     login(formState).then((response) => {
-      dispatch({ type: 'LOGIN', payload: response.data });
-      navigate('/dashboard');
-    }).catch((error) => { console.log(error) })
+      dispatch({ type: 'LOGIN', payload: response });
+    }).catch((error) => { console.log(error) }).finally(() => { navigate('/dashboard') });
     //   try {
     //     await signInWithEmailAndPassword(auth, formState.email, formState.password)
     //     navigate('/dashboard')
