@@ -27,7 +27,7 @@ const SponsorList = () => {
     }, [])
     const getSponsor = async () => {
         const response = await getAll();
-        setData(response.data.data);
+        setData(response.data);
     }
     console.log(data)
     return (

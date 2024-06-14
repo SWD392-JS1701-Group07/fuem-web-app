@@ -17,12 +17,13 @@ const EventList = () => {
     const [data, setData] = React.useState<Event[]>([])
     React.useEffect(() => {
         getEvents();
+        console.log(data)
     }, [])
     const getEvents = async () => {
         const response = await getAll();
-        setData(response.data);
+        //@ts-expect-error
+        setData(response);
     }
-    console.log(data)
     return (
         <div className="w-full pb-2">
             <h1 className="text-4xl font-semibold w-full py-2 pl-5 mx-auto">Events</h1>

@@ -39,3 +39,10 @@ export type EventDate = {
     end: string,
     allDay: boolean,
 }
+export type ScheduleList = {
+    id: string,
+    endTime: string,
+    eventId: number,
+    place: string,
+    startTime: string
+}

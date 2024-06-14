@@ -17,8 +17,8 @@ const EventDetail = () => {
     return (
         <div className="h-screen">
             <div className="text-3xl self-center p-5">
-                {//@ts-expect-error
-                    (event) ? event.eventName : "nothing"}
+                {
+                    (event) ? event.name : "nothing"}
             </div>
         </div>
     );
