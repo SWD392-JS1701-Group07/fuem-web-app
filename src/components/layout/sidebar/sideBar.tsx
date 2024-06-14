@@ -40,6 +40,7 @@
 'use client'
 
 import { HandCoins, LandPlot, LayoutDashboard, LucideFootprints, Newspaper, PawPrint, PocketKnife, Rabbit, ShoppingBag, Star, Ticket, User, UserCog, UtensilsCrossed } from 'lucide-react'
+import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 const adminSidebarLinks = [
@@ -49,9 +50,14 @@ const adminSidebarLinks = [
         label: 'Overview'
     },
     {
-        icon: <LucideFootprints className="w-6 h-6" />,
-        route: '/dashboard/visitors',
-        label: 'Visitors'
+        icon: <User className="w-6 h-6" />,
+        route: '/dashboard/operator',
+        label: 'Operator'
+    },
+    {
+        icon: <HandCoins className="w-6 h-6" />,
+        route: '/dashboard/sponsor',
+        label: 'Sponsor'
     },
     {
         icon: <UserCog className="w-6 h-6" />,
@@ -59,15 +65,10 @@ const adminSidebarLinks = [
         label: 'Staffs'
     },
     {
-        icon: <User className="w-6 h-6" />,
-        route: '/dashboard/zoo-trainers',
-        label: 'Operator'
+        icon: <LucideFootprints className="w-6 h-6" />,
+        route: '/dashboard/visitors',
+        label: 'Visitors'
     },
-    {
-        icon: <HandCoins className="w-6 h-6" />,
-        route: '/dashboard/zoo-trainers',
-        label: 'Sponsor'
-    }
 ]
 
 const operatorSidebarLinks = [
@@ -190,11 +191,13 @@ const sponsorSidebarLinks = [
 //5 Operator
 //6 collaborator
 
-function LeftSidebar({ roleId = 5 }) {
-    const sidebarLinks = roleId === 1
-        ? adminSidebarLinks : roleId === 3
-            ? sponsorSidebarLinks : roleId === 4
-                ? staffSidebarLinks : roleId === 5
+function LeftSidebar({ }) {
+    const user = useSelector((state: any) => state.loginedUser.role);
+    console.log(user)
+    const sidebarLinks = user === 1
+        ? adminSidebarLinks : user === 3
+            ? sponsorSidebarLinks : user === 4
+                ? staffSidebarLinks : user === 5
                     ? operatorSidebarLinks : [];
     return (
         <section className='custom-scrollbar

@@ -1,8 +1,11 @@
 import { toast } from "@/components/ui/use-toast";
 import { RefreshTokenCredentials } from "@/constants/models/common";
 import axios, { AxiosResponse } from "axios";
+
+const baseURL = "https://localhost:7297";
+
 const axiosClient = axios.create({
-    baseURL: "https://localhost:7297",
+    baseURL: baseURL,
     headers: {
         "Content-Type": "application/json",
     },
@@ -25,7 +28,7 @@ axiosClient.interceptors.request.use(
             config.headers.Accept = "application/json";
             config.headers["Content-Type"] = "application/json";
         }
-
+        console.log('config: ', config);
         return config;
     },
     (error) => {
@@ -37,8 +40,8 @@ axiosClient.interceptors.request.use(
 axiosClient.interceptors.response.use(
     (response: AxiosResponse) => response.data,
     async (error) => {
-        console.log(error);
-        if (error.response.status === 401) {
+        console.log(error.response);
+        if (error.response === 401) {
             console.log("Refresh token");
             const accessToken = localStorage.getItem("accessToken");
             const refreshToken = localStorage.getItem("refreshToken");

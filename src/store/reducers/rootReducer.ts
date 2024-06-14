@@ -1,3 +1,4 @@
+import { logout } from "@/api/userAPI";
 
 const initialState = {
     loginedUser: {
@@ -20,8 +21,12 @@ const rootReducers = (state: any, action: any) => {
             //localStorage.setItem("refreshToken", data.refreshToken);
             return { ...state, loginedUser: action.payload };
         case 'LOGOUT':
-            localStorage.setItem("accessToken", "");
-            localStorage.setItem("role", "0");
+            logout(state.loginedUser.accessToken).then((res) => {
+                localStorage.setItem("accessToken", "");
+                localStorage.setItem("role", "");
+            }).catch((err) => {
+                console.log(err);
+            })
             return { ...state, loginedUser: { role: 0, accessToken: "" } };
         default: return state;
     }
