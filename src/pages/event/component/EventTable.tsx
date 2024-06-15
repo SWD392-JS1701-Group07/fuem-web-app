@@ -23,7 +23,6 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -35,7 +34,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { Event } from "@/constants/models/Event"
+import { Event, ScheduleList } from "@/constants/models/Event"
 import { useNavigate } from "react-router-dom"
 
 
@@ -62,7 +61,7 @@ export const columns: ColumnDef<Event>[] = [
         ),
     },
     {
-        accessorKey: "place",
+        accessorKey: "scheduleList",
         header: ({ column }) => {
             return (
                 <Button
@@ -75,7 +74,7 @@ export const columns: ColumnDef<Event>[] = [
             )
         },
         cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("place")}</div>
+            <div className="capitalize">{(row.getValue("scheduleList") as ScheduleList[]).map((schedule) => (schedule.place + ", "))}</div>
         ),
     },
     {
@@ -266,16 +265,15 @@ const EventTable = ({ data }: Props) => {
             rowSelection,
         },
     })
-    console.log(table)
     return (
         <div className="w-full">
             <div className="flex items-center pb-4">
                 <div className="flex">
                     <Input
-                        placeholder="Filter emails..."
-                        value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+                        placeholder="Filter events..."
+                        value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
                         onChange={(event) =>
-                            table.getColumn("email")?.setFilterValue(event.target.value)
+                            table.getColumn("name")?.setFilterValue(event.target.value)
                         }
                         className="max-w-sm"
                     />

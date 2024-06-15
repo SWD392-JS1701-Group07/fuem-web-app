@@ -24,9 +24,9 @@ const LandingPageLayout = () => {
     console.log(loginedUser)
     return (
         <>
-            {(loginedUser.role === 0) ? ((!isAuthPage) ? <MainNavBar /> : "") : <DashBoardNavBar />}
+            {(loginedUser.role == 0) ? ((!isAuthPage) ? <MainNavBar /> : "") : <DashBoardNavBar />}
             <Outlet></Outlet>
-            {(loginedUser.role === 0) ? ((!isAuthPage) ? <MainFooter /> : "") : <DashBoardFooter />}
+            {(loginedUser.role == 0) ? ((!isAuthPage) ? <MainFooter /> : "") : <DashBoardFooter />}
             <Toaster />
         </>
     );

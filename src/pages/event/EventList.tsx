@@ -57,6 +57,37 @@ const EventList = () => {
       <Separator />
     </div>
   )
+<!--     const [date, setDate] = React.useState<Date | undefined>(new Date())
+    const [data, setData] = React.useState<Event[]>([])
+    React.useEffect(() => {
+        getEvents();
+        console.log(data)
+    }, [])
+    const getEvents = async () => {
+        const response = await getAll();
+        //@ts-expect-error
+        setData(response);
+    }
+    return (
+        <div className="w-full pb-2">
+            <h1 className="text-4xl font-semibold w-full py-2 pl-5 mx-auto">Events</h1>
+            <Tabs defaultValue="list" className="">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="list">List</TabsTrigger>
+                    <TabsTrigger value="calendar">Calendar</TabsTrigger>
+                </TabsList>
+                <TabsContent value="list">
+                    <div className="flex items-center py-4">
+                        <EventTable data={data} />
+                    </div>
+                </TabsContent>
+                <TabsContent value="calendar">
+                    <EventCalendar data={data} />
+                </TabsContent>
+            </Tabs>
+            <Separator />
+        </div>
+    ) -->
 }
 
 export default EventList
