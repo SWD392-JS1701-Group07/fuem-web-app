@@ -2,6 +2,7 @@ import { useState, ChangeEvent, FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { login } from '@/api/userAPI'
 import { useDispatch, useSelector } from 'react-redux'
+import { AppState } from '@/constants/models/common'
 
 interface LoginFormState {
   username: string
@@ -9,8 +10,8 @@ interface LoginFormState {
 }
 
 const LoginPage = () => {
-  const loginedUser = useSelector((state: any) => state.loginedUser)
-  const dispatch = useDispatch();
+  const loginedUser = useSelector((state: AppState) => state.loginedUser)
+  const dispatch = useDispatch()
   const [formState, setFormState] = useState<LoginFormState>({ username: '', password: '' })
   const [error, setError] = useState<string>('')
   const navigate = useNavigate()
@@ -26,22 +27,17 @@ const LoginPage = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
     setError('')
-    login(formState).then((response) => {
-      dispatch({ type: 'LOGIN', payload: response });
-    }).catch((error) => { console.log(error) }).finally(() => { navigate('/dashboard') });
-    //   try {
-    //     await signInWithEmailAndPassword(auth, formState.email, formState.password)
-    //     navigate('/dashboard')
-    //   } catch (err) {
-    //     setError('Failed to log in. Please check your credentials.')
-    //   }
-    // if (formState.username === "operator" && formState.password === "123456") {
-    //   navigate("/dashboard");
-    // } else if ((formState.username === "visitor" && formState.password === "123456")) {
-    //   navigate("/");
-    // } else {
-    //   setError('Failed to log in. Please check your credentials.')
-    // }
+    login(formState)
+      .then((response) => {
+        console.log(response.data)
+        dispatch({ type: 'LOGIN', payload: response })
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+      .finally(() => {
+        navigate('/dashboard')
+      })
   }
   return (
     <div className="flex h-screen w-full items-start">

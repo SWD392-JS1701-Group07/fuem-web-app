@@ -19,6 +19,30 @@
   background-position-x: calc(100% - 0px);
 }
 
+@keyframes slide-in {
+  from {
+    transform: translate(-50%, -50%) translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+.dialog-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @layer base {
   html {
     @apply font-poppins;

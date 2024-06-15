@@ -1,14 +1,23 @@
 import { Separator } from '@/components/ui/separator'
+import { useSelector } from 'react-redux'
+import { AppState } from '@/constants/models/common'
 import { Link } from 'react-router-dom'
 
-const navLinks = [
-  { name: 'About', path: '/about' },
-  { name: 'Events', path: '/event' },
-  { name: 'Contact', path: '/contact' },
-  { name: 'Login', path: '/login' }
-]
-
 const MainNavBar = () => {
+  const loginedUser = useSelector((state: AppState) => state.loginedUser)
+  const isAuthenticated = loginedUser.accessToken !== ''
+
+  const baseNavLinks = [
+    { name: 'About', path: '/about' },
+    { name: 'Events', path: '/event' },
+    { name: 'Contact', path: '/contact' }
+  ]
+
+  const authNavLink = isAuthenticated
+    ? { name: 'Profile', path: '/profile' }
+    : { name: 'Login', path: '/login' }
+
+  const navLinks = [...baseNavLinks, authNavLink]
   return (
     <div className="sticky top-0 z-50">
       <header className="z-50 w-full bg-white text-black">
