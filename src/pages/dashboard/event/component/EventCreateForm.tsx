@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { format } from "date-fns"
+import { format, min } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -23,12 +23,15 @@ import { EventCreateModel } from "@/constants/models/Event"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { useToast } from "@/components/ui/use-toast"
+import { Sponsor } from "@/constants/models/Sponsor"
+import { Card } from "@/components/ui/card"
+import { preventDefault } from "@fullcalendar/core/internal"
+import { Checkbox } from "@/components/ui/checkbox"
 
 const formDetailSchema = z.object({
     name: z.string()
         .min(3, { message: 'Name must be at least 3 characters.' }),
     place: z.string(),
-    // duration: z.string(),
     startTime: z.string(),
     endTime: z.string(),
     startDate: z.date({
@@ -55,6 +58,21 @@ const formDetailSchema = z.object({
     //     invalid_type_error: "must be a number",
     // }),
     subjectId: z.string(),
+    sponsor: z.array(z.object({
+        name: z.string().
+            min(3, { message: 'Name must be at least 3 characters.' }),
+        email: z.string().email(),
+        phoneNumber: z.string()
+            .min(9, { message: 'Phone number must be 9 or 10 characters.' })
+            .max(10, { message: 'Phone number must be 9 or 10 characters.' }),
+        sponsorType: z.string()
+            .min(3, { message: 'Name must be at least 3 characters.' })
+            .max(50, { message: 'Name must be at most 50 characters.' }),
+        sponsorSum: z.string(),
+        sponsorDescription: z.string(),
+        //sponsorId: z.number(),
+        //newAccount: z.boolean()
+    }))
 })
 
 type FormDetailValues = z.infer<typeof formDetailSchema>
@@ -64,6 +82,7 @@ export function CreateEventForm() {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const { toast } = useToast();
+    const [Sponsor, setSponsor] = useState<Sponsor[]>([]);
 
     useEffect(() => {
         const initialize = async () => {
@@ -88,7 +107,8 @@ export function CreateEventForm() {
         quantity: 0,
         //avatarUrl: "",
         //ownerId: 0,
-        subjectId: "0"
+        subjectId: "0",
+        sponsor: []
     }
 
     const form = useForm<FormDetailValues>({
@@ -140,7 +160,7 @@ export function CreateEventForm() {
                     }
 
                 )
-                console.log("error", error)
+                //console.log("error", error)
                 setIsLoading(false);
             })
             .finally(() => {
@@ -149,11 +169,38 @@ export function CreateEventForm() {
         setIsLoading(false);
         //router.push(`/dashboard/diets/${dietId}/view`);
     }
+
+    const handleAddSponsor = (ev: React.MouseEvent) => {
+        ev.preventDefault();
+        console.log(Sponsor.length)
+        if (Sponsor.length == 0) {
+            setSponsor([{
+                id: Sponsor.length,
+                name: "sponsor",
+                email: "aaa",
+                phoneNumber: "123",
+                avatarUrl: "#",
+                accountId: null
+            }])
+        } else {
+            setSponsor([...Sponsor, {
+                id: Sponsor.length,
+                name: "sponsor",
+                email: "aaa",
+                phoneNumber: "123",
+                avatarUrl: "#",
+                accountId: null
+            }])
+        }
+    }
+    const handleDeleteSponsor = (id: number) => {
+        setSponsor(Sponsor.filter(sponsor => sponsor.id !== id))
+    }
     return (
         <>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                    <Accordion type="single" collapsible defaultValue="general">
+                    <Accordion type="multiple" defaultValue={["general"]}>
                         <AccordionItem title="Event Detail" value="general">
                             <AccordionTrigger className="bg-slate-200 pl-2">General information</AccordionTrigger>
                             <AccordionContent>
@@ -321,26 +368,147 @@ export function CreateEventForm() {
                                 />
                             </AccordionContent>
                         </AccordionItem>
-                        <AccordionItem title="Sponsor information" value={"sponsor"} disabled>
-                            <AccordionTrigger className="bg-slate-200 pl-2" >Sponsor information</AccordionTrigger>
+                        <AccordionItem title="Schedule" value="schedule" className="my-1">
+                            <AccordionTrigger className="bg-slate-200 pl-2" >Schedule</AccordionTrigger>
                             <AccordionContent>
                                 {/* <FormField
-                                control={form.control}
-                                name="eventStatus"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Status</FormLabel>
-                                        <FormControl>
-                                            <Checkbox {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            /> */}
+                                    control={form.control}
+                                    name="schedule"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Schedule</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                /> */}
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem title="Sponsor information" value={"sponsor"}>
+                            <AccordionTrigger className="bg-slate-200 pl-2" >Sponsor information</AccordionTrigger>
+                            <AccordionContent>
+                                <Button onClick={handleAddSponsor}>Add new sponsor</Button>
+                                {Sponsor.map((sponsor) => (
+                                    <Card className="my-2">
+                                        <div className="flex justify-between m-1">
+                                            <h1>Sponsor {sponsor.id}</h1>
+                                            <div className="flex">
+                                                <Input
+                                                    placeholder="Filter emails..."
+                                                    // value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+                                                    // onChange={(event) =>
+                                                    //     table.getColumn("email")?.setFilterValue(event.target.value)
+                                                    // }
+                                                    className="max-w-sm mr-2"
+                                                />
+                                                <Button>clear</Button>
+                                            </div>
+                                        </div>
+                                        <FormField
+                                            control={form.control}
+                                            name={`sponsor.${sponsor.id}.name`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>name</FormLabel>
+                                                    <FormControl>
+                                                        <Input {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name={`sponsor.${sponsor.id}.email`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Email</FormLabel>
+                                                    <FormControl>
+                                                        <Input {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name={`sponsor.${sponsor.id}.phoneNumber`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>name</FormLabel>
+                                                    <FormControl>
+                                                        <Input {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <div className="flex">
+                                            <div className="w-full mr-10">
+                                                <FormField
+                                                    control={form.control}
+                                                    name={`sponsor.${sponsor.id}.sponsorType`}
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormLabel>Sponsor Type</FormLabel>
+                                                            <FormControl>
+                                                                <Input {...field} />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </div>
+                                            <div className="w-full">
+                                                <FormField
+                                                    control={form.control}
+                                                    name={`sponsor.${sponsor.id}.sponsorSum`}
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormLabel>Sponsor Sum</FormLabel>
+                                                            <FormControl>
+                                                                <Input type="number" {...field} />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </div>
+                                        </div>
+                                        <FormField
+                                            control={form.control}
+                                            name={`sponsor.${sponsor.id}.sponsorDescription`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Sponsor Sum</FormLabel>
+                                                    <FormControl>
+                                                        <Input {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        {/* <FormField
+                                            control={form.control}
+                                            name={`sponsor.${sponsor.id}.newAccount`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Create a new account:    </FormLabel>
+                                                    <FormControl>
+                                                        <Checkbox {...field} value={field.value.toString()} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        /> */}
+                                    </Card>
+                                ))}
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
-                    <Button type="submit" className="w-full hover:shadow-primary-md">Create Diet Detail</Button>
+                    <Button type="submit" className="w-full hover:shadow-primary-md">Create Event</Button>
                 </form>
             </Form>
         </>
