@@ -10,7 +10,7 @@ const events = [
     participants: '122 participants',
     backgroundImage:
       'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-35.png)',
-    backgroundColor: 'bg-[#ff6af0]',
+    backgroundColor: 'bg-crayola',
     textColor: 'text-black'
   },
   {
