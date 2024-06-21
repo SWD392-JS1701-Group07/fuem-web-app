@@ -15,22 +15,22 @@ export type Event = {
     avatarUrl: string,
     ownerId: number,
     subjectId: number
-    "scheduleList": Schedule[]
+    scheduleList: Schedule[]
 }
 export type EventCreateModel = {
     name: string,
     place: string,
-    startTime: Date,
-    endTime: Date,
-    startDate: Date,
-    endDate: Date,
-    description: string,
-    eventStatus: number,
+    startSellDate: Date,
+    endSellDate: Date,
     price: number,
     quantity: number,
-    avatarUrl: string,
+    avatarUrl: string | null,
+    description: string,
+    eventStatus: string,
     ownerId: number,
-    subjectId: number
+    subjectId: number,
+    scheduleList: ScheduleCreateModel[],
+    sponsorships: SponsorshipCreateModel[]
 }
 export type EventDate = {
     id: string,
@@ -46,3 +46,23 @@ export type ScheduleList = {
     place: string,
     startTime: string
 }
+
+export type ScheduleCreateModel = {
+    startTime: Date,
+    endTime: Date,
+    place: string
+}
+export type SponsorshipCreateModel =
+    {
+        description: string,
+        type: string,
+        title: string,
+        sum: number,
+        sponsor: {
+            name: string,
+            email: string,
+            phoneNumber: string,
+            avatarFile: string,
+            accountId: 0
+        }
+    }

@@ -1,9 +1,7 @@
 import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -12,37 +10,25 @@ import {
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { format, min } from "date-fns"
-import { CalendarIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 //import { useParams } from "react-router-dom"
 import { create } from "@/api/eventApi"
-import { EventCreateModel } from "@/constants/models/Event"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { EventCreateModel, ScheduleCreateModel, SponsorshipCreateModel } from "@/constants/models/Event"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { useToast } from "@/components/ui/use-toast"
-import { Sponsor } from "@/constants/models/Sponsor"
 import { Card } from "@/components/ui/card"
-import { preventDefault } from "@fullcalendar/core/internal"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useNavigate } from "react-router-dom"
 
 const formDetailSchema = z.object({
     name: z.string()
         .min(3, { message: 'Name must be at least 3 characters.' }),
-    place: z.string(),
-    startTime: z.string(),
-    endTime: z.string(),
-    startDate: z.date({
-        required_error: "Please select a date"
-    }),
-    // endDate: z.date({
-    //     required_error: "Please select a date"
-    // }),
+    startSellTime: z.string(),
+    endSellTime: z.string(),
     description: z.string()
         .min(3, { message: 'Name must be at least 3 characters.' }),
-    // eventStatus: z.boolean(),
     price: z.number({
         required_error: "required",
         invalid_type_error: "must be a number",
@@ -51,13 +37,16 @@ const formDetailSchema = z.object({
         required_error: "required",
         invalid_type_error: "must be a number",
     }),
-    // avatarUrl: z.string()
-    //     .min(3, { message: 'Name must be at least 3 characters.' }),
-    // ownerId: z.number({
-    //     required_error: "required",
-    //     invalid_type_error: "must be a number",
-    // }),
+    avatarUrl: z.string()
+        .optional(),
     subjectId: z.string(),
+    schedules: z.array(z.object({
+        date: z.string(),
+        startTime: z.string(),
+        endTime: z.string(),
+        place: z.string(),
+    })
+    ).optional(),
     sponsor: z.array(z.object({
         name: z.string().
             min(3, { message: 'Name must be at least 3 characters.' }),
@@ -70,19 +59,34 @@ const formDetailSchema = z.object({
             .max(50, { message: 'Name must be at most 50 characters.' }),
         sponsorSum: z.string(),
         sponsorDescription: z.string(),
-        //sponsorId: z.number(),
-        //newAccount: z.boolean()
+        avatarFile: z.string().optional(),
+        newAccount: z.boolean().optional()
     }))
 })
 
 type FormDetailValues = z.infer<typeof formDetailSchema>
+type Sponsorship = {
+    id: number,
+    sponsorship: SponsorshipCreateModel
+}
+type Schedule = {
+    id: number,
+    schedule: ScheduleCreateModel
+}
+
+const Subject = [
+    { id: 1, name: "Computer fundamental" },
+    { id: 2, name: "Software Engineering" },
+    { id: 3, name: "Mathematics" },
+]
 
 export function CreateEventForm() {
-    //const { dietId } = useParams();
+    const nav = useNavigate();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const { toast } = useToast();
-    const [Sponsor, setSponsor] = useState<Sponsor[]>([]);
+    const [Sponsorships, setSponsorships] = useState<Sponsorship[]>([]);
+    const [schedules, setSchedules] = useState<Schedule[]>([{ id: 0, schedule: { startTime: new Date(), endTime: new Date(), place: "place" } }]);
 
     useEffect(() => {
         const initialize = async () => {
@@ -98,16 +102,13 @@ export function CreateEventForm() {
     const defaultValues: Partial<FormDetailValues> = {
         name: "",
         description: "",
-        startTime: new Date().toDateString(),
-        endTime: new Date().toDateString(),
-        startDate: new Date(),
-        //endDate: new Date(),
-        //eventStatus: true,
+        startSellTime: new Date().toDateString(),
+        endSellTime: new Date().toDateString(),
         price: 0,
         quantity: 0,
-        //avatarUrl: "",
-        //ownerId: 0,
+        avatarUrl: "",
         subjectId: "0",
+        schedules: [],
         sponsor: []
     }
 
@@ -124,77 +125,132 @@ export function CreateEventForm() {
 
     async function onSubmit(values: FormDetailValues) {
         console.log("submit")
+        console.log("Sponsor avatar: ", values.sponsor[0].avatarFile)
         let eventCreateModel: EventCreateModel = {
             name: values.name,
-            place: values.place,
+            place: "place",
             description: values.description,
-            startTime: new Date(values.startTime),
-            endTime: new Date(values.endTime),
-            startDate: new Date(values.startDate),
-            endDate: new Date(values.startDate),
-            eventStatus: 1,
+            startSellDate: new Date(values.startSellTime),
+            endSellDate: new Date(values.endSellTime),
             price: values.price,
             quantity: values.quantity,
-            avatarUrl: "#",
-            ownerId: 1,
-            subjectId: parseInt(values.subjectId)
+            avatarUrl: values.avatarUrl ? values.avatarUrl : null,
+            ownerId: 5,
+            eventStatus: "2",
+            subjectId: parseInt(values.subjectId),
+            scheduleList: values.schedules ? values.schedules.map((schedule) => {
+                return {
+                    startTime: new Date(schedule.date.split('T')[0] + "T" + schedule.startTime + ":00Z"),
+                    endTime: new Date(schedule.date.split('T')[0] + "T" + schedule.endTime + ":00Z"),
+                    place: schedule.place
+                }
+            }) : [],
+            sponsorships: values.sponsor.map((sponsor) => {
+                return {
+                    description: sponsor.sponsorDescription,
+                    type: sponsor.sponsorType,
+                    title: sponsor.name,
+                    sum: parseInt(sponsor.sponsorSum),
+                    sponsor: {
+                        name: sponsor.name,
+                        email: sponsor.email,
+                        phoneNumber: sponsor.phoneNumber,
+                        avatarFile: "#",
+                        accountId: 0
+                    }
+                }
+            })
         };
         create(eventCreateModel)
             .then(() => {
                 toast({
                     title: "Create success",
-                    description: "Diet detail has been created",
+                    description: "Event has been created",
                 })
-                setIsLoading(false);
+                nav("/dashboard/event");
             })
             .catch((error) => {
-                toast(
-                    {
-                        title: "Create failed",
-                        description: error,
-                        variant: "destructive",
-                        duration: 2000,
-                        className: cn(
-                            'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
-                        )
-                    }
-
-                )
-                //console.log("error", error)
+                console.log("error", error)
+                toast({
+                    title: "Create fail",
+                    description: "Some errors occurred",
+                    variant: "destructive",
+                })
                 setIsLoading(false);
             })
             .finally(() => {
                 setIsLoading(false);
             })
         setIsLoading(false);
-        //router.push(`/dashboard/diets/${dietId}/view`);
     }
 
     const handleAddSponsor = (ev: React.MouseEvent) => {
         ev.preventDefault();
-        console.log(Sponsor.length)
-        if (Sponsor.length == 0) {
-            setSponsor([{
-                id: Sponsor.length,
-                name: "sponsor",
-                email: "aaa",
-                phoneNumber: "123",
-                avatarUrl: "#",
-                accountId: null
+        if (Sponsorships.length == 0) {
+            setSponsorships([{
+                id: Sponsorships.length,
+                sponsorship: {
+                    description: "description",
+                    type: "type",
+                    title: "title",
+                    sum: 0,
+                    sponsor: {
+                        name: "sponsor",
+                        email: "aaa",
+                        phoneNumber: "123",
+                        avatarFile: "#",
+                        accountId: 0
+                    }
+                }
             }])
         } else {
-            setSponsor([...Sponsor, {
-                id: Sponsor.length,
-                name: "sponsor",
-                email: "aaa",
-                phoneNumber: "123",
-                avatarUrl: "#",
-                accountId: null
+            setSponsorships([...Sponsorships, {
+                id: Sponsorships.length,
+                sponsorship: {
+                    description: "description",
+                    type: "type",
+                    title: "title",
+                    sum: 0,
+                    sponsor: {
+                        name: "sponsor",
+                        email: "aaa",
+                        phoneNumber: "123",
+                        avatarFile: "#",
+                        accountId: 0
+                    }
+                }
             }])
         }
     }
-    const handleDeleteSponsor = (id: number) => {
-        setSponsor(Sponsor.filter(sponsor => sponsor.id !== id))
+    const handleAddSchedule = (ev: React.MouseEvent) => {
+        ev.preventDefault();
+        if (schedules.length == 0) {
+            setSchedules([{
+                id: schedules.length,
+                schedule: {
+                    startTime: new Date(),
+                    endTime: new Date(),
+                    place: "place"
+                }
+            }])
+        } else {
+            setSchedules([...schedules, {
+                id: schedules.length,
+                schedule: {
+                    startTime: new Date(),
+                    endTime: new Date(),
+                    place: "place"
+                }
+            }])
+        }
+    }
+    const handleDeleteSponsor = (id: number, ev: React.MouseEvent) => {
+        ev.preventDefault();
+        setSponsorships(Sponsorships.filter(sponsorship => sponsorship.id !== id))
+    }
+    const handleDeleteSchedule = (id: number, ev: React.MouseEvent) => {
+        ev.preventDefault();
+        setSchedules(schedules.filter(schedule => schedule.id !== id))
     }
     return (
         <>
@@ -219,108 +275,22 @@ export function CreateEventForm() {
                                 />
                                 <FormField
                                     control={form.control}
-                                    name="place"
-                                    render={({ field }) => (
-                                        <FormItem className="flex flex-col">
-                                            <FormLabel>Place</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder="Place of the event" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
                                     name="subjectId"
                                     render={({ field }) => (
-                                        <FormItem>
+                                        <FormItem className="mb-2">
                                             <FormLabel>Subject</FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                {/* <Input {...field} /> */}
+                                                <select {...field} className="w-full p-2 border border-gray-200 rounded-md">
+                                                    {Subject.map((subject) => (
+                                                        <option key={subject.id} value={subject.id}>{subject.name}</option>
+                                                    ))}
+                                                </select>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
-                                <div className="flex justify-start">
-                                    <div className="pr-32">
-                                        <FormField
-                                            control={form.control}
-                                            name="startDate"
-                                            render={({ field }) => (
-                                                <FormItem className="flex flex-col">
-                                                    <FormLabel>Event Date</FormLabel>
-                                                    <FormDescription>
-                                                        the scheduled date of this event.
-                                                    </FormDescription>
-                                                    <Popover>
-                                                        <PopoverTrigger asChild>
-                                                            <FormControl>
-                                                                <Button
-                                                                    variant={"outline"}
-                                                                    className={cn(
-                                                                        "w-[240px] pl-3 text-left font-normal",
-                                                                        !field.value && "text-muted-foreground"
-                                                                    )}
-                                                                >
-                                                                    {field.value ? (
-                                                                        format(field.value, "MMM dd, yyyy")
-                                                                    ) : (
-                                                                        <span>Pick a date</span>
-                                                                    )}
-                                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                                </Button>
-                                                            </FormControl>
-                                                        </PopoverTrigger>
-                                                        <PopoverContent className="w-auto p-0" align="start">
-                                                            <Calendar
-                                                                mode="single"
-                                                                selected={field.value}
-                                                                onSelect={field.onChange}
-                                                                disabled={{ before: new Date() }}
-                                                                initialFocus
-                                                            />
-                                                        </PopoverContent>
-                                                    </Popover>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-                                    <div className="pr-32">
-                                        <FormField
-                                            control={form.control}
-                                            name="startTime"
-                                            render={({ field }) => (
-                                                <FormItem className="flex flex-col">
-                                                    <FormLabel>Begin at</FormLabel>
-                                                    <FormDescription>
-                                                        the begin hour of this event.
-                                                    </FormDescription>
-                                                    <Input type="time" {...field} />
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-                                    <div>
-                                        <FormField
-                                            control={form.control}
-                                            name="endTime"
-                                            render={({ field }) => (
-                                                <FormItem className="flex flex-col">
-                                                    <FormLabel>End at</FormLabel>
-                                                    <FormDescription>
-                                                        the end hour of this event.
-                                                    </FormDescription>
-                                                    <Input type="time" {...field} />
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-                                </div>
                                 <div className="flex justify-start">
                                     <div className="pr-44">
                                         <FormField
@@ -360,7 +330,7 @@ export function CreateEventForm() {
                                         <FormItem>
                                             <FormLabel>Description</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Diet detail's description" {...field} />
+                                                <Input placeholder="Event's description" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -371,28 +341,81 @@ export function CreateEventForm() {
                         <AccordionItem title="Schedule" value="schedule" className="my-1">
                             <AccordionTrigger className="bg-slate-200 pl-2" >Schedule</AccordionTrigger>
                             <AccordionContent>
-                                {/* <FormField
-                                    control={form.control}
-                                    name="schedule"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Schedule</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                /> */}
+                                <Button onClick={handleAddSchedule}>Add Schedule</Button>
+                                {schedules.map((schedule) => (
+                                    <Card>
+                                        <div className="flex justify-between m-2">
+                                            <h1>Schedule {schedule.id}</h1>
+                                            {(schedules.length > 1) ?
+                                                <Button
+                                                    onClick={(e) => handleDeleteSchedule(schedule.id, e)}
+                                                >Remove</Button>
+                                                : null
+                                            }
+                                        </div>
+                                        <FormField
+                                            control={form.control}
+                                            name={`schedules.${schedule.id}.date`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Date</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="date" {...field} min={new Date().toISOString().split('T')[0]} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name={`schedules.${schedule.id}.startTime`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>start Time</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="time" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name={`schedules.${schedule.id}.endTime`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>End Time</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="time" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name={`schedules.${schedule.id}.place`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Place</FormLabel>
+                                                    <FormControl>
+                                                        <Input {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </Card>
+                                ))}
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem title="Sponsor information" value={"sponsor"}>
                             <AccordionTrigger className="bg-slate-200 pl-2" >Sponsor information</AccordionTrigger>
                             <AccordionContent>
                                 <Button onClick={handleAddSponsor}>Add new sponsor</Button>
-                                {Sponsor.map((sponsor) => (
+                                {Sponsorships.map((sponsor) => (
                                     <Card className="my-2">
-                                        <div className="flex justify-between m-1">
+                                        <div className="flex justify-between m-2">
                                             <h1>Sponsor {sponsor.id}</h1>
                                             <div className="flex">
                                                 <Input
@@ -404,6 +427,7 @@ export function CreateEventForm() {
                                                     className="max-w-sm mr-2"
                                                 />
                                                 <Button>clear</Button>
+                                                <Button onClick={(e) => handleDeleteSponsor(sponsor.id, e)}>Remove</Button>
                                             </div>
                                         </div>
                                         <FormField
@@ -490,19 +514,32 @@ export function CreateEventForm() {
                                                 </FormItem>
                                             )}
                                         />
-                                        {/* <FormField
+                                        <FormField
+                                            control={form.control}
+                                            name={`sponsor.${sponsor.id}.avatarFile`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Create a new account:    </FormLabel>
+                                                    <FormControl>
+                                                        <Input {...field} type="file" />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
                                             control={form.control}
                                             name={`sponsor.${sponsor.id}.newAccount`}
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>Create a new account:    </FormLabel>
                                                     <FormControl>
-                                                        <Checkbox {...field} value={field.value.toString()} />
+                                                        <Checkbox {...field} value={(field.value == null ? "false" : "true")} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
-                                        /> */}
+                                        />
                                     </Card>
                                 ))}
                             </AccordionContent>

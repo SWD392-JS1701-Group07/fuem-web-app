@@ -15,7 +15,8 @@ const DashboardEventList = () => {
     const getEvents = async () => {
         //const response = await getAll();
         const response = await getAll();
-        setData(response.data);
+        setData(response);
+        console.log("data: ", response)
     }
     console.log(data)
     return (
