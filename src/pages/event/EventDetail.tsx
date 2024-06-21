@@ -56,10 +56,8 @@ const EventDetail = () => {
         >
           <h1 className="font-jura text-7xl font-extrabold">{event?.name || 'Unknown'}</h1>
           <p className="mt-6 font-jura text-4xl font-bold text-crayola">
-            {formatDateTime(event?.startTimeOverall as string, 'date')} <br />
-            {formatDateTime(event?.startTimeOverall as string, 'time') +
-              ' - ' +
-              formatDateTime(event?.endTimeOverall as string, 'time')}{' '}
+            {formatDateTime(event?.startSellDate as string, 'date')} to{' '}
+            {formatDateTime(event?.endSellDate as string, 'date')}
           </p>
           <Button className="mt-4 h-14 rounded-none border border-crayola bg-black px-8 text-xl text-crayola hover:bg-crayola hover:text-white">
             Tham Gia
