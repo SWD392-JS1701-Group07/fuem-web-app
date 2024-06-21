@@ -15,6 +15,7 @@ import ContactPage from './pages/home/ContactPage'
 import AboutPage from './pages/home/AboutPage'
 import PrivateRoute from './components/common/PrivateRoute'
 import AuthRoute from './components/common/AuthRoute'
+import ProfilePage from './pages/home/ProfilePage'
 
 function App() {
   //const { component: Component, path } = routes[3];
@@ -25,15 +26,35 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="about" element={<AboutPage />} />
           <Route path="contact" element={<ContactPage />} />
-          <Route path="login" element={<AuthRoute><LoginPage /></AuthRoute>} />
-          <Route path="signup" element={<AuthRoute><SignupPage /></AuthRoute>} />
+          <Route path="profile" element={<ProfilePage />} />
+          <Route
+            path="login"
+            element={
+              <AuthRoute>
+                <LoginPage />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="signup"
+            element={
+              <AuthRoute>
+                <SignupPage />
+              </AuthRoute>
+            }
+          />
           <Route path="event" element={<EventList />} />
           <Route path="event/:id" element={<EventDetail />} />
-          <Route path="dashboard" element={<>
-            <PrivateRoute>
-              <DashboardLayout />
-            </PrivateRoute>
-          </>}>
+          <Route
+            path="dashboard"
+            element={
+              <>
+                <PrivateRoute>
+                  <DashboardLayout />
+                </PrivateRoute>
+              </>
+            }
+          >
             <Route index element={<DashBoard />} />
             <Route path="event" element={<DashboardEventList />} />
             <Route path="event/:id" element={<EventDetail />} />
