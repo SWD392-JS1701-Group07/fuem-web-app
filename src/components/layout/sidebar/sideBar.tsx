@@ -40,6 +40,7 @@
 'use client'
 
 import { HandCoins, LandPlot, LayoutDashboard, LucideFootprints, Newspaper, PawPrint, PocketKnife, Rabbit, ShoppingBag, Star, Ticket, User, UserCog, UtensilsCrossed } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
@@ -192,12 +193,12 @@ const sponsorSidebarLinks = [
 //6 collaborator
 
 function LeftSidebar({ }) {
-    const user = useSelector((state: any) => state.loginedUser.role);
+    const [user, setUser] = useState(localStorage.getItem('role'));
     console.log(user)
-    const sidebarLinks = user === 1
-        ? adminSidebarLinks : user === 3
-            ? sponsorSidebarLinks : user === 4
-                ? staffSidebarLinks : user === 5
+    const sidebarLinks = user === '1'
+        ? adminSidebarLinks : user === '3'
+            ? sponsorSidebarLinks : user === '4'
+                ? staffSidebarLinks : user === '5'
                     ? operatorSidebarLinks : [];
     return (
         <section className='custom-scrollbar

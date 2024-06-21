@@ -94,72 +94,72 @@ export const columns: ColumnDef<Event>[] = [
             <div className="capitalize">{row.getValue("place")}</div>
         ),
     },
-    {
-        accessorKey: "startTime",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Start At
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-        cell: ({ row }) => <div className="lowercase">{(row.getValue("startTime") as string).substring(11, 16)}</div>,
-    },
-    {
-        accessorKey: "endTime",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    End At
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-        cell: ({ row }) => (
-            <div className="capitalize">{(row.getValue("endTime") as string).substring(11, 16)}</div>
-        ),
-    },
-    {
-        accessorKey: "startDate",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Start Date
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-        cell: ({ row }) => (
-            <div className="capitalize">{new Date((row.getValue("startDate") as string)).toLocaleDateString()}</div>
-        ),
-    },
-    {
-        accessorKey: "endDate",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    End Date
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-        cell: ({ row }) => (
-            <div className="capitalize">{new Date((row.getValue("endDate") as string)).toLocaleDateString()}</div>
-        ),
-    },
+    // {
+    //     accessorKey: "startTime",
+    //     header: ({ column }) => {
+    //         return (
+    //             <Button
+    //                 variant="ghost"
+    //                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    //             >
+    //                 Start At
+    //                 <CaretSortIcon className="ml-2 h-4 w-4" />
+    //             </Button>
+    //         )
+    //     },
+    //     cell: ({ row }) => <div className="lowercase">{(row.getValue("startTime") as string).substring(11, 16)}</div>,
+    // },
+    // {
+    //     accessorKey: "endTime",
+    //     header: ({ column }) => {
+    //         return (
+    //             <Button
+    //                 variant="ghost"
+    //                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    //             >
+    //                 End At
+    //                 <CaretSortIcon className="ml-2 h-4 w-4" />
+    //             </Button>
+    //         )
+    //     },
+    //     cell: ({ row }) => (
+    //         <div className="capitalize">{(row.getValue("endTime") as string).substring(11, 16)}</div>
+    //     ),
+    // },
+    // {
+    //     accessorKey: "startDate",
+    //     header: ({ column }) => {
+    //         return (
+    //             <Button
+    //                 variant="ghost"
+    //                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    //             >
+    //                 Start Date
+    //                 <CaretSortIcon className="ml-2 h-4 w-4" />
+    //             </Button>
+    //         )
+    //     },
+    //     cell: ({ row }) => (
+    //         <div className="capitalize">{new Date((row.getValue("startDate") as string)).toLocaleDateString()}</div>
+    //     ),
+    // },
+    // {
+    //     accessorKey: "endDate",
+    //     header: ({ column }) => {
+    //         return (
+    //             <Button
+    //                 variant="ghost"
+    //                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    //             >
+    //                 End Date
+    //                 <CaretSortIcon className="ml-2 h-4 w-4" />
+    //             </Button>
+    //         )
+    //     },
+    //     cell: ({ row }) => (
+    //         <div className="capitalize">{new Date((row.getValue("endDate") as string)).toLocaleDateString()}</div>
+    //     ),
+    // },
     {
         accessorKey: "description",
         header: ({ column }) => {
