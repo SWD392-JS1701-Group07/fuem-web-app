@@ -23,7 +23,8 @@ export default {
     extend: {
       colors: {
         'yellow-sun': '#fff424',
-        'electric-indigo': "#6700ff"
+        'electric-indigo': "#6700ff",
+        'crayola': "#ff6af0"
       },
       backgroundImage: {
         'home-dots': "url('http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-31.png')",

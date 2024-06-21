@@ -1,5 +1,9 @@
 import { getById } from '@/api'
+import { Button } from '@/components/ui/button'
 import { Event } from '@/constants/models/Event'
+import { AVATAR_PLACEHOLDER_URL, EVENT_PLACEHOLDER_URL } from '@/constants/models/url'
+import { formatDateTime } from '@/lib/utils'
+import * as Avatar from '@radix-ui/react-avatar'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -33,43 +37,83 @@ const EventDetail = () => {
         id="row"
         className="relative m-auto flex w-4/5 max-w-6xl flex-wrap justify-center bg-cover bg-center bg-no-repeat py-7"
       >
-        <h1 className="font-jura text-9xl font-extrabold">{event.name}</h1>
+        <h1 className="font-jura text-9xl font-extrabold"></h1>
       </div>
 
       <div
         id="row"
-        className="relative m-auto flex w-4/5 max-w-6xl flex-wrap bg-home-dots-2 bg-cover bg-center bg-no-repeat py-7"
+        className="relative m-auto flex w-4/5 max-w-6xl flex-wrap space-x-10 bg-home-dots bg-cover bg-center bg-no-repeat py-7"
       >
         <div
           id="column"
-          className="relative mr-14 min-h-px w-full max-w-xl flex-1 bg-cover bg-center bg-no-repeat"
+          className="relative min-h-px w-full max-w-xl flex-1 bg-cover bg-center bg-no-repeat"
         >
-          <p className="font-poppins text-2xl leading-10">
-            Chào mừng bạn đến với trang quản lý sự kiện của Đại học FPT, điểm đến hàng đầu của bạn
-            cho tất cả các hội thảo, hội nghị và sự kiện bán vé sắp tới tại Thành phố Hồ Chí Minh.
-          </p>
+          <img src={event?.avatarUrl || EVENT_PLACEHOLDER_URL}></img>
         </div>
         <div
           id="column"
-          className="relative mr-14 min-h-px w-full max-w-xl flex-1 bg-cover bg-center bg-no-repeat"
+          className="relative min-h-px w-full max-w-xl flex-1 bg-cover bg-center bg-no-repeat"
         >
-          <p className="font-poppins text-xl leading-8">
-            Là một trong những cơ sở giáo dục hàng đầu, Đại học FPT cam kết xây dựng một cộng đồng
-            học tập và chuyên nghiệp sôi động. Nền tảng của chúng tôi cung cấp trải nghiệm liền mạch
-            để bạn có thể cập nhật thông tin về các sự kiện học thuật và chuyên nghiệp mới nhất, mua
-            vé và tham gia các hoạt động bổ ích. Dù bạn là sinh viên, cựu sinh viên hay chuyên gia
-            trong ngành, loạt sự kiện đa dạng của chúng tôi được thiết kế để nâng cao kiến thức,
-            mạng lưới và triển vọng nghề nghiệp của bạn. Tham gia cùng chúng tôi và trở thành một
-            phần của cộng đồng năng động cam kết với sự xuất sắc và đổi mới.
+          <h1 className="font-jura text-7xl font-extrabold">{event?.name || 'Unknown'}</h1>
+          <p className="mt-6 font-jura text-4xl font-bold text-crayola">
+            {formatDateTime(event?.startTimeOverall as string, 'date')} <br />
+            {formatDateTime(event?.startTimeOverall as string, 'time') +
+              ' - ' +
+              formatDateTime(event?.endTimeOverall as string, 'time')}{' '}
           </p>
+          <Button className="mt-4 h-14 rounded-none border border-crayola bg-black px-8 text-xl text-crayola hover:bg-crayola hover:text-white">
+            Tham Gia
+          </Button>
         </div>
       </div>
-
       <div
         id="row"
-        className="relative m-auto mb-10 flex w-4/5 max-w-6xl flex-wrap justify-center bg-cover bg-center bg-no-repeat py-7"
+        className="relative m-auto mb-10 flex w-4/5 max-w-6xl flex-row flex-wrap justify-evenly bg-cover bg-center bg-no-repeat py-7"
       >
-        <h1 className="text-center font-jura text-7xl font-extrabold">Event Organizers</h1>
+        <div id="avatar" className="flex flex-row items-center">
+          <Avatar.Root className="bg-blackA1 inline-flex h-40 w-40 select-none items-center justify-center overflow-hidden rounded-full align-middle">
+            <Avatar.Image
+              className="h-full w-full rounded-[inherit] object-cover"
+              src={AVATAR_PLACEHOLDER_URL}
+              alt="Avatar"
+            />
+            <Avatar.Fallback
+              className="text-violet11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium"
+              delayMs={600}
+            >
+              {event?.ownerId}
+            </Avatar.Fallback>
+          </Avatar.Root>
+          <div className="flex flex-col pl-5">
+            <h3 className="font-jura text-4xl font-extrabold text-yellow-sun">EVENT ORGANIZER</h3>
+            <h2 className="pt-3 font-poppins text-2xl font-bold">{event?.ownerId}</h2>
+          </div>
+        </div>
+        <div id="ticket" className="flex flex-row items-center">
+          <div className="flex flex-col pl-5">
+            <h3 className="font-jura text-4xl font-extrabold text-yellow-sun">Ticket Price: </h3>
+            <div className="flex flex-row items-center space-x-4">
+              <div>
+                <h2 className="pt-3 font-poppins text-2xl font-bold">
+                  {event?.price} <u>đ</u>
+                </h2>
+                <p className="text-xl text-gray-400">100 left</p>
+              </div>
+              <div className="flex items-center">
+                <Button className="mt-2 h-14 rounded-none border border-yellow-sun bg-transparent px-8 text-xl text-yellow-sun hover:bg-yellow-sun hover:text-black">
+                  Mua Vé
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        id="row"
+        className="relative m-auto mb-10 flex w-4/5 max-w-6xl flex-col flex-wrap justify-center bg-cover bg-center bg-no-repeat py-7"
+      >
+        <h1 className="pb-10 text-center font-jura text-7xl font-extrabold">Details</h1>
+        <p className="text-2xl leading-9">{event?.description || '...'}</p>
       </div>
       <div
         id="row"

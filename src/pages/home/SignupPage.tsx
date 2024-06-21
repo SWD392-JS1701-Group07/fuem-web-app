@@ -1,29 +1,26 @@
 import { useState, ChangeEvent, FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '@/firebaseConfig'
+import { useDispatch } from 'react-redux'
+import axios from 'axios'
 
 interface SignupFormState {
   email: string
   password: string
   confirmPassword: string
+  username: string
 }
 
 const SignupPage: React.FC = () => {
   const [formState, setFormState] = useState<SignupFormState>({
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    username: ''
   })
   const [error, setError] = useState<string>('')
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
-  /**
-   * Updates the form state with the new input value.
-   *
-   * @param {ChangeEvent<HTMLInputElement>} e - The event object containing the new input value.
-   * @return {void}
-   */
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target
     setFormState((prevState) => ({
@@ -32,12 +29,19 @@ const SignupPage: React.FC = () => {
     }))
   }
 
-  /**
-   * Handles the form submission for the signup page.
-   *
-   * @param {FormEvent<HTMLFormElement>} e - The form event triggered by the submit button.
-   * @return {Promise<void>} A promise that resolves when the submission is complete.
-   */
+  const login = async (username: string, password: string) => {
+    try {
+      const response = await axios.post('https://localhost:7297/api/auth/login', {
+        username,
+        password
+      })
+      dispatch({ type: 'LOGIN', payload: response.data })
+      return response
+    } catch (error) {
+      throw new Error('Login failed')
+    }
+  }
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
     setError('')
@@ -48,8 +52,23 @@ const SignupPage: React.FC = () => {
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, formState.email, formState.password)
-      navigate('/')
+      const registerResponse = await axios.post('https://localhost:7297/api/auth/register', {
+        username: formState.username,
+        email: formState.email,
+        password: formState.password,
+        confirmPassword: formState.confirmPassword
+      })
+
+      if (registerResponse.status === 200) {
+        try {
+          await login(formState.username, formState.password)
+          navigate('/dashboard')
+        } catch (err) {
+          setError('Failed to log in after registration. Please try logging in manually.')
+        }
+      } else {
+        setError('Failed to sign up. Please check your details.')
+      }
     } catch (err) {
       setError('Failed to sign up. Please check your details.')
     }
@@ -91,6 +110,15 @@ const SignupPage: React.FC = () => {
 
           <form onSubmit={handleSubmit}>
             <div className="flex w-full flex-col">
+              <input
+                className="my-2 w-full border-b border-white bg-transparent py-2 pl-2 text-white outline-none focus:outline-none"
+                type="text"
+                name="username"
+                placeholder="Username"
+                value={formState.username}
+                onChange={handleInputChange}
+              />
+
               <input
                 className="my-2 w-full border-b border-white bg-transparent py-2 pl-2 text-white outline-none focus:outline-none"
                 type="email"
@@ -137,6 +165,14 @@ const SignupPage: React.FC = () => {
             Already have an account?{' '}
             <span className="cursor-pointer font-semibold underline underline-offset-2">
               <Link to="/login">Login</Link>
+            </span>
+          </p>
+        </div>
+
+        <div className="flex w-full items-center justify-center">
+          <p className="text-xs font-normal text-white md:text-sm">
+            <span className="cursor-pointer font-semibold underline underline-offset-2">
+              <Link to="/">Back to home</Link>
             </span>
           </p>
         </div>
