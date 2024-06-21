@@ -15,6 +15,7 @@ import ContactPage from './pages/home/ContactPage'
 import AboutPage from './pages/home/AboutPage'
 import PrivateRoute from './components/common/PrivateRoute'
 import AuthRoute from './components/common/AuthRoute'
+import OperatorAccCreate from './pages/dashboard/OperatorAcc/OperatorAccCreate'
 import ProfilePage from './pages/home/ProfilePage'
 
 function App() {
@@ -60,6 +61,7 @@ function App() {
             <Route path="event/:id" element={<EventDetail />} />
             <Route path="event/create" element={<CreateEvent />} />
             <Route path="sponsor" element={<SponsorList />} />
+            <Route path="operator/create" element={<OperatorAccCreate />} />
           </Route>
         </Route>
       </Routes>
