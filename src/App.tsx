@@ -17,7 +17,11 @@ import AboutPage from './pages/home/AboutPage'
 import PrivateRoute from './components/common/PrivateRoute'
 import AuthRoute from './components/common/AuthRoute'
 import OperatorAccCreate from './pages/dashboard/OperatorAcc/OperatorAccCreate'
+<<<<<<< HEAD
 import StaffCreate from './pages/dashboard/StaffAcc/StaffCreate'
+=======
+import ProfilePage from './pages/home/ProfilePage'
+>>>>>>> 7941ebd994a38eeea72f62872d4bc7063213d43d
 
 function App() {
   //const { component: Component, path } = routes[3];
@@ -28,15 +32,35 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="about" element={<AboutPage />} />
           <Route path="contact" element={<ContactPage />} />
-          <Route path="login" element={<AuthRoute><LoginPage /></AuthRoute>} />
-          <Route path="signup" element={<AuthRoute><SignupPage /></AuthRoute>} />
+          <Route path="profile" element={<ProfilePage />} />
+          <Route
+            path="login"
+            element={
+              <AuthRoute>
+                <LoginPage />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="signup"
+            element={
+              <AuthRoute>
+                <SignupPage />
+              </AuthRoute>
+            }
+          />
           <Route path="event" element={<EventList />} />
           <Route path="event/:id" element={<EventDetail />} />
-          <Route path="dashboard" element={<>
-            <PrivateRoute>
-              <DashboardLayout />
-            </PrivateRoute>
-          </>}>
+          <Route
+            path="dashboard"
+            element={
+              <>
+                <PrivateRoute>
+                  <DashboardLayout />
+                </PrivateRoute>
+              </>
+            }
+          >
             <Route index element={<DashBoard />} />
             <Route path="event" element={<DashboardEventList />} />
             <Route path="event/:id" element={<EventDashboardDetail />} />
