@@ -5,6 +5,7 @@ import HomePage from './pages/home/HomePage'
 // import routes from "./routes";
 // import { Suspense } from "react";
 import EventDetail from './pages/event/EventDetail'
+import EventDashboardDetail from './pages/dashboard/event/EventDashboardDetail'
 import DashBoard from './pages/dashboard'
 import DashboardEventList from './pages/dashboard/event/EventList'
 import CreateEvent from './pages/dashboard/event/EventCreate'
@@ -16,7 +17,11 @@ import AboutPage from './pages/home/AboutPage'
 import PrivateRoute from './components/common/PrivateRoute'
 import AuthRoute from './components/common/AuthRoute'
 import OperatorAccCreate from './pages/dashboard/OperatorAcc/OperatorAccCreate'
+<<<<<<< HEAD
+import StaffCreate from './pages/dashboard/StaffAcc/StaffCreate'
+=======
 import ProfilePage from './pages/home/ProfilePage'
+>>>>>>> 7941ebd994a38eeea72f62872d4bc7063213d43d
 
 function App() {
   //const { component: Component, path } = routes[3];
@@ -58,10 +63,11 @@ function App() {
           >
             <Route index element={<DashBoard />} />
             <Route path="event" element={<DashboardEventList />} />
-            <Route path="event/:id" element={<EventDetail />} />
+            <Route path="event/:id" element={<EventDashboardDetail />} />
             <Route path="event/create" element={<CreateEvent />} />
             <Route path="sponsor" element={<SponsorList />} />
             <Route path="operator/create" element={<OperatorAccCreate />} />
+            <Route path="staff/create" element={<StaffCreate />} />
           </Route>
         </Route>
       </Routes>

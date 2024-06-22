@@ -17,3 +17,7 @@ export const getById = async (id: number) => {
 export const create = async (data: EventCreateModel) => {
   return await axiosClient.post('/api/events', data)
 }
+
+export const updateStatus = async (id: number) => {
+  return await axiosClient.put(`/api/events/${id}`)
+}

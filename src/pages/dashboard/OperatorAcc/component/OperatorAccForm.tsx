@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { Account } from "@/constants/models/Account";
+import { Account, AccountCreateModel } from "@/constants/models/Account";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
@@ -21,13 +21,13 @@ const formDetailSchema = z.object({
     username: z.string().min(3, { message: "Username must be at least 3 characters" }),
     password: z.string().min(6, { message: "Password must be at least 6 characters" }),
     confirmPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
-    studentId: z.string().min(3, { message: "Student ID must be at least 3 characters" }).optional(),
+    studentId: z.string().optional(),
     phoneNumber: z.string()
         .min(9, { message: "Phone number must be at least 9 characters" })
         .max(10, { message: "Phone number must be at most 10 characters" }),
     dob: z.date(),
-    gender: z.string().min(3, { message: "Gender must be at least 3 characters" }),
-    avatarUrl: z.string(),
+    gender: z.string().min(3, { message: "Gender must be at least 3 characters" }).optional(),
+    avatarUrl: z.string().optional(),
     roleId: z.number(),
     isVerified: z.boolean().optional()
 }).superRefine(({ confirmPassword, password }, ctx) => {
@@ -85,41 +85,35 @@ const OperatorAccForm = () => {
 
     async function onSubmit(values: FormDetailValues) {
         console.log("submit")
-        let accountCreateModel: Account = {
+        let accountCreateModel: AccountCreateModel = {
             name: values.name,
-            subjectId: values.subjectId,
+            subjectId: values.subjectId || 1,
             email: values.email,
             username: values.username,
             password: values.password,
             studentId: values.studentId || "1",
             phoneNumber: values.phoneNumber,
             dob: values.dob,
-            roleId: values.roleId,
-            gender: values.gender,
-            avatarUrl: values.avatarUrl,
+            roleId: 5,
+            gender: values.gender || "Male",
+            avatarUrl: values.avatarUrl || "",
+
         };
         createAccount(accountCreateModel)
             .then(() => {
                 toast({
                     title: "Create success",
-                    description: "Diet detail has been created",
+                    description: "Operator account has been created",
                 })
                 setIsLoading(false);
             })
             .catch((error) => {
-                toast(
-                    {
-                        title: "Create failed",
-                        description: error,
-                        variant: "destructive",
-                        duration: 2000,
-                        className: cn(
-                            'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
-                        )
-                    }
-
-                )
-                //console.log("error", error)
+                toast({
+                    title: "Create fail",
+                    description: `${error.response.data.message}`,
+                    variant: "destructive"
+                })
+                console.log("error", error)
                 setIsLoading(false);
             })
             .finally(() => {
@@ -139,7 +133,7 @@ const OperatorAccForm = () => {
                             <FormItem>
                                 <FormLabel>Operator Name</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Name of the event" {...field} />
+                                    <Input placeholder="Name" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -152,7 +146,7 @@ const OperatorAccForm = () => {
                             <FormItem className="flex flex-col">
                                 <FormLabel>Email</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Place of the event" {...field} />
+                                    <Input placeholder="Place" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -165,7 +159,20 @@ const OperatorAccForm = () => {
                             <FormItem className="flex flex-col">
                                 <FormLabel>Username</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Place of the event" {...field} />
+                                    <Input placeholder="username" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="phoneNumber"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-col">
+                                <FormLabel>Phone Number</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Phone" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -197,7 +204,7 @@ const OperatorAccForm = () => {
                             </FormItem>
                         )}
                     />
-                    <FormField
+                    {/* <FormField
                         control={form.control}
                         name="confirmPassword"
                         render={({ field }) => (
@@ -209,8 +216,8 @@ const OperatorAccForm = () => {
                                 <FormMessage />
                             </FormItem>
                         )}
-                    />
-                    <FormField
+                    /> */}
+                    {/* <FormField
                         control={form.control}
                         name="studentId"
                         render={({ field }) => (
@@ -222,7 +229,7 @@ const OperatorAccForm = () => {
                                 <FormMessage />
                             </FormItem>
                         )}
-                    />
+                    /> */}
                     <Button type="submit" className="w-full hover:shadow-primary-md">Create Event</Button>
                 </form>
             </Form>

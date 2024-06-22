@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/table"
 import { Event } from "@/constants/models/Event"
 import { useNavigate } from "react-router-dom"
+import { Schedule } from "@/constants/models/schedule"
 
 
 type Props = {
@@ -78,7 +79,7 @@ export const columns: ColumnDef<Event>[] = [
         ),
     },
     {
-        accessorKey: "place",
+        accessorKey: "scheduleList",
         header: ({ column }) => {
             return (
                 <Button
@@ -91,75 +92,51 @@ export const columns: ColumnDef<Event>[] = [
             )
         },
         cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("place")}</div>
+            <div className="capitalize">{(row.getValue("scheduleList") as Schedule[]).map((schedule) => {
+                return (schedule.place + ", ")
+            })}</div>
         ),
     },
-    // {
-    //     accessorKey: "startTime",
-    //     header: ({ column }) => {
-    //         return (
-    //             <Button
-    //                 variant="ghost"
-    //                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    //             >
-    //                 Start At
-    //                 <CaretSortIcon className="ml-2 h-4 w-4" />
-    //             </Button>
-    //         )
-    //     },
-    //     cell: ({ row }) => <div className="lowercase">{(row.getValue("startTime") as string).substring(11, 16)}</div>,
-    // },
-    // {
-    //     accessorKey: "endTime",
-    //     header: ({ column }) => {
-    //         return (
-    //             <Button
-    //                 variant="ghost"
-    //                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    //             >
-    //                 End At
-    //                 <CaretSortIcon className="ml-2 h-4 w-4" />
-    //             </Button>
-    //         )
-    //     },
-    //     cell: ({ row }) => (
-    //         <div className="capitalize">{(row.getValue("endTime") as string).substring(11, 16)}</div>
-    //     ),
-    // },
-    // {
-    //     accessorKey: "startDate",
-    //     header: ({ column }) => {
-    //         return (
-    //             <Button
-    //                 variant="ghost"
-    //                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    //             >
-    //                 Start Date
-    //                 <CaretSortIcon className="ml-2 h-4 w-4" />
-    //             </Button>
-    //         )
-    //     },
-    //     cell: ({ row }) => (
-    //         <div className="capitalize">{new Date((row.getValue("startDate") as string)).toLocaleDateString()}</div>
-    //     ),
-    // },
-    // {
-    //     accessorKey: "endDate",
-    //     header: ({ column }) => {
-    //         return (
-    //             <Button
-    //                 variant="ghost"
-    //                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    //             >
-    //                 End Date
-    //                 <CaretSortIcon className="ml-2 h-4 w-4" />
-    //             </Button>
-    //         )
-    //     },
-    //     cell: ({ row }) => (
-    //         <div className="capitalize">{new Date((row.getValue("endDate") as string)).toLocaleDateString()}</div>
-    //     ),
-    // },
+    {
+        accessorKey: "startSellDate",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Sell At
+                    <CaretSortIcon className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+        cell: (({ row }) => {
+            // const startSellDate = (row.getValue("startSellDate") as string).substring(5, 10);
+            // const endSellDate = (row.getValue("endSellDate") as string).substring(5, 10);
+            // const year = (row.getValue("startSellDate") as string).substring(0, 4);
+            return <div className="lowercase">{(row.getValue("startSellDate") as string).substring(0, 10)}</div>
+            // return (
+            //     <div className="lowercase">
+            //         {startSellDate} - {endSellDate}-{year}
+            //     </div>
+            // );
+        })
+    },
+    {
+        accessorKey: "endSellDate",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Sell End
+                    <CaretSortIcon className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+        cell: ({ row }) => <div className="lowercase">{(row.getValue("endSellDate") as string).substring(0, 10)}</div>,
+    },
     {
         accessorKey: "description",
         header: ({ column }) => {
@@ -176,6 +153,21 @@ export const columns: ColumnDef<Event>[] = [
         cell: ({ row }) => (
             <div className="capitalize">{row.getValue("description")}</div>
         ),
+    },
+    {
+        accessorKey: "eventStatus",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Status
+                    <CaretSortIcon className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+        cell: ({ row }) => <div className="lowercase">{(row.getValue("eventStatus") as string)}</div>,
     },
     {
         id: "actions",
@@ -329,7 +321,7 @@ const DashboardEventTable = ({ data }: Props) => {
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
-                                    onClick={() => nav(`/event/${row.original.id}`)}
+                                    onClick={() => nav(`${row.original.id}`)}
                                     data-state={row.getIsSelected() && "selected"}
                                 >
                                     {row.getVisibleCells().map((cell) => (

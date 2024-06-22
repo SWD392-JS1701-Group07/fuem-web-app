@@ -1,21 +1,19 @@
-import { Schedule } from "./schedule"
-
 export type Event = {
     id: Number,
     name: string,
     place: string,
-    startTimeOverall: string,
-    endTimeOverall: string,
+    startSellDate: Date,
+    endSellDate: Date,
     startDate: string,
     endDate: string,
     description: string,
-    eventStatus: number,
+    eventStatus: string,
     price: number,
     quantity: number,
     avatarUrl: string,
     ownerId: number,
     subjectId: number
-    scheduleList: Schedule[]
+    scheduleList: ScheduleList[]
 }
 export type EventCreateModel = {
     name: string,

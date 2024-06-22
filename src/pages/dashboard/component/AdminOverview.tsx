@@ -23,7 +23,7 @@ const AdminOverview = () => {
         <div className='w-full min-h-screen'>
             <AccInfoBox title='Operator' value={handleUserByRole(5)} createPermit={true} createLink='operator/create' viewLink='operator'></AccInfoBox>
             <AccInfoBox title='Sponsor' value={handleUserByRole(3)} createPermit={true} createLink='' viewLink='sponsor'></AccInfoBox>
-            <AccInfoBox title='Staff' value={handleUserByRole(4)} createPermit={true} createLink='' viewLink='staff'></AccInfoBox>
+            <AccInfoBox title='Staff' value={handleUserByRole(4)} createPermit={true} createLink='staff/create' viewLink='staff'></AccInfoBox>
             <AccInfoBox title='Visitor' value={handleUserByRole(2)} createPermit={false} createLink='' viewLink='visitor'></AccInfoBox>
         </div>
     );
