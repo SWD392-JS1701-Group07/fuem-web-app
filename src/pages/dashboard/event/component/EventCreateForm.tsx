@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -25,8 +26,8 @@ import { useNavigate } from "react-router-dom"
 const formDetailSchema = z.object({
     name: z.string()
         .min(3, { message: 'Name must be at least 3 characters.' }),
-    startSellTime: z.string(),
-    endSellTime: z.string(),
+    startSellDate: z.string(),
+    endSellDate: z.string(),
     description: z.string()
         .min(3, { message: 'Name must be at least 3 characters.' }),
     price: z.number({
@@ -36,7 +37,8 @@ const formDetailSchema = z.object({
     quantity: z.number({
         required_error: "required",
         invalid_type_error: "must be a number",
-    }),
+    })
+        .min(1, { message: 'Quantity must be at least 1.' }),
     avatarUrl: z.string()
         .optional(),
     subjectId: z.string(),
@@ -56,9 +58,13 @@ const formDetailSchema = z.object({
             .max(10, { message: 'Phone number must be 9 or 10 characters.' }),
         sponsorType: z.string()
             .min(3, { message: 'Name must be at least 3 characters.' })
-            .max(50, { message: 'Name must be at most 50 characters.' }),
-        sponsorSum: z.string(),
-        sponsorDescription: z.string(),
+            .max(50, { message: 'Name must be at most 50 characters.' })
+            .optional(),
+        sponsorSum: z.number({
+            required_error: "required",
+            invalid_type_error: "must be a number",
+        }).min(1000, { message: 'Sum must be greater than 0.' }),
+        sponsorDescription: z.string().optional(),
         avatarFile: z.string().optional(),
         newAccount: z.boolean().optional()
     }))
@@ -102,8 +108,6 @@ export function CreateEventForm() {
     const defaultValues: Partial<FormDetailValues> = {
         name: "",
         description: "",
-        startSellTime: new Date().toDateString(),
-        endSellTime: new Date().toDateString(),
         price: 0,
         quantity: 0,
         avatarUrl: "",
@@ -130,8 +134,8 @@ export function CreateEventForm() {
             name: values.name,
             place: "place",
             description: values.description,
-            startSellDate: new Date(values.startSellTime),
-            endSellDate: new Date(values.endSellTime),
+            startSellDate: new Date(values.startSellDate),
+            endSellDate: new Date(values.endSellDate),
             price: values.price,
             quantity: values.quantity,
             avatarUrl: values.avatarUrl ? values.avatarUrl : null,
@@ -147,10 +151,10 @@ export function CreateEventForm() {
             }) : [],
             sponsorships: values.sponsor.map((sponsor) => {
                 return {
-                    description: sponsor.sponsorDescription,
-                    type: sponsor.sponsorType,
+                    description: sponsor.sponsorDescription || "",
+                    type: sponsor.sponsorType || "",
                     title: sponsor.name,
-                    sum: parseInt(sponsor.sponsorSum),
+                    sum: sponsor.sponsorSum,
                     sponsor: {
                         name: sponsor.name,
                         email: sponsor.email,
@@ -258,14 +262,14 @@ export function CreateEventForm() {
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                     <Accordion type="multiple" defaultValue={["general"]}>
                         <AccordionItem title="Event Detail" value="general">
-                            <AccordionTrigger className="bg-slate-200 pl-2">General information</AccordionTrigger>
+                            <AccordionTrigger className="bg-slate-200 pl-2">General information*</AccordionTrigger>
                             <AccordionContent>
                                 <FormField
                                     control={form.control}
                                     name="name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Name</FormLabel>
+                                            <FormLabel>Name*</FormLabel>
                                             <FormControl>
                                                 <Input placeholder="Name of the event" {...field} />
                                             </FormControl>
@@ -278,9 +282,8 @@ export function CreateEventForm() {
                                     name="subjectId"
                                     render={({ field }) => (
                                         <FormItem className="mb-2">
-                                            <FormLabel>Subject</FormLabel>
+                                            <FormLabel>Subject*</FormLabel>
                                             <FormControl>
-                                                {/* <Input {...field} /> */}
                                                 <select {...field} className="w-full p-2 border border-gray-200 rounded-md">
                                                     {Subject.map((subject) => (
                                                         <option key={subject.id} value={subject.id}>{subject.name}</option>
@@ -295,12 +298,13 @@ export function CreateEventForm() {
                                     <div className="pr-44">
                                         <FormField
                                             control={form.control}
-                                            name="price"
+                                            name="quantity"
                                             render={({ field }) => (
                                                 <FormItem className="flex flex-col">
-                                                    <FormLabel>Ticket price</FormLabel>
+                                                    <FormLabel>Ticket quantity*</FormLabel>
+                                                    <FormDescription>ticket quantity</FormDescription>
                                                     <FormControl>
-                                                        <Input type="number" min="0" placeholder="0" step={0.01} {...field} onChange={event => field.onChange(+event.target.value)} />
+                                                        <Input type="number" min="0" placeholder="0" step={1} {...field} onChange={event => field.onChange(+event.target.value)} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -310,12 +314,48 @@ export function CreateEventForm() {
                                     <div className="pr-44">
                                         <FormField
                                             control={form.control}
-                                            name="quantity"
+                                            name="price"
                                             render={({ field }) => (
                                                 <FormItem className="flex flex-col">
-                                                    <FormLabel>Ticket quantity</FormLabel>
+                                                    <FormLabel>Ticket price*</FormLabel>
+                                                    <FormDescription>Enter 0 if the event is free</FormDescription>
+                                                    <div className="flex">
+                                                        <FormControl>
+                                                            <Input type="number" min="0" placeholder="0" step={1000} {...field} onChange={event => field.onChange(+event.target.value)} />
+                                                        </FormControl>
+                                                        <FormLabel className="text-lg self-end">VND</FormLabel>
+                                                    </div>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                    <div className="pr-44">
+                                        <FormField
+                                            control={form.control}
+                                            name="startSellDate"
+                                            render={({ field }) => (
+                                                <FormItem className="flex flex-col">
+                                                    <FormLabel>Ticket Sale At*</FormLabel>
+                                                    <FormDescription>Also represent open date to participate</FormDescription>
                                                     <FormControl>
-                                                        <Input type="number" min="0" placeholder="0" step={0.01} {...field} onChange={event => field.onChange(+event.target.value)} />
+                                                        <Input type="date"  {...field} onChange={event => field.onChange(+event.target.value)} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                    <div className="pr-4">
+                                        <FormField
+                                            control={form.control}
+                                            name="endSellDate"
+                                            render={({ field }) => (
+                                                <FormItem className="flex flex-col">
+                                                    <FormLabel>Ticket Sale End*</FormLabel>
+                                                    <FormDescription>Also represent close date of participant</FormDescription>
+                                                    <FormControl>
+                                                        <Input type="date" {...field} onChange={event => field.onChange(+event.target.value)} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -339,13 +379,13 @@ export function CreateEventForm() {
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem title="Schedule" value="schedule" className="my-1">
-                            <AccordionTrigger className="bg-slate-200 pl-2" >Schedule</AccordionTrigger>
+                            <AccordionTrigger className="bg-slate-200 pl-2" >Schedule*</AccordionTrigger>
                             <AccordionContent>
                                 <Button onClick={handleAddSchedule}>Add Schedule</Button>
                                 {schedules.map((schedule) => (
                                     <Card>
                                         <div className="flex justify-between m-2">
-                                            <h1>Schedule {schedule.id}</h1>
+                                            <h1>Schedule {schedule.id + 1}*</h1>
                                             {(schedules.length > 1) ?
                                                 <Button
                                                     onClick={(e) => handleDeleteSchedule(schedule.id, e)}
@@ -358,7 +398,7 @@ export function CreateEventForm() {
                                             name={`schedules.${schedule.id}.date`}
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Date</FormLabel>
+                                                    <FormLabel>Date*</FormLabel>
                                                     <FormControl>
                                                         <Input type="date" {...field} min={new Date().toISOString().split('T')[0]} />
                                                     </FormControl>
@@ -371,7 +411,7 @@ export function CreateEventForm() {
                                             name={`schedules.${schedule.id}.startTime`}
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>start Time</FormLabel>
+                                                    <FormLabel>start Time*</FormLabel>
                                                     <FormControl>
                                                         <Input type="time" {...field} />
                                                     </FormControl>
@@ -384,7 +424,7 @@ export function CreateEventForm() {
                                             name={`schedules.${schedule.id}.endTime`}
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>End Time</FormLabel>
+                                                    <FormLabel>End Time*</FormLabel>
                                                     <FormControl>
                                                         <Input type="time" {...field} />
                                                     </FormControl>
@@ -397,7 +437,7 @@ export function CreateEventForm() {
                                             name={`schedules.${schedule.id}.place`}
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Place</FormLabel>
+                                                    <FormLabel>Place*</FormLabel>
                                                     <FormControl>
                                                         <Input {...field} />
                                                     </FormControl>
@@ -416,7 +456,7 @@ export function CreateEventForm() {
                                 {Sponsorships.map((sponsor) => (
                                     <Card className="my-2">
                                         <div className="flex justify-between m-2">
-                                            <h1>Sponsor {sponsor.id}</h1>
+                                            <h1>Sponsor {sponsor.id + 1}</h1>
                                             <div className="flex">
                                                 <Input
                                                     placeholder="Filter emails..."
@@ -435,7 +475,7 @@ export function CreateEventForm() {
                                             name={`sponsor.${sponsor.id}.name`}
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>name</FormLabel>
+                                                    <FormLabel>name*</FormLabel>
                                                     <FormControl>
                                                         <Input {...field} />
                                                     </FormControl>
@@ -448,7 +488,7 @@ export function CreateEventForm() {
                                             name={`sponsor.${sponsor.id}.email`}
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Email</FormLabel>
+                                                    <FormLabel>Email*</FormLabel>
                                                     <FormControl>
                                                         <Input {...field} />
                                                     </FormControl>
@@ -461,7 +501,7 @@ export function CreateEventForm() {
                                             name={`sponsor.${sponsor.id}.phoneNumber`}
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>name</FormLabel>
+                                                    <FormLabel>Phone Number*</FormLabel>
                                                     <FormControl>
                                                         <Input {...field} />
                                                     </FormControl>
@@ -485,48 +525,38 @@ export function CreateEventForm() {
                                                     )}
                                                 />
                                             </div>
-                                            <div className="w-full">
+                                            <div className="w-full pr-4">
                                                 <FormField
                                                     control={form.control}
                                                     name={`sponsor.${sponsor.id}.sponsorSum`}
                                                     render={({ field }) => (
                                                         <FormItem>
                                                             <FormLabel>Sponsor Sum</FormLabel>
-                                                            <FormControl>
-                                                                <Input type="number" {...field} />
-                                                            </FormControl>
+                                                            <div className="flex">
+                                                                <FormControl>
+                                                                    <Input type="number" min="0" placeholder="0" step={1000} {...field} onChange={event => field.onChange(+event.target.value)} />
+                                                                </FormControl>
+                                                                <FormLabel className="text-lg self-end">VND</FormLabel>
+                                                            </div>
                                                             <FormMessage />
                                                         </FormItem>
                                                     )}
                                                 />
                                             </div>
                                         </div>
-                                        <FormField
-                                            control={form.control}
-                                            name={`sponsor.${sponsor.id}.sponsorDescription`}
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Sponsor Sum</FormLabel>
-                                                    <FormControl>
-                                                        <Input {...field} />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
+                                        {/* <FormField
                                             control={form.control}
                                             name={`sponsor.${sponsor.id}.avatarFile`}
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Create a new account:    </FormLabel>
+                                                    <FormLabel>Sponsor Image</FormLabel>
                                                     <FormControl>
                                                         <Input {...field} type="file" />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
-                                        />
+                                        /> */}
                                         <FormField
                                             control={form.control}
                                             name={`sponsor.${sponsor.id}.newAccount`}
