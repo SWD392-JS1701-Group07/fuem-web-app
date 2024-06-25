@@ -17,11 +17,8 @@ import AboutPage from './pages/home/AboutPage'
 import PrivateRoute from './components/common/PrivateRoute'
 import AuthRoute from './components/common/AuthRoute'
 import OperatorAccCreate from './pages/dashboard/OperatorAcc/OperatorAccCreate'
-<<<<<<< HEAD
 import StaffCreate from './pages/dashboard/StaffAcc/StaffCreate'
-=======
 import ProfilePage from './pages/home/ProfilePage'
->>>>>>> 7941ebd994a38eeea72f62872d4bc7063213d43d
 
 function App() {
   //const { component: Component, path } = routes[3];
