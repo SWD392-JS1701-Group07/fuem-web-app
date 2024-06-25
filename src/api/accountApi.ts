@@ -10,6 +10,6 @@ export const createAccount = async (account: AccountCreateModel) => {
 }
 
 export const getById = async (accountId: string): Promise<Account> => {
-  const response = await axiosClient.get(`/api/account/${accountId}`)
+  const response = await axiosClient.get(`/api/accounts/${accountId}`)
   return response.data
 }
