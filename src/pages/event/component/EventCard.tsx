@@ -38,7 +38,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
             {event.subjectId}
           </span>
         </h2>
-        <h2 className="mt-1 italic text-gray-300">{formatDateTime(event.startDate, 'date')}</h2>
+        <h2 className="mt-1 italic text-gray-300">At {event.place || 'unknown location'}</h2>
         <p className="description my-2 text-gray-300">{truncateText(event.description, 100)}</p>
         <div className="tokenInfo my-4 flex items-center justify-between">
           <div className="price flex items-center font-bold text-indigo-300">
@@ -50,24 +50,26 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
           <div className="duration flex items-center text-gray-400">
             <ins className="mx-2 mb-[0.1rem] not-italic no-underline">◷</ins>
             <p>
-              {formatDateTime(event.startTimeOverall, 'time') +
+              {formatDateTime(event.startDate, 'time') +
                 ' - ' +
-                formatDateTime(event.endTimeOverall, 'time')}
+                formatDateTime(event.endDate, 'time')}
             </p>
           </div>
         </div>
         <hr className="w-full border-t border-gray-400/50" />
         <div className="mt-2 flex items-center justify-between">
-          <div className="wrapper flex items-center rounded-full border border-white/20 p-1 shadow-inner">
-            <img
-              src={AVATAR_PLACEHOLDER_URL}
-              className="h-8 w-8 rounded-full border border-white/20 object-cover"
-              alt="C"
-            />
+          <div className="flex flex-row">
+            <div className="wrapper flex items-center rounded-full border border-white/20 p-1 shadow-inner">
+              <img
+                src={AVATAR_PLACEHOLDER_URL}
+                className="h-8 w-8 rounded-full border border-white/20 object-cover"
+                alt="C"
+              />
+            </div>
+            <p className="ml-2 text-gray-400 self-center">
+              <ins className="not-italic no-underline">Hosted by</ins> {event.ownerId}
+            </p>
           </div>
-          <p className="ml-2 text-gray-400">
-            <ins className="not-italic no-underline">Hosted by</ins> {event.ownerId}
-          </p>
           <button
             className="flex h-12 w-12 items-center justify-center rounded-full bg-electric-indigo text-white"
             aria-label="Join Event"
