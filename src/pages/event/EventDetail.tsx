@@ -6,11 +6,11 @@ import { formatDateTime } from '@/lib/utils'
 import * as Avatar from '@radix-ui/react-avatar'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import EventTicket from '@/pages/event/component/EventTicket'
 
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>()
-  const [event, setEvent] = useState<Event>()
-
+  const [event, setEvent] = useState<Event | undefined>(undefined)
   useEffect(() => {
     const getEventDetail = async () => {
       try {
@@ -56,13 +56,12 @@ const EventDetail = () => {
         >
           <h1 className="font-jura text-7xl font-extrabold">{event?.name || 'Unknown'}</h1>
           <p className="mt-6 font-jura text-4xl font-bold text-crayola">
-            {formatDateTime(event?.startTimeOverall as string, 'date')} <br />
-            {formatDateTime(event?.startTimeOverall as string, 'time') +
+            {formatDateTime(event?.startDate as string, 'time') +
               ' - ' +
-              formatDateTime(event?.endTimeOverall as string, 'time')}{' '}
+              formatDateTime(event?.endDate as string, 'time')}{' '}
           </p>
-          <Button className="mt-4 h-14 rounded-none border border-crayola bg-black px-8 text-xl text-crayola hover:bg-crayola hover:text-white">
-            Tham Gia
+          <Button className="mt-2 h-14 rounded-none border border-crayola bg-black px-8 text-xl text-crayola hover:bg-crayola hover:text-black">
+            Participate
           </Button>
         </div>
       </div>
@@ -99,11 +98,7 @@ const EventDetail = () => {
                 </h2>
                 <p className="text-xl text-gray-400">100 left</p>
               </div>
-              <div className="flex items-center">
-                <Button className="mt-2 h-14 rounded-none border border-yellow-sun bg-transparent px-8 text-xl text-yellow-sun hover:bg-yellow-sun hover:text-black">
-                  Mua Vé
-                </Button>
-              </div>
+              <div className="flex items-center">{event && <EventTicket event={event} />}</div>
             </div>
           </div>
         </div>
