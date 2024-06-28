@@ -60,7 +60,7 @@ export type SponsorshipCreateModel =
             name: string,
             email: string,
             phoneNumber: string,
-            avatarFile: string,
+            avatarUrl: string,
             accountId: 0
         }
     }

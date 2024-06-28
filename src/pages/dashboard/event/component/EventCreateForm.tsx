@@ -9,7 +9,6 @@ import {
     FormMessage
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -159,7 +158,7 @@ export function CreateEventForm() {
                         name: sponsor.name,
                         email: sponsor.email,
                         phoneNumber: sponsor.phoneNumber,
-                        avatarFile: "#",
+                        avatarUrl: "#",
                         accountId: 0
                     }
                 }
@@ -202,7 +201,7 @@ export function CreateEventForm() {
                         name: "sponsor",
                         email: "aaa",
                         phoneNumber: "123",
-                        avatarFile: "#",
+                        avatarUrl: "#",
                         accountId: 0
                     }
                 }
@@ -219,7 +218,7 @@ export function CreateEventForm() {
                         name: "sponsor",
                         email: "aaa",
                         phoneNumber: "123",
-                        avatarFile: "#",
+                        avatarUrl: "#",
                         accountId: 0
                     }
                 }
@@ -339,7 +338,7 @@ export function CreateEventForm() {
                                                     <FormLabel>Ticket Sale At*</FormLabel>
                                                     <FormDescription>Also represent open date to participate</FormDescription>
                                                     <FormControl>
-                                                        <Input type="date"  {...field} onChange={event => field.onChange(+event.target.value)} />
+                                                        <Input type="date"  {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -355,7 +354,7 @@ export function CreateEventForm() {
                                                     <FormLabel>Ticket Sale End*</FormLabel>
                                                     <FormDescription>Also represent close date of participant</FormDescription>
                                                     <FormControl>
-                                                        <Input type="date" {...field} onChange={event => field.onChange(+event.target.value)} />
+                                                        <Input type="date" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>

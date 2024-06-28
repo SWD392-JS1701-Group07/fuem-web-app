@@ -5,7 +5,8 @@ import Overview from './component/NormalOverview';
 const DashBoard: React.FC = () => {
     const role = localStorage.getItem('role');
     return (
-        (role === "1") ? (<AdminOverview />) : (<Overview />)
+        (role === "1") ? (<AdminOverview />) : (<div className='h-screen'></div>)
+        // <Overview />
     );
 }
 
