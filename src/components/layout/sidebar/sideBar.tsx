@@ -198,7 +198,7 @@ function LeftSidebar({ }) {
     const sidebarLinks = user === '1'
         ? adminSidebarLinks : user === '3'
             ? sponsorSidebarLinks : user === '4'
-                ? staffSidebarLinks : user === '5'
+                ? operatorSidebarLinks : user === '5'
                     ? operatorSidebarLinks : [];
     return (
         <section className='custom-scrollbar

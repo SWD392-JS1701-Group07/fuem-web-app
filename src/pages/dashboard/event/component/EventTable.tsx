@@ -233,7 +233,7 @@ const DashboardEventTable = ({ data }: Props) => {
     return (
         <div className="w-full">
             <div className="flex items-center pb-4">
-                <div className="flex">
+                {/* <div className="flex">
                     <Input
                         placeholder="Filter emails..."
                         value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
@@ -268,7 +268,7 @@ const DashboardEventTable = ({ data }: Props) => {
                                 })}
                         </DropdownMenuContent>
                     </DropdownMenu>
-                </div>
+                </div> */}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="ml-auto">
@@ -352,7 +352,7 @@ const DashboardEventTable = ({ data }: Props) => {
                     {table.getFilteredSelectedRowModel().rows.length} of{" "}
                     {table.getFilteredRowModel().rows.length} row(s) selected.
                 </div>
-                <div className="space-x-2">
+                {/* <div className="space-x-2">
                     <Button
                         variant="outline"
                         size="sm"
@@ -369,7 +369,7 @@ const DashboardEventTable = ({ data }: Props) => {
                     >
                         Next
                     </Button>
-                </div>
+                </div> */}
             </div>
         </div>
     )
