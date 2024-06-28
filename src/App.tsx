@@ -17,7 +17,6 @@ import AboutPage from './pages/home/AboutPage'
 import PrivateRoute from './components/common/PrivateRoute'
 import AuthRoute from './components/common/AuthRoute'
 import OperatorAccCreate from './pages/dashboard/OperatorAcc/OperatorAccCreate'
-
 import StaffCreate from './pages/dashboard/StaffAcc/StaffCreate'
 import ProfilePage from './pages/home/ProfilePage'
 

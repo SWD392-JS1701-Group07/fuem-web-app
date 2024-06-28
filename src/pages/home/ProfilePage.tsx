@@ -1,59 +1,76 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, ChangeEvent, FormEvent } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { AppState } from '@/constants/models/common'
 import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
 import * as Dialog from '@radix-ui/react-dialog'
 import * as Label from '@radix-ui/react-label'
 import { Edit, Save } from 'lucide-react'
 import { AVATAR_PLACEHOLDER_URL } from '@/constants/models/url'
+import { getById } from '@/api/accountApi'
+import { Account } from '@/constants/models/Account'
+import { formatDateTime } from '@/lib/utils'
 
-interface UserProfile {
-  Name: string
-  Email: string
-  Username: string
-  PhoneNumber: string
-  DOB: string
-  Gender: string
-  AvatarUrl: string
-  AccountStatus: string
+const profileFields = {
+  name: 'Name',
+  email: 'Email',
+  username: 'Username',
+  phoneNumber: 'Phone Number',
+  dob: 'Date of Birth',
+  gender: 'Gender',
+  accountStatus: 'Account Status',
+  studentId: 'Student ID',
+  subjectId: 'Subject ID',
 }
 
-const ProfilePage: React.FC = () => {
-  const [user, setUser] = useState<UserProfile>({
-    Name: 'John Doe',
-    Email: 'johndoe@example.com',
-    Username: 'johnny',
-    PhoneNumber: '123-456-7890',
-    DOB: '1990-01-01',
-    Gender: 'Male',
-    AvatarUrl: AVATAR_PLACEHOLDER_URL,
-    AccountStatus: 'Active'
-  })
+// Fields to exclude from the Edit Profile form
+const excludeFromEdit = ['accountStatus', 'studentId', 'subjectId']
 
+const ProfilePage: React.FC = () => {
+  const { accessToken } = useSelector((state: AppState) => state.loginedUser)
+  const [user, setUser] = useState<Account | null>(null)
   const [editMode, setEditMode] = useState(false)
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
+  useEffect(() => {
+    const userId = localStorage.getItem('userId')
+    if (accessToken && userId) {
+      getById(userId)
+        .then((profile) => setUser(profile))
+        .catch((err) => console.error('Failed to fetch user profile:', err))
+    }
+  }, [accessToken])
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target
-    setUser((prevState) => ({
-      ...prevState,
-      [name]: value
-    }))
+    setUser((prevState) =>
+      prevState
+        ? {
+            ...prevState,
+            [name]: value,
+          }
+        : null
+    )
   }
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
     setEditMode(false)
+  }
+
+  if (!user) {
+    return <div>Loading...</div>
   }
 
   return (
     <div className="mx-auto h-screen bg-black p-4 px-10 pt-10 text-white">
       <div className="flex items-center space-x-4">
         <Avatar className="h-40 w-40 rounded-full">
-          <AvatarImage src={user.AvatarUrl} alt={user.Name} />
-          <AvatarFallback className="bg-gray-700 text-white">{user.Name.charAt(0)}</AvatarFallback>
+          <AvatarImage src={user.avatarUrl || AVATAR_PLACEHOLDER_URL} alt={user.name} />
+          <AvatarFallback className="bg-gray-700 text-white">{user.name.charAt(0)}</AvatarFallback>
         </Avatar>
         <div>
-          <h1 className="text-4xl font-bold">{user.Name}</h1>
-          <p className="text-xl text-gray-400">{user.Email}</p>
+          <h1 className="text-4xl font-bold">{user.name}</h1>
+          <p className="text-xl text-gray-400">{user.email}</p>
         </div>
         <button
           className="flex items-center space-x-1 pl-4 text-xl text-blue-400 hover:text-blue-600"
@@ -67,24 +84,22 @@ const ProfilePage: React.FC = () => {
       <div className="mt-8">
         <h2 className="mb-4 text-3xl font-semibold">Profile Details</h2>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {['Name', 'Email', 'Username', 'PhoneNumber', 'DOB', 'Gender', 'AccountStatus'].map(
-            (key) => (
-              <div key={key} className="flex flex-col">
-                <Label.Root htmlFor={key} className="mb-1 font-medium text-gray-300">
-                  {key}
-                </Label.Root>
-                <input
-                  className="rounded border border-gray-700 bg-gray-800 p-2 text-white"
-                  type="text"
-                  id={key}
-                  name={key}
-                  value={(user as any)[key]}
-                  onChange={handleInputChange}
-                  disabled={true}
-                />
-              </div>
-            )
-          )}
+          {Object.entries(profileFields).map(([key, label]) => (
+            <div key={key} className="flex flex-col">
+              <Label.Root htmlFor={key} className="mb-1 font-medium text-gray-300">
+                {label}
+              </Label.Root>
+              <input
+                className="rounded border border-gray-700 bg-gray-800 p-2 text-white"
+                type="text"
+                id={key}
+                name={key}
+                value={key === 'dob' ? formatDateTime(user[key].toString(), 'date') : (user as any)[key] || ''}
+                onChange={handleInputChange}
+                disabled={!editMode}
+              />
+            </div>
+          ))}
         </form>
       </div>
 
@@ -94,23 +109,23 @@ const ProfilePage: React.FC = () => {
           <Dialog.Content className="fixed left-1/2 top-1/2 max-h-screen w-full max-w-lg -translate-x-1/2 -translate-y-1/2 transform overflow-y-auto rounded bg-gray-800 p-6 shadow-lg">
             <Dialog.Title className="text-2xl font-semibold text-white">Edit Profile</Dialog.Title>
             <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-              {['Name', 'Email', 'Username', 'PhoneNumber', 'DOB', 'Gender', 'AccountStatus'].map(
-                (key) => (
+              {Object.entries(profileFields)
+                .filter(([key]) => !excludeFromEdit.includes(key))
+                .map(([key, label]) => (
                   <div key={key} className="flex flex-col">
                     <Label.Root htmlFor={key} className="mb-1 font-medium text-gray-300">
-                      {key}
+                      {label}
                     </Label.Root>
                     <input
                       className="rounded border border-gray-700 bg-gray-700 p-2 text-white"
                       type="text"
                       id={key}
                       name={key}
-                      value={(user as any)[key]}
+                      value={key === 'dob' ? formatDateTime(user[key].toString(), 'date') : (user as any)[key] || ''}
                       onChange={handleInputChange}
                     />
                   </div>
-                )
-              )}
+                ))}
               <div className="flex justify-end">
                 <button
                   type="submit"
