@@ -1,9 +1,9 @@
 import { Separator } from '@/components/ui/separator'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 
 const DashBoardNavBar = () => {
-  const loginedUser = useSelector((state: any) => state.loginedUser)
+  // const loginedUser = useSelector((state: any) => state.loginedUser)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const handleLogout = () => {
