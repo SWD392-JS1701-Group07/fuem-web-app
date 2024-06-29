@@ -7,6 +7,7 @@ const DashBoardNavBar = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const handleLogout = () => {
+    ['role', 'userId', 'accessToken'].forEach(key => localStorage.removeItem(key));
     dispatch({ type: 'LOGOUT' })
     navigate('/')
   }

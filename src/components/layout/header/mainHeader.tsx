@@ -1,11 +1,33 @@
+import { getById } from '@/api/accountApi'
 import { Separator } from '@/components/ui/separator'
-import { useSelector } from 'react-redux'
+import { Account } from '@/constants/models/Account'
 import { AppState } from '@/constants/models/common'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link, useNavigate } from 'react-router-dom'
 
 const MainNavBar = () => {
   const loginedUser = useSelector((state: AppState) => state.loginedUser)
   const isAuthenticated = loginedUser.accessToken !== ''
+  const [user, setUser] = useState<Account | null>(null)
+  useEffect(() => {
+    const userId = localStorage.getItem('userId')
+    if (loginedUser.accessToken && userId) {
+      getById(userId)
+        .then((profile) => setUser(profile))
+        .catch((err) => console.error('Failed to fetch user profile:', err))
+    }
+  }, [loginedUser.accessToken])
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const keysToRemove = ['role', 'userId', 'accessToken'] //for logout
+
+  const handleLogout = () => {
+    keysToRemove.forEach((key) => localStorage.removeItem(key))
+    dispatch({ type: 'LOGOUT' })
+    navigate('/')
+  }
 
   const baseNavLinks = [
     { name: 'About', path: '/about' },
@@ -13,11 +35,22 @@ const MainNavBar = () => {
     { name: 'Contact', path: '/contact' }
   ]
 
-  const authNavLink = isAuthenticated
-    ? { name: 'Profile', path: '/profile' }
-    : { name: 'Login', path: '/login' }
+  console.log(user?.roleId)
+  const dashboardLink = user?.roleId !== 0 && user?.roleId !== 2 ?
+  [{ name: 'Dashboard', path: '/dashboard' }] : []
 
-  const navLinks = [...baseNavLinks, authNavLink]
+  const authNavLink = isAuthenticated
+    ? [
+        { name: 'Profile (' + user?.username + ')', path: '/profile' },
+        { name: 'Logout', path: '/', onClick: handleLogout }
+      ]
+    : [{ name: 'Login', path: '/login' }]
+
+  const navLinks: {
+    name: string
+    path: string
+    onClick?: () => void
+  }[] = [...baseNavLinks, ...dashboardLink, ...authNavLink]
   return (
     <div className="sticky top-0 z-50">
       <header className="z-50 w-full bg-white text-black">
@@ -34,7 +67,7 @@ const MainNavBar = () => {
             <ul className="flex space-x-6">
               {navLinks.map((link) => (
                 <li key={link.name} className="font-poppins font-medium">
-                  <Link to={link.path}>
+                  <Link to={link.path} onClick={link.onClick}>
                     <a href={link.path}>{link.name}</a>
                   </Link>
                 </li>
