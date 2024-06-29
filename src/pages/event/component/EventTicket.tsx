@@ -23,35 +23,43 @@ const EventTicket = ({ event }: { event: Event }) => {
   }
 
   const total = event.price * quantity
+  const schedule = event.scheduleList
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <Button className="mt-4 h-14 rounded-none border border-yellow-sun bg-black px-8 text-xl text-yellow-sun hover:bg-yellow-sun hover:text-black">
-          Purchase
+          Buy Ticket
         </Button>
       </DrawerTrigger>
       <DrawerContent className="bg-black text-white">
-        <DrawerHeader className="text-left">
+        <DrawerHeader className="px-20 text-left">
           <DrawerTitle className="text-2xl text-yellow-sun">{event.name}</DrawerTitle>
           <DrawerDescription className="text-gray-400">
             Subject: {event.subjectId}
           </DrawerDescription>
         </DrawerHeader>
-        <div className="px-4">
+        <div className="px-20">
           <div className="mb-4">
             <p className="mb-2 text-lg font-semibold text-white">Event Detail</p>
-            <div className="flex flex-row space-x-3 pb-2">
-              <MapPin className="self-center text-gray-400" />
-              <p className="text-base text-white">At {event.place || 'somewhere'}</p>
-            </div>
-            <div className="flex flex-row space-x-3">
-              <Calendar className="self-center text-gray-400" />
-              <p className="text-base text-white">
-                {formatDateTime(event.startDate, 'time') +
-                  ' - ' +
-                  formatDateTime(event.endDate, 'time')}
-              </p>
+            <div className="flex flex-row space-x-4">
+              {schedule?.map((sched) => (
+                <div className="flex flex-col" key={sched.id}>
+                  <h3 className="pb-1 text-gray-400">Schedule {schedule.indexOf(sched) + 1}</h3>
+                  <div className="flex flex-row space-x-3 pb-2">
+                    <MapPin className="self-center text-gray-400" />
+                    <p>{sched.place}</p>
+                  </div>
+                  <div className="flex flex-row space-x-3">
+                    <Calendar className="self-center text-gray-400" />
+                    <p className="text-base text-white">
+                      {formatDateTime(sched.startTime, 'time') +
+                        ' - ' +
+                        formatDateTime(sched.endTime, 'time')}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
           <div className="mb-4 grid gap-4">
@@ -71,7 +79,6 @@ const EventTicket = ({ event }: { event: Event }) => {
                     -
                   </Button>
                   <input
-                    type="number"
                     className="h-10 w-16 border border-gray-700 bg-black text-center text-white"
                     value={quantity}
                     onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
@@ -85,10 +92,6 @@ const EventTicket = ({ event }: { event: Event }) => {
                   </Button>
                 </div>
               </div>
-              <div className="flex justify-between">
-                <p className="text-lg text-gray-400">Discount</p>
-                <p className="text-lg font-semibold text-white">-{'NaN'}đ</p>
-              </div>
               <div className="flex justify-between border-t border-gray-700 pt-2">
                 <p className="text-lg font-semibold text-white">Total</p>
                 <p className="text-lg font-semibold text-white">{total || 'NaN'}đ</p>
@@ -96,7 +99,7 @@ const EventTicket = ({ event }: { event: Event }) => {
             </div>
           </div>
         </div>
-        <DrawerFooter className="flex justify-between pt-2">
+        <DrawerFooter className="flex justify-between px-20 pt-2">
           <Button className="bg-white text-black hover:bg-gray-300">Checkout</Button>
           <DrawerClose asChild>
             <Button

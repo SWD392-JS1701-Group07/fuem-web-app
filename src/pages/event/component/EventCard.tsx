@@ -10,6 +10,7 @@ interface EventCardProps {
 
 const EventCard: React.FC<EventCardProps> = ({ event }) => {
   const navigate = useNavigate()
+  const schedule = event.scheduleList
 
   const handleEventClick = (id: number) => {
     navigate(`/event/${id}`)
@@ -38,7 +39,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
             {event.subjectId}
           </span>
         </h2>
-        <h2 className="mt-1 italic text-gray-300">At {event.place || 'unknown location'}</h2>
+        <h2 className="mt-1 italic text-gray-300">At {schedule[0].place || 'unknown location'}</h2>
         <p className="description my-2 text-gray-300">{truncateText(event.description, 100)}</p>
         <div className="tokenInfo my-4 flex items-center justify-between">
           <div className="price flex items-center font-bold text-indigo-300">
@@ -50,9 +51,10 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
           <div className="duration flex items-center text-gray-400">
             <ins className="mx-2 mb-[0.1rem] not-italic no-underline">◷</ins>
             <p>
-              {formatDateTime(event.startDate, 'time') +
+              Sales:{' '}
+              {formatDateTime(event.startSellDate.toString(), 'simple') +
                 ' - ' +
-                formatDateTime(event.endDate, 'time')}
+                formatDateTime(event.endSellDate.toString(), 'simple')}
             </p>
           </div>
         </div>
@@ -66,7 +68,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
                 alt="C"
               />
             </div>
-            <p className="ml-2 text-gray-400 self-center">
+            <p className="ml-2 self-center text-gray-400">
               <ins className="not-italic no-underline">Hosted by</ins> {event.ownerId}
             </p>
           </div>

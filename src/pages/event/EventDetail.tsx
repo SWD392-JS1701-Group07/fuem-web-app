@@ -28,6 +28,8 @@ const EventDetail = () => {
     }
   }, [id])
 
+  const schedule = event?.scheduleList
+
   return (
     <div
       id="section"
@@ -56,9 +58,16 @@ const EventDetail = () => {
         >
           <h1 className="font-jura text-7xl font-extrabold">{event?.name || 'Unknown'}</h1>
           <p className="mt-6 font-jura text-4xl font-bold text-crayola">
-            {formatDateTime(event?.startDate as string, 'time') +
-              ' - ' +
-              formatDateTime(event?.endDate as string, 'time')}{' '}
+            {schedule?.map((schedule) => (
+              <div key={schedule.id}>
+                <p className="text-2xl">
+                  {formatDateTime(schedule.startTime as string, 'time') +
+                    ' - ' +
+                    formatDateTime(schedule.endTime as string, 'time')}{' '}
+                </p>
+                <p className="text-white">Hosted at {schedule.place}</p>
+              </div>
+            ))}
           </p>
           <Button className="mt-2 h-14 rounded-none border border-crayola bg-black px-8 text-xl text-crayola hover:bg-crayola hover:text-black">
             Participate
@@ -69,7 +78,7 @@ const EventDetail = () => {
         id="row"
         className="relative m-auto mb-10 flex w-4/5 max-w-6xl flex-row flex-wrap justify-evenly bg-cover bg-center bg-no-repeat py-7"
       >
-        <div id="avatar" className="flex flex-row items-center">
+        <div id="avatar" className="flex w-1/2 flex-row items-center">
           <Avatar.Root className="bg-blackA1 inline-flex h-40 w-40 select-none items-center justify-center overflow-hidden rounded-full align-middle">
             <Avatar.Image
               className="h-full w-full rounded-[inherit] object-cover"
@@ -88,7 +97,7 @@ const EventDetail = () => {
             <h2 className="pt-3 font-poppins text-2xl font-bold">{event?.ownerId}</h2>
           </div>
         </div>
-        <div id="ticket" className="flex flex-row items-center">
+        <div id="ticket" className="flex w-1/2 flex-row items-center">
           <div className="flex flex-col pl-5">
             <h3 className="font-jura text-4xl font-extrabold text-yellow-sun">Ticket Price: </h3>
             <div className="flex flex-row items-center space-x-4">
@@ -99,6 +108,18 @@ const EventDetail = () => {
                 <p className="text-xl text-gray-400">100 left</p>
               </div>
               <div className="flex items-center">{event && <EventTicket event={event} />}</div>
+            </div>
+            <div className="pt-3 text-xl">
+              <h3 className="pb-1 font-jura text-2xl font-extrabold text-yellow-sun">
+                Sales period:
+              </h3>
+              {formatDateTime(event?.startSellDate.toString() as string, 'date') +
+                ' at ' +
+                formatDateTime(event?.startSellDate.toString() as string, 'time') +
+                ' - ' +
+                formatDateTime(event?.endSellDate.toString() as string, 'date') +
+                ' at ' +
+                formatDateTime(event?.endSellDate.toString() as string, 'time')}{' '}
             </div>
           </div>
         </div>
