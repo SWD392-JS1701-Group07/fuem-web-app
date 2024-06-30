@@ -1,39 +1,39 @@
 import { logout } from "@/api/userAPI";
-import { useNavigate } from "react-router-dom";
 
 const initialState = {
   loginedUser: {
-    role: 0,
-    accessToken: ''
-  }
-}
-const rootReducers = (state: any, action: any) => {
-  state = {
-    loginedUser: {
-      role: localStorage.getItem('role') ? localStorage.getItem('role') : 0,
-      accessToken: localStorage.getItem('accessToken') ? localStorage.getItem('accessToken') : ''
-    }
-  }
+    role: localStorage.getItem('role') || 0,
+    accessToken: localStorage.getItem('accessToken') || '',
+    userProfile: JSON.parse(localStorage.getItem('userProfile') || '{}'),
+  },
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const rootReducers = (state = initialState, action: any) => {
   switch (action.type) {
     case 'LOGIN':
-      console.log('payload: ', action.payload)
-      localStorage.setItem('accessToken', action.payload.accessToken)
-      localStorage.setItem('role', action.payload.role)
-      localStorage.setItem('userId', action.payload.accountId)
-      //localStorage.setItem("refreshToken", data.refreshToken);
-      return { ...state, loginedUser: action.payload }
+      // eslint-disable-next-line no-case-declarations
+      const { accessToken, role, accountId, accountDTO } = action.payload;
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('role', role);
+      localStorage.setItem('userId', accountId);
+      localStorage.setItem('userProfile', JSON.stringify(accountDTO));
+      return { ...state, loginedUser: { ...action.payload, userProfile: accountDTO } };
     case 'LOGOUT':
       logout(state.loginedUser.accessToken)
-        .then((res) => {
-          localStorage.setItem('accessToken', '')
-          localStorage.setItem('role', '')
+        .then(() => {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('role');
+          localStorage.removeItem('userId');
+          localStorage.removeItem('userProfile');
         })
         .catch((err) => {
-          console.log(err)
-        })
-      return { ...state, loginedUser: { role: 0, accessToken: '' } }
+          console.error(err);
+        });
+      return { ...state, loginedUser: { role: 0, accessToken: '', userProfile: {} } };
     default:
-      return state
+      return state;
   }
-}
-export default rootReducers
+};
+
+export default rootReducers;

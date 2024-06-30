@@ -7,7 +7,6 @@ import * as Dialog from '@radix-ui/react-dialog'
 import * as Label from '@radix-ui/react-label'
 import { Edit, Save } from 'lucide-react'
 import { AVATAR_PLACEHOLDER_URL } from '@/constants/models/url'
-import { getById } from '@/api/accountApi'
 import { Account } from '@/constants/models/Account'
 import { formatDateTime } from '@/lib/utils'
 
@@ -20,7 +19,7 @@ const profileFields = {
   gender: 'Gender',
   accountStatus: 'Account Status',
   studentId: 'Student ID',
-  subjectId: 'Subject ID',
+  subjectId: 'Subject ID'
 }
 
 // Fields to exclude from the Edit Profile form
@@ -32,11 +31,9 @@ const ProfilePage: React.FC = () => {
   const [editMode, setEditMode] = useState(false)
 
   useEffect(() => {
-    const userId = localStorage.getItem('userId')
-    if (accessToken && userId) {
-      getById(userId)
-        .then((profile) => setUser(profile))
-        .catch((err) => console.error('Failed to fetch user profile:', err))
+    const storedUser = localStorage.getItem('userProfile')
+    if (storedUser) {
+      setUser(JSON.parse(storedUser))
     }
   }, [accessToken])
 
@@ -46,7 +43,7 @@ const ProfilePage: React.FC = () => {
       prevState
         ? {
             ...prevState,
-            [name]: value,
+            [name]: value
           }
         : null
     )
@@ -55,6 +52,9 @@ const ProfilePage: React.FC = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
     setEditMode(false)
+    if (user) {
+      localStorage.setItem('userProfile', JSON.stringify(user))
+    }
   }
 
   if (!user) {
@@ -94,7 +94,11 @@ const ProfilePage: React.FC = () => {
                 type="text"
                 id={key}
                 name={key}
-                value={key === 'dob' ? formatDateTime(user[key].toString(), 'date') : (user as any)[key] || ''}
+                value={
+                  key === 'dob'
+                    ? formatDateTime(user[key].toString(), 'date')
+                    : (user as any)[key] || ''
+                }
                 onChange={handleInputChange}
                 disabled={!editMode}
               />
@@ -121,7 +125,11 @@ const ProfilePage: React.FC = () => {
                       type="text"
                       id={key}
                       name={key}
-                      value={key === 'dob' ? formatDateTime(user[key].toString(), 'date') : (user as any)[key] || ''}
+                      value={
+                        key === 'dob'
+                          ? formatDateTime(user[key].toString(), 'date')
+                          : (user as any)[key] || ''
+                      }
                       onChange={handleInputChange}
                     />
                   </div>

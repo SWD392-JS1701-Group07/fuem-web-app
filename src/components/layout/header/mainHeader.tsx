@@ -1,4 +1,3 @@
-import { getById } from '@/api/accountApi'
 import { Separator } from '@/components/ui/separator'
 import { Account } from '@/constants/models/Account'
 import { AppState } from '@/constants/models/common'
@@ -10,12 +9,11 @@ const MainNavBar = () => {
   const loginedUser = useSelector((state: AppState) => state.loginedUser)
   const isAuthenticated = loginedUser.accessToken !== ''
   const [user, setUser] = useState<Account | null>(null)
+
   useEffect(() => {
-    const userId = localStorage.getItem('userId')
-    if (loginedUser.accessToken && userId) {
-      getById(userId)
-        .then((profile) => setUser(profile))
-        .catch((err) => console.error('Failed to fetch user profile:', err))
+    const storedUser = localStorage.getItem('userProfile')
+    if (storedUser) {
+      setUser(JSON.parse(storedUser))
     }
   }, [loginedUser.accessToken])
 
@@ -36,8 +34,10 @@ const MainNavBar = () => {
   ]
 
   console.log(user?.roleId)
-  const dashboardLink = user?.roleId !== 0 && user?.roleId !== 2 ?
-  [{ name: 'Dashboard', path: '/dashboard' }] : []
+  const dashboardLink =
+    user?.roleId && user?.roleId !== 0 && user?.roleId !== 2
+      ? [{ name: 'Dashboard', path: '/dashboard' }]
+      : []
 
   const authNavLink = isAuthenticated
     ? [
