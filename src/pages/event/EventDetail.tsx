@@ -5,7 +5,7 @@ import { AVATAR_PLACEHOLDER_URL, EVENT_PLACEHOLDER_URL } from '@/constants/model
 import { formatDateTime } from '@/lib/utils'
 import * as Avatar from '@radix-ui/react-avatar'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import EventTicket from '@/pages/event/component/EventTicket'
 
 const EventDetail = () => {
@@ -15,9 +15,7 @@ const EventDetail = () => {
     const getEventDetail = async () => {
       try {
         const response = await getById(parseInt(id as string))
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-expect-error
-        setEvent(response)
+        setEvent(response.data)
       } catch (error) {
         console.error('Failed to fetch event details', error)
       }
@@ -29,7 +27,6 @@ const EventDetail = () => {
   }, [id])
 
   const schedule = event?.scheduleList
-
   return (
     <div
       id="section"
@@ -37,11 +34,12 @@ const EventDetail = () => {
     >
       <div
         id="row"
-        className="relative m-auto flex w-4/5 max-w-6xl flex-wrap justify-center bg-cover bg-center bg-no-repeat py-7"
+        className="relative m-auto flex w-4/5 max-w-6xl flex-wrap bg-cover bg-center bg-no-repeat py-7"
       >
-        <h1 className="font-jura text-9xl font-extrabold"></h1>
+        <h1 className="font-jura text-2xl font-extrabold">
+          <Link to="/event">← Back to event list</Link>
+        </h1>
       </div>
-
       <div
         id="row"
         className="relative m-auto flex w-4/5 max-w-6xl flex-wrap space-x-10 bg-home-dots bg-cover bg-center bg-no-repeat py-7"
