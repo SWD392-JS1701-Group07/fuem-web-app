@@ -1,8 +1,8 @@
 import { useState, ChangeEvent, FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { login } from '@/api/userAPI'
-import { useDispatch, useSelector } from 'react-redux'
-import { AppState } from '@/constants/models/common'
+import { useDispatch } from 'react-redux'
+// import { AppState } from '@/constants/models/common'
 import { useToast } from '@/components/ui/use-toast'
 
 interface LoginFormState {
@@ -11,9 +11,9 @@ interface LoginFormState {
 }
 
 const LoginPage = () => {
-  const loginedUser = useSelector((state: AppState) => state.loginedUser)
+  // const loginedUser = useSelector((state: AppState) => state.loginedUser)
   const dispatch = useDispatch()
-  const { toast } = useToast();
+  const { toast } = useToast()
   const [formState, setFormState] = useState<LoginFormState>({ username: '', password: '' })
   const [error, setError] = useState<string>('')
   const navigate = useNavigate()
@@ -36,7 +36,7 @@ const LoginPage = () => {
         dispatch({ type: 'LOGIN', payload: response })
         toast({
           title: 'Login Success',
-          variant: "default"
+          variant: 'default'
         })
       })
       .catch((error) => {
@@ -44,14 +44,14 @@ const LoginPage = () => {
         toast({
           title: 'Error',
           description: 'Invalid username or password',
-          variant: "destructive"
+          variant: 'destructive'
         })
-      }).finally(() => {
+      })
+      .finally(() => {
         if (localStorage.getItem('role') !== '0') {
           navigate('/dashboard')
         }
       })
-
   }
   return (
     <div className="flex h-screen w-full items-start">
