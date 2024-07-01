@@ -1,6 +1,8 @@
 import { Separator } from '@/components/ui/separator'
 import { Account } from '@/constants/models/Account'
 import { AppState } from '@/constants/models/common'
+import Cart from '@/pages/cart/Cart'
+import { useCart } from '@/pages/cart/UseCart'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
@@ -9,6 +11,8 @@ const MainNavBar = () => {
   const loginedUser = useSelector((state: AppState) => state.loginedUser)
   const isAuthenticated = loginedUser.accessToken !== ''
   const [user, setUser] = useState<Account | null>(null)
+  const { cartItems } = useCart()
+  const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0)
 
   useEffect(() => {
     const storedUser = localStorage.getItem('userProfile')
@@ -72,11 +76,27 @@ const MainNavBar = () => {
                   </Link>
                 </li>
               ))}
+              <li className="font-poppins font-medium">
+                <Cart />
+                {cartCount > 0 && <Badge count={cartCount} />}
+              </li>
             </ul>
           </div>
         </div>
         <Separator />
       </header>
+    </div>
+  )
+}
+
+type BadgeProps = {
+  count: number
+}
+
+const Badge: React.FC<BadgeProps> = ({ count }) => {
+  return (
+    <div className="absolute w-auto -translate-y-8 translate-x-1/2 transform rounded-full bg-electric-indigo px-2 py-1 text-xs text-white">
+      {count}
     </div>
   )
 }
