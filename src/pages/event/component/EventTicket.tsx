@@ -17,19 +17,20 @@ import { Account } from '@/constants/models/Account'
 import { AppState } from '@/constants/models/common'
 import { useSelector } from 'react-redux'
 import { useCart } from '../../cart/UseCart'
-import { CartTicket } from '@/constants/models/Ticket'
+import { CartItem, type Ticket } from '@/constants/models/Ticket'
 import { useParams } from 'react-router-dom'
+import { useToast } from '@/components/ui/use-toast'
 
 const EventTicket = ({ event }: { event: Event }) => {
+  const MAX_TICKETS = 5
   const { accessToken } = useSelector((state: AppState) => state.loginedUser)
   const [open, setOpen] = useState(false)
   const [quantity, setQuantity] = useState(1)
-  const [ticketIdCounter, setTicketIdCounter] = useState(0)
   const [user, setUser] = useState<Account | null>(null)
+  const [additionalTickets, setAdditionalTickets] = useState<Ticket[]>([])
   const { addToCart } = useCart()
-
+  const { toast } = useToast()
   const { id } = useParams()
-
   const isEventPage = !!id
 
   useEffect(() => {
@@ -40,25 +41,89 @@ const EventTicket = ({ event }: { event: Event }) => {
   }, [accessToken])
 
   const handleQuantityChange = (value: number) => {
-    setQuantity(Math.max(1, value))
+    const newQuantity = Math.max(1, Math.min(MAX_TICKETS, value))
+    setQuantity(newQuantity)
+    setAdditionalTickets((prevTickets) => {
+      const updatedTickets = [...prevTickets]
+      for (let i = prevTickets.length; i < newQuantity - 1; i++) {
+        updatedTickets.push({ name: '', email: '', phoneNumber: '', eventId: event.id })
+      }
+      return updatedTickets.slice(0, newQuantity - 1)
+    })
+  }
+
+  const validateTickets = () => {
+    // Check for empty fields
+    for (const ticket of additionalTickets) {
+      if (!ticket.name || !ticket.email || !ticket.phoneNumber) {
+        toast({
+          title: 'Failed',
+          description: 'All ticket fields must be filled.',
+          variant: 'destructive'
+        })
+        return false
+      }
+    }
+
+    // Check for duplicates
+    const emails = new Set()
+    const phoneNumbers = new Set()
+    for (const ticket of [user, ...additionalTickets]) {
+      if (emails.has(ticket?.email) || phoneNumbers.has(ticket?.phoneNumber)) {
+        toast({
+          title: 'Failed',
+          description: 'Duplicate email or phone number found.',
+          variant: 'destructive'
+        })
+        return false
+      }
+      emails.add(ticket?.email)
+      phoneNumbers.add(ticket?.phoneNumber)
+    }
+    return true
   }
 
   const handleAddToCart = () => {
     if (!user) return
 
-    const newTicket: CartTicket = {
+    if (!validateTickets()) return
+
+    const tickets: Ticket[] = [
+      {
+        name: user.name,
+        phoneNumber: user.phoneNumber,
+        email: user.email,
+        eventId: event.id
+      },
+      ...additionalTickets.map((ticket) => ({
+        name: ticket.name,
+        phoneNumber: ticket.phoneNumber,
+        email: ticket.email,
+        eventId: event.id
+      }))
+    ]
+
+    const cartItem: CartItem = {
       name: user.name,
       phoneNumber: user.phoneNumber,
       email: user.email,
       event: event,
       price: event.price,
       quantity: quantity,
-      id: ticketIdCounter
+      id: event.id as number,
+      tickets: tickets
     }
 
-    addToCart(newTicket)
+    // console.log('CART LOOKS LIKE THIS: ', cartItem)
+
+    addToCart(cartItem)
     setOpen(false)
-    setTicketIdCounter(ticketIdCounter + 1)
+  }
+
+  const handleAdditionalTicketChange = (index: number, field: keyof Account, value: string) => {
+    const newTickets = [...additionalTickets]
+    newTickets[index] = { ...newTickets[index], [field]: value }
+    setAdditionalTickets(newTickets)
   }
 
   const total = event.price * quantity
@@ -116,16 +181,60 @@ const EventTicket = ({ event }: { event: Event }) => {
             <div className="grid gap-2">
               <p className="text-lg font-semibold text-white">User Info</p>
               <div className="flex justify-between">
-                <p className="text-lg text-gray-400">Name</p>
-                <p className="text-lg font-semibold text-white">{user?.name}</p>
-              </div>
-              <div className="flex justify-between">
-                <p className="text-lg text-gray-400">Email</p>
-                <p className="text-lg font-semibold text-white">{user?.email}</p>
-              </div>
-              <div className="flex items-center justify-between">
-                <p className="text-lg text-gray-400">Phone Number</p>
-                <div className="flex items-center space-x-2">{user?.phoneNumber}</div>
+                <div className="pr-2">
+                  <div className="flex justify-between space-x-3">
+                    <p className="text-lg text-gray-400">Name</p>
+                    <p className="text-lg font-semibold text-white">{user?.name}</p>
+                  </div>
+                  <div className="flex justify-between space-x-3">
+                    <p className="text-lg text-gray-400">Email</p>
+                    <p className="text-lg font-semibold text-white">{user?.email}</p>
+                  </div>
+                  <div className="flex items-center justify-between space-x-3">
+                    <p className="text-lg text-gray-400">Phone Number</p>
+                    <p className="text-lg font-semibold text-white">{user?.phoneNumber}</p>
+                  </div>
+                </div>
+                {quantity > 1 && (
+                  <div className="flex flex-row space-x-2 pl-2">
+                    {additionalTickets.map((ticket, index) => (
+                      <div key={index} className="mb-4">
+                        <p className="text-lg font-semibold text-white">
+                          Additional Ticket {index + 1}
+                        </p>
+                        <div className="flex flex-col gap-2">
+                          <input
+                            type="text"
+                            placeholder="Name"
+                            value={ticket.name}
+                            onChange={(e) =>
+                              handleAdditionalTicketChange(index, 'name', e.target.value)
+                            }
+                            className="h-10 w-full border border-gray-700 bg-black px-2 text-white"
+                          />
+                          <input
+                            type="email"
+                            placeholder="Email"
+                            value={ticket.email}
+                            onChange={(e) =>
+                              handleAdditionalTicketChange(index, 'email', e.target.value)
+                            }
+                            className="h-10 w-full border border-gray-700 bg-black px-2 text-white"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Phone Number"
+                            value={ticket.phoneNumber}
+                            onChange={(e) =>
+                              handleAdditionalTicketChange(index, 'phoneNumber', e.target.value)
+                            }
+                            className="h-10 w-full border border-gray-700 bg-black px-2 text-white"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -142,6 +251,7 @@ const EventTicket = ({ event }: { event: Event }) => {
                   <Button
                     className="flex h-10 w-10 items-center justify-center border border-gray-700 bg-black text-2xl text-white hover:bg-gray-800"
                     onClick={() => handleQuantityChange(quantity - 1)}
+                    disabled={quantity <= 1}
                   >
                     -
                   </Button>
@@ -150,10 +260,12 @@ const EventTicket = ({ event }: { event: Event }) => {
                     value={quantity}
                     onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
                     min={1}
+                    max={5}
                   />
                   <Button
                     className="flex h-10 w-10 items-center justify-center border border-gray-700 bg-black text-2xl text-white hover:bg-gray-800"
                     onClick={() => handleQuantityChange(quantity + 1)}
+                    disabled={quantity >= 5}
                   >
                     +
                   </Button>
