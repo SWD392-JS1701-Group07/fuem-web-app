@@ -1,61 +1,63 @@
 import { Separator } from '@/components/ui/separator'
 import { Account } from '@/constants/models/Account'
-import { AppState } from '@/constants/models/common'
 import Cart from '@/pages/cart/Cart'
 import { useCart } from '@/pages/cart/UseCart'
 import { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 
+type NavLinks = {
+  name: string
+  path: string
+  onClick?: () => void
+}
+
 const MainNavBar = () => {
-  const loginedUser = useSelector((state: AppState) => state.loginedUser)
-  const isAuthenticated = loginedUser.accessToken !== ''
   const [user, setUser] = useState<Account | null>(null)
   const { cartItems } = useCart()
+  const [navLinks, setNavLinks] = useState<NavLinks[]>([])
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0)
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem('userProfile')
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
-    }
-  }, [loginedUser.accessToken])
-
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const keysToRemove = ['role', 'userId', 'accessToken'] //for logout
 
   const handleLogout = () => {
-    keysToRemove.forEach((key) => localStorage.removeItem(key))
     dispatch({ type: 'LOGOUT' })
+    setUser(null)
     navigate('/')
   }
 
-  const baseNavLinks = !user?.roleId || user?.roleId === 0 || user?.roleId === 2 ?
-    [
-      { name: 'About', path: '/about' },
-      { name: 'Events', path: '/event' },
-      { name: 'Contact', path: '/contact' }
-    ] : []
-  const collaboratorLink = user?.roleId === 2 ? [{ name: 'Collaborator', path: '/collaborator' }] : []
-  console.log(user?.roleId)
-  const dashboardLink =
-    user?.roleId && user?.roleId !== 0 && user?.roleId !== 2
-      ? [{ name: 'Dashboard', path: '/dashboard' }]
-      : []
+  const defaultNavLinks = [
+    { name: 'About', path: '/about' },
+    { name: 'Events', path: '/event' },
+    { name: 'Contact', path: '/contact' },
+    { name: 'Login', path: '/login' },
+  ]
 
-  const authNavLink = isAuthenticated
-    ? [
-      { name: 'Profile (' + user?.username + ')', path: '/profile' },
-      { name: 'Logout', path: '/', onClick: handleLogout }
-    ]
-    : [{ name: 'Login', path: '/login' }]
+  const VisitorsNavLinks = [
+    { name: 'About', path: '/about' },
+    { name: 'Events', path: '/event' },
+    { name: 'Contact', path: '/contact' },
+    { name: 'Profile (' + user?.username + ')', path: '/profile' },
+    { name: 'Logout', path: '/', onClick: handleLogout }
+  ]
 
-  const navLinks: {
-    name: string
-    path: string
-    onClick?: () => void
-  }[] = [...baseNavLinks, ...collaboratorLink, ...dashboardLink, ...authNavLink]
+  const OperatorNavLinks = [
+    { name: 'Profile (' + user?.username + ')', path: '/profile' },
+    { name: 'Logout', path: '/', onClick: handleLogout }
+  ]
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('userProfile') || null
+    if (storedUser) {
+      setUser(JSON.parse(storedUser))
+    }
+  }, [localStorage.getItem('userProfile')])
+  useEffect(() => {
+    (user?.roleId === 1 || user?.roleId === 3 || user?.roleId === 4 || user?.roleId === 5) ? setNavLinks(OperatorNavLinks)
+      : (user?.roleId === 2) ? setNavLinks(VisitorsNavLinks)
+        : setNavLinks(defaultNavLinks)
+  }, [user])
+
   return (
     <div className="sticky top-0 z-50">
       <header className="z-50 w-full bg-white text-black">
@@ -77,10 +79,13 @@ const MainNavBar = () => {
                   </Link>
                 </li>
               ))}
-              <li className="font-poppins font-medium">
-                <Cart />
-                {cartCount > 0 && <Badge count={cartCount} />}
-              </li>
+              {(user?.roleId !== 1 && user?.roleId !== 3 && user?.roleId !== 4 && user?.roleId !== 5) ? (
+                <li className="font-poppins font-medium">
+                  <Cart />
+                  {cartCount > 0 && <Badge count={cartCount} />}
+                </li>
+              ) : null
+              }
             </ul>
           </div>
         </div>

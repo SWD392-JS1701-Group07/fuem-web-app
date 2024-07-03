@@ -2,7 +2,7 @@ import { Account } from "./Account"
 
 export type RefreshTokenCredentials = {
   accessToken: string
-  refreshToken: string
+  //refreshToken: string
 }
 
 export type UserState = {
