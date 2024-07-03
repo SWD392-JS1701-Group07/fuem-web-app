@@ -7,12 +7,17 @@ import { Event, type EventDetail } from '@/constants/models/Event'
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import EventTicket from '@/pages/event/component/EventTicket'
+import { addCollaborator } from '@/api/collaboratorApi'
+import { CollaboratorCreateModel } from '@/constants/models/Collaborator'
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTrigger } from '@/components/ui/dialog'
+import { useToast } from '@/components/ui/use-toast'
 
 const EventDetail = () => {
+  // const [isOpen, setIsOpen] = useState(false);
   const { id } = useParams<{ id: string }>()
   const [event, setEvent] = useState<Event | undefined>(undefined)
   const [eventDetail, setEventDetail] = useState<EventDetail | undefined>(undefined)
-
+  const { toast } = useToast();
   useEffect(() => {
     const getEventDetail = async () => {
       try {
@@ -28,7 +33,25 @@ const EventDetail = () => {
       getEventDetail()
     }
   }, [id])
-
+  const handleCollaborator = () => {
+    const Collaborator: CollaboratorCreateModel = {
+      eventId: parseInt(id ? id : "0"),
+      accountId: parseInt(localStorage.getItem('userId') as string)
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    addCollaborator(Collaborator).then((_response) => {
+      toast({
+        title: "registered successfully",
+      })
+    }).catch((error) => {
+      console.error('Failed to create collaborator', error)
+      toast({
+        title: "Register fail",
+        description: error.response.data,
+        variant: "destructive",
+      })
+    })
+  }
   const schedule = event?.scheduleList
   return (
     <div
@@ -74,6 +97,23 @@ const EventDetail = () => {
           <Button className="mt-2 h-14 rounded-none border border-crayola bg-black px-8 text-xl text-crayola hover:bg-crayola hover:text-black">
             Participate
           </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="mt-2 ml-10 h-14 rounded-none border border-yellow-sun bg-black px-8 text-xl text-yellow-sun hover:bg-yellow-sun hover:text-black">
+                Join as collaborator
+              </Button>
+            </DialogTrigger>
+            <DialogContent className='bg-black text-white'>
+              <DialogHeader>Join as collaborator</DialogHeader>
+              <DialogDescription>
+                Are you sure?
+              </DialogDescription>
+              <DialogFooter>
+                <DialogClose asChild><Button onClick={handleCollaborator} variant="outline" className='text-black'>Yes</Button></DialogClose>
+                <DialogClose asChild><Button variant="outline" className='text-black'>Cancel</Button></DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
       <div

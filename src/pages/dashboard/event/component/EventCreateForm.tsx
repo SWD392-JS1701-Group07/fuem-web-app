@@ -66,7 +66,7 @@ const formDetailSchema = z.object({
         sponsorDescription: z.string().optional(),
         avatarFile: z.string().optional(),
         newAccount: z.boolean().optional()
-    }))
+    })).optional()
 })
 
 type FormDetailValues = z.infer<typeof formDetailSchema>
@@ -128,7 +128,7 @@ export function CreateEventForm() {
 
     async function onSubmit(values: FormDetailValues) {
         console.log("submit")
-        console.log("Sponsor avatar: ", values.sponsor[0].avatarFile)
+        //console.log("Sponsor avatar: ", values.sponsor ? values.sponsor[0].avatarFile : null)
         let eventCreateModel: EventCreateModel = {
             name: values.name,
             place: "place",
@@ -148,7 +148,7 @@ export function CreateEventForm() {
                     place: schedule.place
                 }
             }) : [],
-            sponsorships: values.sponsor.map((sponsor) => {
+            sponsorships: values.sponsor ? values.sponsor.map((sponsor) => {
                 return {
                     description: sponsor.sponsorDescription || "",
                     type: sponsor.sponsorType || "",
@@ -162,7 +162,7 @@ export function CreateEventForm() {
                         accountId: 0
                     }
                 }
-            })
+            }) : [] as SponsorshipCreateModel[]
         };
         create(eventCreateModel)
             .then(() => {
@@ -173,10 +173,9 @@ export function CreateEventForm() {
                 nav("/dashboard/event");
             })
             .catch((error) => {
-                console.log("error", error)
                 toast({
                     title: "Create fail",
-                    description: "Some errors occurred",
+                    description: error.response.data,
                     variant: "destructive",
                 })
                 setIsLoading(false);
