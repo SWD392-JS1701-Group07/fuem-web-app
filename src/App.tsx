@@ -19,6 +19,8 @@ import AuthRoute from './components/common/AuthRoute'
 import OperatorAccCreate from './pages/dashboard/OperatorAcc/OperatorAccCreate'
 import StaffCreate from './pages/dashboard/StaffAcc/StaffCreate'
 import ProfilePage from './pages/home/ProfilePage'
+import CollaboratorList from './pages/dashboard/collaborator/CollaboratorList'
+import RegistedEventList from './pages/collaborator/RegistedEventList'
 
 function App() {
   //const { component: Component, path } = routes[3];
@@ -30,6 +32,7 @@ function App() {
           <Route path="about" element={<AboutPage />} />
           <Route path="contact" element={<ContactPage />} />
           <Route path="profile" element={<ProfilePage />} />
+          <Route path="collaborator" element={<RegistedEventList />} />
           <Route
             path="login"
             element={
@@ -65,6 +68,7 @@ function App() {
             <Route path="sponsor" element={<SponsorList />} />
             <Route path="operator/create" element={<OperatorAccCreate />} />
             <Route path="staff/create" element={<StaffCreate />} />
+            <Route path='collaborator' element={<CollaboratorList />} />
           </Route>
         </Route>
       </Routes>
