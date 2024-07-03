@@ -31,12 +31,13 @@ const MainNavBar = () => {
     navigate('/')
   }
 
-  const baseNavLinks = [
-    { name: 'About', path: '/about' },
-    { name: 'Events', path: '/event' },
-    { name: 'Contact', path: '/contact' }
-  ]
-
+  const baseNavLinks = !user?.roleId || user?.roleId === 0 || user?.roleId === 2 ?
+    [
+      { name: 'About', path: '/about' },
+      { name: 'Events', path: '/event' },
+      { name: 'Contact', path: '/contact' }
+    ] : []
+  const collaboratorLink = user?.roleId === 2 ? [{ name: 'Collaborator', path: '/collaborator' }] : []
   console.log(user?.roleId)
   const dashboardLink =
     user?.roleId && user?.roleId !== 0 && user?.roleId !== 2
@@ -45,16 +46,16 @@ const MainNavBar = () => {
 
   const authNavLink = isAuthenticated
     ? [
-        { name: 'Profile (' + user?.username + ')', path: '/profile' },
-        { name: 'Logout', path: '/', onClick: handleLogout }
-      ]
+      { name: 'Profile (' + user?.username + ')', path: '/profile' },
+      { name: 'Logout', path: '/', onClick: handleLogout }
+    ]
     : [{ name: 'Login', path: '/login' }]
 
   const navLinks: {
     name: string
     path: string
     onClick?: () => void
-  }[] = [...baseNavLinks, ...dashboardLink, ...authNavLink]
+  }[] = [...baseNavLinks, ...collaboratorLink, ...dashboardLink, ...authNavLink]
   return (
     <div className="sticky top-0 z-50">
       <header className="z-50 w-full bg-white text-black">
