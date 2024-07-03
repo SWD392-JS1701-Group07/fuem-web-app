@@ -1,41 +1,73 @@
+import { getAll } from '@/api/eventApi'
 import { Button } from '@/components/ui/button'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-
-// Dummy hard coded data, can change logic later
-const events = [
-  {
-    date: 'June 5',
-    title: 'POST-A-TREE TRỞ LẠI VỚI MÙA 4',
-    location: 'Địa điểm: Sảnh trống đồng',
-    participants: '122 participants',
-    backgroundImage:
-      'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-35.png)',
-    backgroundColor: 'bg-crayola',
-    textColor: 'text-black'
-  },
-  {
-    date: 'June 26',
-    title: 'FPTU JOB FAIR 2024 | RIDE WAVE - RIGHT WAY',
-    location: 'Địa điểm: Sảnh trống đồng',
-    participants: '122 participants',
-    backgroundImage:
-      'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-33.png)',
-    backgroundColor: 'bg-electric-indigo',
-    textColor: 'text-white'
-  },
-  {
-    date: 'July 7',
-    title: 'HỒ SEN CHỜ AI 34 - F&E INSIGHTS',
-    location: 'Địa điểm: Sảnh trống đồng',
-    participants: '122 participants',
-    backgroundImage:
-      'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-34.png)',
-    backgroundColor: 'bg-yellow-sun',
-    textColor: 'text-black'
-  }
-]
+import { Event } from '@/constants/models/Event'
+import { formatDateTime, useFadeIn } from '@/lib/utils'
+import { motion } from 'framer-motion'
 
 const HomePage = () => {
+  const [data, setData] = useState<Event[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getEvents()
+  }, [])
+
+  const getEvents = async () => {
+    try {
+      const response = await getAll()
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-expect-error
+      setData(response)
+      console.log('DATA IS ', response)
+      setLoading(false)
+    } catch (error) {
+      console.error('Error fetching events:', error)
+    }
+  }
+
+  const events =
+    data.length > 0
+      ? [
+          {
+            id: data[0].id,
+            date: formatDateTime(data[0].startSellDate.toString(), 'date'),
+            title: data[0].name,
+            location: 'Địa điểm: ' + data[0].scheduleList[0].place,
+            price: data[0].price + 'đ/ticket',
+            backgroundImage:
+              'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-35.png)',
+            backgroundColor: 'bg-crayola',
+            textColor: 'text-black'
+          },
+          {
+            id: data[1].id,
+            date: formatDateTime(data[1].startSellDate.toString(), 'date'),
+            title: data[1].name,
+            location: 'Địa điểm: ' + data[1].scheduleList[0].place,
+            price: data[1].price + 'đ/ticket',
+            backgroundImage:
+              'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-33.png)',
+            backgroundColor: 'bg-electric-indigo',
+            textColor: 'text-white'
+          },
+          {
+            id: data[2].id,
+            date: formatDateTime(data[2].startSellDate.toString(), 'date'),
+            title: data[2].name,
+            location: 'Địa điểm: ' + data[2].scheduleList[0].place,
+            price: data[2].price + 'đ/ticket',
+            backgroundImage:
+              'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-34.png)',
+            backgroundColor: 'bg-yellow-sun',
+            textColor: 'text-black'
+          }
+        ]
+      : []
+
+  const fadeIn = useFadeIn()
+
   return (
     <div>
       <div id="main">
@@ -54,13 +86,17 @@ const HomePage = () => {
                   id="row"
                   className="relative m-auto w-4/5 max-w-6xl bg-cover bg-center bg-no-repeat py-7"
                 >
-                  <div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={fadeIn.controls}
+                    ref={fadeIn.ref}
+                  >
                     <div id="line-container">
                       <h1 className="font-jura text-9xl font-bold text-yellow-sun">
                         FPTU Event Page
                       </h1>
                     </div>
-                  </div>
+                  </motion.div>
                   <div>
                     <div id="line-container">
                       <h1 className="font-jura text-9xl font-normal text-white">Summer 2024</h1>
@@ -186,29 +222,33 @@ const HomePage = () => {
                 <h1 className="py-8 text-center font-jura text-7xl font-semibold text-white">
                   Có gì hot? 🔥
                 </h1>
-                <div
-                  id="events-container"
-                  className="relative m-auto flex w-4/5 max-w-6xl flex-row py-7 font-poppins"
-                >
-                  {events.map((event, index) => (
-                    <div
-                      key={index}
-                      id="event"
-                      className={`mr-8 flex w-1/3 flex-col justify-between bg-cover bg-bottom bg-no-repeat px-10 pb-10 pt-10 ${event.backgroundColor} ${event.textColor}`}
-                      style={{ backgroundImage: event.backgroundImage }}
-                    >
-                      <div>
-                        <h4 className="pb-3 text-lg font-medium">{event.date}</h4>
-                        <h2 className="pb-3 font-jura text-5xl font-bold">{event.title}</h2>
-                        <h4 className="pb-3 text-lg font-medium">{event.location}</h4>
-                        <h4 className="pb-3 text-lg font-medium">{event.participants}</h4>
+                {!loading && data.length > 0 ? (
+                  <div
+                    id="events-container"
+                    className="relative m-auto flex w-4/5 max-w-6xl flex-row py-7 font-poppins"
+                  >
+                    {events.map((event, index) => (
+                      <div
+                        key={index}
+                        id="event"
+                        className={`mr-8 flex w-1/3 flex-col justify-between bg-cover bg-bottom bg-no-repeat px-10 pb-10 pt-10 ${event.backgroundColor} ${event.textColor}`}
+                        style={{ backgroundImage: event.backgroundImage }}
+                      >
+                        <div>
+                          <h4 className="pb-3 text-lg font-medium">{event.date}</h4>
+                          <h2 className="pb-3 font-jura text-5xl font-bold">{event.title}</h2>
+                          <h4 className="pb-3 text-lg font-medium">{event.location}</h4>
+                          <h4 className="pb-3 text-lg font-medium">{event.price}</h4>
+                        </div>
+                        <Button className="mt-10 h-14 rounded-none bg-black px-8 text-xl">
+                          <Link to={`/event/${event.id}`}>Xem chi tiết</Link>
+                        </Button>
                       </div>
-                      <Button className="mt-10 h-14 rounded-none bg-black px-8 text-xl">
-                        Xem Chi Tiết
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p>Loading...</p>
+                )}
               </div>
 
               <div id="section" className="relative bg-black py-14 pb-28">

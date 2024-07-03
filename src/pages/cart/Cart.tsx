@@ -11,10 +11,15 @@ import {
 } from '@/components/ui/dialog'
 import { EVENT_PLACEHOLDER_URL } from '@/constants/models/url'
 import { ShoppingBag, ShoppingCart, Trash2 } from 'lucide-react'
+import { OrderResponse } from '@/constants/models/Ticket'
+import { useToast } from '@/components/ui/use-toast'
+import { createOrder } from '@/api/orderApi'
 
 const Cart = () => {
   const { cartItems, setCartItems, removeFromCart } = useCart()
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const { toast } = useToast()
 
   useEffect(() => {
     const storedCartItems = localStorage.getItem('cartItems')
@@ -23,17 +28,49 @@ const Cart = () => {
     }
   }, [setCartItems])
 
-  const handleQuantityChange = (id: string, quantity: string) => {
-    const updatedQuantity = quantity === '' ? 1 : Math.max(1, parseInt(quantity, 10))
-    const updatedCartItems = cartItems.map((item) =>
-      item.id.toString() === id ? { ...item, quantity: updatedQuantity } : item
-    )
-    setCartItems(updatedCartItems)
-    localStorage.setItem('cartItems', JSON.stringify(updatedCartItems))
-  }
-
   const emptyCart = () => {
     cartItems.forEach((item) => removeFromCart(item.id.toString()))
+  }
+
+  const checkout = async () => {
+    setLoading(true)
+
+    const tickets = cartItems.flatMap((item) => item.tickets)
+    console.log('Cart: ', tickets)
+
+    const totalAmount = cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
+
+    const orderData = {
+      orderNotes: '',
+      email: cartItems[0].email,
+      phoneNumber: cartItems[0].phoneNumber,
+      totalAmount,
+      customerId: 1,
+      tickets
+    }
+
+    try {
+      const response: OrderResponse = await createOrder(orderData)
+      if (response.isSuccess) {
+        const newTab = window.open()
+        newTab?.location.assign(response.data)
+      } else {
+        throw new Error('Order creation failed')
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      const errorMessages = error.response?.data?.errors
+        ? Array.from(new Set(Object.values(error.response.data.errors).flat())).join(', ')
+        : 'An unknown error occurred. Try again later.'
+
+      toast({
+        title: 'Order creation failed',
+        description: errorMessages,
+        variant: 'destructive'
+      })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -78,42 +115,29 @@ const Cart = () => {
                     <h3 className="text-lg font-medium">{item.event.name}</h3>
                     <p className="text-gray-400">In Stock</p>
                   </div>
-                  <div className="flex h-full flex-col items-end">
-                    <label className="text-sm text-gray-400">Each</label>
-                    <p className="w-24 text-right text-lg font-medium">{item.price}đ</p>
-                  </div>
-                  <div className="flex h-full flex-col items-center">
-                    <label className="text-sm text-gray-400">Quantity</label>
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        className="flex h-10 w-5 items-center justify-center border border-gray-700 bg-gray-900 text-2xl text-white hover:bg-gray-800"
-                        onClick={() =>
-                          handleQuantityChange(item.id.toString(), (item.quantity - 1).toString())
-                        }
-                      >
-                        -
-                      </Button>
-                      <input
-                        min="1"
-                        value={item.quantity}
-                        onChange={(e) => handleQuantityChange(item.id.toString(), e.target.value)}
-                        className="h-10 w-12 border border-gray-700 bg-gray-900 text-center text-white"
-                      />
-                      <Button
-                        className="flex h-10 w-5 items-center justify-center border border-gray-700 bg-gray-900 text-2xl text-white hover:bg-gray-800"
-                        onClick={() =>
-                          handleQuantityChange(item.id.toString(), (item.quantity + 1).toString())
-                        }
-                      >
-                        +
-                      </Button>
+                  <div className="flex flex-col">
+                    <div className="flex flex-row">
+                      <div className="flex h-full flex-col items-end">
+                        <label className="text-sm text-gray-400">Each</label>
+                        <p className="w-24 text-right text-lg font-medium">{item.price}đ</p>
+                      </div>
+                      <div className="flex h-full flex-col items-end">
+                        <label className="text-sm text-gray-400">Quantity</label>
+                        <p className="w-24 text-right text-lg font-medium">{item.quantity}</p>
+                      </div>
+                      <div className="flex h-full flex-col items-end">
+                        <label className="text-sm text-gray-400">Total</label>
+                        <p className="w-24 text-right text-lg font-medium">
+                          {item.price * item.quantity}đ
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex h-full flex-col items-end">
-                    <label className="text-sm text-gray-400">Total</label>
-                    <p className="w-24 text-right text-lg font-medium">
-                      {item.price * item.quantity}đ
-                    </p>
+                    <div className="flex h-full flex-col items-end">
+                      <label className="text-sm text-gray-400">Attendees</label>
+                      <p className="text-right text-lg font-medium">
+                        {item.tickets.map((ticket) => ticket.name).join(', ')}
+                      </p>
+                    </div>
                   </div>
                   <Button
                     onClick={() => removeFromCart(item.id.toString())}
@@ -127,10 +151,11 @@ const Cart = () => {
           )}
           <DialogFooter>
             <Button
-              onClick={() => setOpen(false)}
+              onClick={checkout}
               className="bg-electric-indigo text-white hover:bg-white hover:text-electric-indigo"
+              disabled={loading}
             >
-              Checkout
+              {loading ? 'Processing...' : 'Checkout'}
               <ShoppingBag className="ml-2" />
             </Button>
           </DialogFooter>

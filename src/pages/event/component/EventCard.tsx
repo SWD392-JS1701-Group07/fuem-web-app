@@ -1,8 +1,10 @@
-import { Event } from '@/constants/models/Event'
+import { Event, EventDetail } from '@/constants/models/Event'
 import { AVATAR_PLACEHOLDER_URL, EVENT_PLACEHOLDER_URL } from '@/constants/models/url'
 import { formatDateTime, truncateText } from '@/lib/utils'
 import { useNavigate } from 'react-router-dom'
 import EventTicket from './EventTicket'
+import { useEffect, useState } from 'react'
+import { getById } from '@/api/eventApi'
 
 interface EventCardProps {
   event: Event
@@ -10,7 +12,21 @@ interface EventCardProps {
 
 const EventCard: React.FC<EventCardProps> = ({ event }) => {
   const navigate = useNavigate()
-  const schedule = event.scheduleList
+  const [eventDetail, setEventDetail] = useState<EventDetail | undefined>(undefined)
+  useEffect(() => {
+    const getEventDetail = async () => {
+      try {
+        const response = await getById(parseInt(event.id.toString() as string))
+        setEventDetail(response.data)
+      } catch (error) {
+        console.error('Failed to fetch event details', error)
+      }
+    }
+
+    if (event.id) {
+      getEventDetail()
+    }
+  }, [event.id])
 
   const handleEventClick = (id: number) => {
     navigate(`/event/${id}`)
@@ -28,21 +44,26 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
       <div className="mx-auto flex w-96 cursor-pointer flex-col p-4">
         <img
           className="tokenImage h-64 w-full rounded-md object-cover"
-          src={event.avatarUrl || EVENT_PLACEHOLDER_URL}
-          alt={event.name}
+          src={eventDetail?.avatarUrl || EVENT_PLACEHOLDER_URL}
+          alt={eventDetail?.name}
         />
         <h2 className="mt-4 text-2xl font-bold text-white">
           {event.name}{' '}
           <span className="ml-1 rounded-xl bg-indigo-400 px-4 text-xl font-semibold not-italic text-white">
-            {event.subjectId}
+            {eventDetail?.subject.name}
           </span>
         </h2>
-        <h2 className="mt-1 italic text-gray-300">At {schedule[0].place || 'unknown location'}</h2>
+        <h2 className="mt-1 italic text-gray-300">
+          At:{' '}
+          {eventDetail?.scheduleList
+            .map((schedule) => schedule.place || 'unknown location')
+            .join(', ')}
+        </h2>
         <p className="description my-2 text-gray-300">{truncateText(event.description, 100)}</p>
         <div className="tokenInfo my-4 flex items-center justify-between">
           <div className="price flex items-center font-bold text-indigo-300">
             <p>
-              {event.price}
+              {eventDetail?.price}
               <u>đ</u>
             </p>
           </div>
@@ -61,13 +82,14 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
           <div className="flex flex-row">
             <div className="wrapper flex items-center rounded-full border border-white/20 p-1 shadow-inner">
               <img
-                src={AVATAR_PLACEHOLDER_URL}
+                src={eventDetail?.eventOperator.avatarUrl || AVATAR_PLACEHOLDER_URL}
                 className="h-8 w-8 rounded-full border border-white/20 object-cover"
-                alt="C"
+                alt="?"
               />
             </div>
             <p className="ml-2 self-center text-gray-400">
-              <ins className="not-italic no-underline">Hosted by</ins> {event.ownerId}
+              <ins className="not-italic no-underline">Hosted by</ins>{' '}
+              {eventDetail?.eventOperator.name}
             </p>
           </div>
           <button

@@ -1,17 +1,17 @@
 import { createContext, useState, ReactNode, useEffect, Dispatch, SetStateAction } from 'react'
-import { CartTicket } from '@/constants/models/Ticket'
+import { CartItem } from '@/constants/models/Ticket'
 
 type CartContextType = {
-  cartItems: CartTicket[]
-  setCartItems: Dispatch<SetStateAction<CartTicket[]>>
-  addToCart: (ticket: CartTicket) => void
+  cartItems: CartItem[]
+  setCartItems: Dispatch<SetStateAction<CartItem[]>>
+  addToCart: (ticket: CartItem) => void
   removeFromCart: (id: string) => void
 }
 
 export const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [cartItems, setCartItems] = useState<CartTicket[]>([])
+  const [cartItems, setCartItems] = useState<CartItem[]>([])
 
   useEffect(() => {
     const storedCartItems = localStorage.getItem('cartItems')
@@ -20,25 +20,48 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [])
 
-  const addToCart = (newTicket: CartTicket) => {
-    console.log('ADDING NEW TICKET: ', newTicket)
+  const addToCart = (newCartItem: CartItem) => {
+    // console.log('ADDING NEW CART ITEM: ', newCartItem)
     setCartItems((prevItems) => {
-      console.log('UPDATING CART ITEMS') // Add this log
-      const existingTicketIndex = prevItems.findIndex(
-        (ticket) => ticket.event.id === newTicket.event.id
+      // console.log('UPDATING CART ITEMS')
+
+      const existingCartItemIndex = prevItems.findIndex(
+        (item) => item.event.id === newCartItem.event.id
       )
-      console.log('PREV TICKET INDEX: ', existingTicketIndex)
+      // console.log('EXISTING CART ITEM INDEX: ', existingCartItemIndex)
 
-      let updatedItems: CartTicket[]
+      let updatedItems: CartItem[]
 
-      if (existingTicketIndex !== -1) {
-        updatedItems = prevItems.map((ticket, index) =>
-          index === existingTicketIndex
-            ? { ...ticket, quantity: ticket.quantity + newTicket.quantity }
-            : ticket
-        )
+      if (existingCartItemIndex !== -1) {
+        updatedItems = prevItems.map((item, index) => {
+          if (index === existingCartItemIndex) {
+            // Filter out duplicate tickets
+            const filteredNewTickets = newCartItem.tickets.filter(
+              (newTicket) =>
+                !item.tickets.some(
+                  (existingTicket) =>
+                    existingTicket.eventId === newTicket.eventId &&
+                    existingTicket.name === newTicket.name &&
+                    existingTicket.phoneNumber === newTicket.phoneNumber
+                )
+            )
+
+            // If no new tickets are left after filtering, return the item as is
+            if (filteredNewTickets.length === 0) {
+              return item
+            }
+
+            return {
+              ...item,
+              quantity: item.quantity + filteredNewTickets.length,
+              tickets: [...item.tickets, ...filteredNewTickets]
+            }
+          } else {
+            return item
+          }
+        })
       } else {
-        updatedItems = [...prevItems, newTicket]
+        updatedItems = [...prevItems, newCartItem]
       }
 
       localStorage.setItem('cartItems', JSON.stringify(updatedItems))
@@ -49,7 +72,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const removeFromCart = (id: string) => {
     setCartItems((prevItems) => {
       const updatedItems = prevItems.filter((item) => item.id.toString() !== id)
-      localStorage.setItem('cartItems', JSON.stringify(updatedItems))
+      localStorage.setItem(
+        'cartItems',
+        JSON.stringify(updatedItems.filter((item) => item.id.toString() !== id))
+      )
       return updatedItems
     })
   }

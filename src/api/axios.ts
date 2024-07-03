@@ -1,4 +1,3 @@
-import { toast } from "@/components/ui/use-toast";
 import { RefreshTokenCredentials } from "@/constants/models/common";
 import axios, { AxiosResponse } from "axios";
 

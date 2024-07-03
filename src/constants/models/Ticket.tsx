@@ -8,7 +8,7 @@ export type Ticket = {
   eventId: Number
 }
 
-export type CartTicket = {
+export type CartItem = {
   id: number
   name: string
   phoneNumber: string
@@ -16,4 +16,14 @@ export type CartTicket = {
   price: number
   quantity: number
   event: Event
+  tickets: Ticket[]
+}
+
+export type OrderResponse = {
+  statusCode: number
+  message: string
+  isSuccess: boolean
+  data: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  errors: any | null
 }

@@ -55,3 +55,24 @@ export const truncateText = (text: string, maxLength: number) => {
   }
   return text.substring(0, maxLength) + '...'
 }
+
+import { useAnimation, useInView } from 'framer-motion'
+import { useEffect, useRef } from 'react'
+
+export const useFadeIn = () => {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true })
+  const controls = useAnimation()
+
+  useEffect(() => {
+    if (inView) {
+      controls.start({
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.6 }
+      })
+    }
+  }, [inView, controls])
+
+  return { ref, controls }
+}
