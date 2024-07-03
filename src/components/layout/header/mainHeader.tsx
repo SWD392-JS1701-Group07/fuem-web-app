@@ -23,7 +23,7 @@ const MainNavBar = () => {
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const keysToRemove = ['role', 'userId', 'accessToken'] //for logout
+  const keysToRemove = ['role', 'userId', 'accessToken', 'cartItems'] //for logout
 
   const handleLogout = () => {
     keysToRemove.forEach((key) => localStorage.removeItem(key))
@@ -95,7 +95,7 @@ type BadgeProps = {
 
 const Badge: React.FC<BadgeProps> = ({ count }) => {
   return (
-    <div className="absolute w-auto -translate-y-8 translate-x-1/2 transform rounded-full bg-electric-indigo px-2 py-1 text-xs text-white">
+    <div className="absolute flex h-5 w-5 -translate-y-8 translate-x-1/2 transform items-center justify-center rounded-full bg-electric-indigo px-2 py-1 text-xs text-white">
       {count}
     </div>
   )
