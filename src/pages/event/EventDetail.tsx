@@ -94,12 +94,9 @@ const EventDetail = () => {
               </div>
             ))}
           </p>
-          <Button className="mt-2 h-14 rounded-none border border-crayola bg-black px-8 text-xl text-crayola hover:bg-crayola hover:text-black">
-            Participate
-          </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="mt-2 ml-10 h-14 rounded-none border border-yellow-sun bg-black px-8 text-xl text-yellow-sun hover:bg-yellow-sun hover:text-black">
+              <Button className="mt-2 h-14 rounded-none border border-crayola bg-black px-8 text-xl text-crayola hover:bg-crayola hover:text-black">
                 Join as collaborator
               </Button>
             </DialogTrigger>

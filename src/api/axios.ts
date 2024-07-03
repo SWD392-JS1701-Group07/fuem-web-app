@@ -43,13 +43,13 @@ axiosClient.interceptors.response.use(
         if (error.response === 401) {
             console.log("Refresh token");
             const accessToken = localStorage.getItem("accessToken");
-            const refreshToken = localStorage.getItem("refreshToken");
+            //const refreshToken = localStorage.getItem("refreshToken");
             localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            if (accessToken && refreshToken) {
+            //localStorage.removeItem("refreshToken");
+            if (accessToken) {
                 const credentials: RefreshTokenCredentials = {
                     accessToken,
-                    refreshToken,
+                    //refreshToken,
                 };
                 const response = await axiosClient.post(
                     "/api/v1/users/RefreshToken",
@@ -57,7 +57,7 @@ axiosClient.interceptors.response.use(
                 );
                 if (response.data) {
                     localStorage.setItem("accessToken", response.data.accessToken);
-                    localStorage.setItem("refreshToken", response.data.refreshToken);
+                    //localStorage.setItem("refreshToken", response.data.refreshToken);
                     //toast("Refresh token successfully");
                     return axiosClient.request(error.config);
                 }
