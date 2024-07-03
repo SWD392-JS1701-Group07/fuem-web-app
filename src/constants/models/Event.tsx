@@ -1,66 +1,95 @@
+import { Operator } from './Operator'
+import { SponsorDetail } from './Sponsor'
+
 export type Event = {
-    id: Number,
-    name: string,
-    place: string,
-    startSellDate: Date,
-    endSellDate: Date,
-    startDate: string,
-    endDate: string,
-    description: string,
-    eventStatus: string,
-    price: number,
-    quantity: number,
-    avatarUrl: string,
-    ownerId: number,
-    subjectId: number
-    scheduleList: ScheduleList[]
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  id: Number
+  name: string
+  place: string
+  startSellDate: Date
+  endSellDate: Date
+  startDate: string
+  endDate: string
+  description: string
+  eventStatus: string
+  price: number
+  quantity: number
+  avatarUrl: string
+  ownerId: number
+  subjectId: number
+  scheduleList: ScheduleList[]
 }
+
+export type Subject = {
+  id: number
+  name: string
+  description: string
+}
+
+export type EventDetail = {
+  id: number
+  name: string
+  startSellDate: string
+  endSellDate: string
+  price: number
+  quantity: number
+  remaining: number
+  avatarUrl: string | null
+  description: string
+  eventStatus: string
+  ownerId: number
+  subjectId: number
+  subject: Subject
+  eventOperator: Operator
+  scheduleList: ScheduleList[]
+  sponsorships: SponsorDetail[]
+}
+
 export type EventCreateModel = {
-    name: string,
-    place: string,
-    startSellDate: Date,
-    endSellDate: Date,
-    price: number,
-    quantity: number,
-    avatarUrl: string | null,
-    description: string,
-    eventStatus: string,
-    ownerId: number,
-    subjectId: number,
-    scheduleList: ScheduleCreateModel[],
-    sponsorships: SponsorshipCreateModel[]
+  name: string
+  place: string
+  startSellDate: Date
+  endSellDate: Date
+  price: number
+  quantity: number
+  avatarUrl: string | null
+  description: string
+  eventStatus: string
+  ownerId: number
+  subjectId: number
+  scheduleList: ScheduleCreateModel[]
+  sponsorships: SponsorshipCreateModel[]
 }
 export type EventDate = {
-    id: string,
-    title: string,
-    start: string,
-    end: string,
-    allDay: boolean,
+  id: string
+  title: string
+  start: string
+  end: string
+  allDay: boolean
 }
 export type ScheduleList = {
-    id: string,
-    endTime: string,
-    eventId: number,
-    place: string,
-    startTime: string
+  id: string
+  endTime: string
+  eventId: number
+  place: string
+  startTime: string
 }
 
 export type ScheduleCreateModel = {
-    startTime: Date,
-    endTime: Date,
-    place: string
+  startTime: Date
+  endTime: Date
+  place: string
 }
-export type SponsorshipCreateModel =
-    {
-        description: string,
-        type: string,
-        title: string,
-        sum: number,
-        sponsor: {
-            name: string,
-            email: string,
-            phoneNumber: string,
-            avatarUrl: string,
-            accountId: 0
-        }
-    }
+export type SponsorshipCreateModel = {
+  description: string
+  type: string
+  title: string
+  sum: number
+  sponsor: {
+    name: string
+    email: string
+    phoneNumber: string
+    avatarUrl: string
+    accountId: 0
+  }
+}
