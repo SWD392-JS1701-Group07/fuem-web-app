@@ -1,8 +1,8 @@
 import { Event } from '@/constants/models/Event'
 import { AVATAR_PLACEHOLDER_URL, EVENT_PLACEHOLDER_URL } from '@/constants/models/url'
 import { formatDateTime, truncateText } from '@/lib/utils'
-import { CalendarPlus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import EventTicket from './EventTicket'
 
 interface EventCardProps {
   event: Event
@@ -17,9 +17,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
   }
 
   const handleJoinEventClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.stopPropagation() // So the button will not redirect to event details
-    // Logic not added yet
-    alert(`Joining event: ${event.id}`)
+    e.stopPropagation()
   }
 
   return (
@@ -77,7 +75,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
             aria-label="Join Event"
             onClick={handleJoinEventClick}
           >
-            <CalendarPlus className="h-6 w-6" />
+            <EventTicket event={event} />
           </button>
         </div>
       </div>

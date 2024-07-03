@@ -21,6 +21,7 @@ import StaffCreate from './pages/dashboard/StaffAcc/StaffCreate'
 import ProfilePage from './pages/home/ProfilePage'
 import CollaboratorList from './pages/dashboard/collaborator/CollaboratorList'
 import RegistedEventList from './pages/collaborator/RegistedEventList'
+import Cart from './pages/cart/Cart'
 
 function App() {
   //const { component: Component, path } = routes[3];
@@ -51,6 +52,7 @@ function App() {
           />
           <Route path="event" element={<EventList />} />
           <Route path="event/:id" element={<EventDetail />} />
+          <Route path="cart" element={<Cart />} />
           <Route
             path="dashboard"
             element={
