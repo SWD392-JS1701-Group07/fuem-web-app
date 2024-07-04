@@ -27,37 +27,48 @@ const HomePage = () => {
     }
   }
 
+  const randomIndexes =
+    data.length > 0
+      ? (() => {
+          const indexes = new Set<number>()
+          while (indexes.size < 3) {
+            indexes.add(Math.floor(Math.random() * data.length))
+          }
+          return Array.from(indexes)
+        })()
+      : [0, 1, 2]
+
   const events =
     data.length > 0
       ? [
           {
-            id: data[0].id,
-            date: formatDateTime(data[0].startSellDate.toString(), 'date'),
-            title: data[0].name,
-            location: 'Địa điểm: ' + data[0].scheduleList[0].place,
-            price: data[0].price + 'đ/ticket',
+            id: data[randomIndexes[0]].id,
+            date: formatDateTime(data[randomIndexes[0]].startSellDate.toString(), 'date'),
+            title: data[randomIndexes[0]].name,
+            location: 'Địa điểm: ' + data[randomIndexes[0]].scheduleList[0].place,
+            price: data[randomIndexes[0]].price + 'đ/ticket',
             backgroundImage:
               'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-35.png)',
             backgroundColor: 'bg-crayola',
             textColor: 'text-black'
           },
           {
-            id: data[1].id,
-            date: formatDateTime(data[1].startSellDate.toString(), 'date'),
-            title: data[1].name,
-            location: 'Địa điểm: ' + data[1].scheduleList[0].place,
-            price: data[1].price + 'đ/ticket',
+            id: data[randomIndexes[1]].id,
+            date: formatDateTime(data[randomIndexes[1]].startSellDate.toString(), 'date'),
+            title: data[randomIndexes[1]].name,
+            location: 'Địa điểm: ' + data[randomIndexes[1]].scheduleList[0].place,
+            price: data[randomIndexes[1]].price + 'đ/ticket',
             backgroundImage:
               'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-33.png)',
             backgroundColor: 'bg-electric-indigo',
             textColor: 'text-white'
           },
           {
-            id: data[2].id,
-            date: formatDateTime(data[2].startSellDate.toString(), 'date'),
-            title: data[2].name,
-            location: 'Địa điểm: ' + data[2].scheduleList[0].place,
-            price: data[2].price + 'đ/ticket',
+            id: data[randomIndexes[2]].id,
+            date: formatDateTime(data[randomIndexes[2]].startSellDate.toString(), 'date'),
+            title: data[randomIndexes[2]].name,
+            location: 'Địa điểm: ' + data[randomIndexes[2]].scheduleList[0].place,
+            price: data[randomIndexes[2]].price + 'đ/ticket',
             backgroundImage:
               'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-34.png)',
             backgroundColor: 'bg-yellow-sun',
