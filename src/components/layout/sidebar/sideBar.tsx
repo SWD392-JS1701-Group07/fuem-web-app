@@ -1,47 +1,13 @@
-// import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-// import { Link } from "react-router-dom";
-
-// const Siderbar = () => {
-//     return (
-//         <div className="min-h-screen bg-purple-400 w-1/6 text-gray-50 shadow-2xl">
-//             <Accordion type="single" collapsible className="mx-3">
-//                 <AccordionItem value="item-1">
-//                     <AccordionTrigger>
-//                         <Link to={"/dashboard/event"}>
-//                             Event
-//                         </Link>
-//                     </AccordionTrigger>
-//                     {/* <AccordionContent>
-//                         Yes. It adheres to the WAI-ARIA design pattern.
-//                     </AccordionContent> */}
-//                 </AccordionItem>
-//                 <AccordionItem value="item-2">
-//                     <AccordionTrigger>Participant</AccordionTrigger>
-//                     {/* <AccordionContent>
-//                         Yes. It comes with default styles that matches the other
-//                         components&apos; aesthetic.
-//                     </AccordionContent> */}
-//                 </AccordionItem>
-//                 <AccordionItem value="item-3">
-//                     <AccordionTrigger>Sponsor</AccordionTrigger>
-//                     {/* <AccordionContent>
-//                         Yes. It&apos;s animated by default, but you can disable it if you
-//                         prefer.
-//                     </AccordionContent> */}
-//                 </AccordionItem>
-//             </Accordion>
-//         </div>
-//     );
-// }
-
-// export default Siderbar;
-
-
 'use client'
 
-import { HandCoins, LandPlot, LayoutDashboard, LucideFootprints, Newspaper, PawPrint, PocketKnife, Rabbit, ShoppingBag, Star, Ticket, User, UserCog, UtensilsCrossed } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import {
+    HandCoins, LandPlot, LayoutDashboard, LucideFootprints,
+    Newspaper,
+    PawPrint, PocketKnife, Rabbit, ShoppingBag, Star,
+    Ticket,
+    User, UserCog, UtensilsCrossed
+} from 'lucide-react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 const adminSidebarLinks = [
@@ -93,16 +59,6 @@ const operatorSidebarLinks = [
         route: '/dashboard/sponsor',
         label: 'Sponsor'
     },
-    // {
-    //     icon: <Ticket className="w-6 h-6" />,
-    //     route: '/dashboard/tickets',
-    //     label: 'Tickets'
-    // },
-    // {
-    //     icon: <Newspaper className="w-6 h-6" />,
-    //     route: '/dashboard/news',
-    //     label: 'News'
-    // },
     {
         icon: <ShoppingBag className="w-6 h-6" />,
         route: '/dashboard/order',
@@ -110,38 +66,38 @@ const operatorSidebarLinks = [
     }
 ]
 
-const staffSidebarLinks = [
-    {
-        icon: <LayoutDashboard className="w-6 h-6" />,
-        route: '/dashboard',
-        label: 'Overview'
-    },
-    {
-        icon: <User className="w-6 h-6" />,
-        route: '/dashboard/zoo-trainers',
-        label: 'Zoo Trainers'
-    },
-    {
-        icon: <LandPlot className="w-6 h-6" />,
-        route: '/dashboard/areas',
-        label: 'Areas'
-    },
-    {
-        icon: <Ticket className="w-6 h-6" />,
-        route: '/dashboard/tickets',
-        label: 'Tickets'
-    },
-    {
-        icon: <Newspaper className="w-6 h-6" />,
-        route: '/dashboard/news',
-        label: 'News'
-    },
-    {
-        icon: <ShoppingBag className="w-6 h-6" />,
-        route: '/dashboard/order',
-        label: 'Orders'
-    }
-]
+// const staffSidebarLinks = [
+//     {
+//         icon: <LayoutDashboard className="w-6 h-6" />,
+//         route: '/dashboard',
+//         label: 'Overview'
+//     },
+//     {
+//         icon: <User className="w-6 h-6" />,
+//         route: '/dashboard/zoo-trainers',
+//         label: 'Zoo Trainers'
+//     },
+//     {
+//         icon: <LandPlot className="w-6 h-6" />,
+//         route: '/dashboard/areas',
+//         label: 'Areas'
+//     },
+//     {
+//         icon: <Ticket className="w-6 h-6" />,
+//         route: '/dashboard/tickets',
+//         label: 'Tickets'
+//     },
+//     {
+//         icon: <Newspaper className="w-6 h-6" />,
+//         route: '/dashboard/news',
+//         label: 'News'
+//     },
+//     {
+//         icon: <ShoppingBag className="w-6 h-6" />,
+//         route: '/dashboard/order',
+//         label: 'Orders'
+//     }
+// ]
 
 const sponsorSidebarLinks = [
     {
@@ -193,7 +149,7 @@ const sponsorSidebarLinks = [
 //6 collaborator
 
 function LeftSidebar({ }) {
-    const [user, setUser] = useState(localStorage.getItem('role'));
+    const [user] = useState(localStorage.getItem('role'));
     console.log(user)
     const sidebarLinks = user === '1'
         ? adminSidebarLinks : user === '3'

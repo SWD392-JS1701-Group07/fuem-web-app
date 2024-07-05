@@ -6,7 +6,7 @@ export const getAccounts = async () => {
 }
 
 export const createAccount = async (account: AccountCreateModel) => {
-    return await axiosClient.post("/api/accounts", account);
+  return await axiosClient.post("/api/accounts", account);
 }
 
 export const getById = async (accountId: string): Promise<Account> => {

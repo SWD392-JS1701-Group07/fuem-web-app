@@ -25,7 +25,6 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
 import {
     Table,
     TableBody,
@@ -173,7 +172,8 @@ export const columns: ColumnDef<Event>[] = [
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
-            const payment = row.original
+            const event = row.original
+            const nav = useNavigate();
 
             return (
                 <DropdownMenu>
@@ -186,7 +186,7 @@ export const columns: ColumnDef<Event>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem
-                        //onClick={() => navigator.clipboard.writeText(payment.id)}
+                            onClick={() => nav(`${event.id}`)}
                         >
                             View details
                         </DropdownMenuItem>

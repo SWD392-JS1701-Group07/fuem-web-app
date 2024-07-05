@@ -1,6 +1,6 @@
 export type Account = {
+    id: number,
     name: string;
-    subjectId: number;
     email: string,
     username: string,
     password: string,
@@ -10,6 +10,8 @@ export type Account = {
     gender: string,
     avatarUrl: string,
     roleId: number,
+    subjectId: number,
+    accountStatus: string,
 };
 export type AccountCreateModel = {
     name: string,

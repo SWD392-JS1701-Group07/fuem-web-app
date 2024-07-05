@@ -2,20 +2,32 @@ import { getById, updateStatus } from "@/api/eventApi";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { toast } from "@/components/ui/use-toast";
 import { Event } from "@/constants/models/Event";
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { Ellipsis } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 const EventDashboardDetail = () => {
     const { id } = useParams<{ id: string }>();
     const [event, setEvent] = useState<Event>();
+    const [color, setColor] = useState("red-500");
     useEffect(() => {
         getById(Number(id)).then((res) => {
-            //@ts-expect-error
-            setEvent(res);
+            setEvent(res.data);
         });
     }, [id]);
+    useEffect(() => {
+        if (event?.eventStatus === "Active") {
+            setColor("green-500");
+        } else if (event?.eventStatus === "Pending") {
+            setColor("gray-500");
+        } else {
+            setColor("red-500");
+        }
+    }, [event]);
     const handleActive = () => {
         if (event?.eventStatus === "Planning") {
             updateStatus(Number(id)).then(() => {
@@ -59,15 +71,37 @@ const EventDashboardDetail = () => {
             })
         }
     }
+    const handlebuild = () => {
+        console.log("build")
+    }
     console.log("data:", event);
     return (
         <div className="w-full">
-            <div className="flex justify-between w-full">
-                <h1 className="text-2xl">Event Detail</h1>
-                {(localStorage.getItem("role") === "4" ?
-                    ((event?.eventStatus == "Planning" || event?.eventStatus == "Pending") ?
-                        (<Button onClick={handleActive} className="m-2">Active</Button>)
-                        : null) : null)}
+            <div className="flex justify-between w-full p-3 bg-purple-400 text-gray-50 flex">
+                <div className="flex">
+                    <h1 className="text-5xl">{event?.name}</h1>
+                    <Button className={`border-4 border-${color} bg-white text-${color} rounded-3xl m-0 p-0 px-2`}>{event?.eventStatus}</Button>
+                </div>
+                <div>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger>
+                            <Ellipsis />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem>
+                                Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                View collaborators
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    {(localStorage.getItem("role") === "4" ?
+                        ((event?.eventStatus == "Planning" || event?.eventStatus == "Pending") ?
+                            (<Button onClick={handleActive} className="m-2">Active</Button>)
+                            : null) : null)}
+                </div>
             </div>
             <Accordion type="multiple" defaultValue={["general"]}>
                 <AccordionItem title="Event Detail" value="general">
@@ -103,6 +137,12 @@ const EventDashboardDetail = () => {
                 </AccordionItem>
                 <AccordionItem title="Event Detail" value="sponsor">
                     <AccordionTrigger className="bg-slate-200 pl-2">Sponsor</AccordionTrigger>
+                    <AccordionContent>
+
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem title="Event Detail" value="Collaborator">
+                    <AccordionTrigger className="bg-slate-200 pl-2">Collaborators</AccordionTrigger>
                     <AccordionContent>
 
                     </AccordionContent>

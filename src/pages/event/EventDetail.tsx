@@ -11,6 +11,7 @@ import { addCollaborator } from '@/api/collaboratorApi'
 import { CollaboratorCreateModel } from '@/constants/models/Collaborator'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTrigger } from '@/components/ui/dialog'
 import { useToast } from '@/components/ui/use-toast'
+import { er } from 'node_modules/@fullcalendar/core/internal-common'
 
 const EventDetail = () => {
   // const [isOpen, setIsOpen] = useState(false);
@@ -42,12 +43,14 @@ const EventDetail = () => {
     addCollaborator(Collaborator).then((_response) => {
       toast({
         title: "registered successfully",
+        description: "Waiting for approval",
       })
     }).catch((error) => {
       console.error('Failed to create collaborator', error)
+      const erString = (error.response.data as string).split('\n')
       toast({
         title: "Register fail",
-        description: error.response.data,
+        description: erString[0],
         variant: "destructive",
       })
     })
