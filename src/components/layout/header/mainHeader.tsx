@@ -37,6 +37,7 @@ const MainNavBar = () => {
     { name: 'About', path: '/about' },
     { name: 'Events', path: '/event' },
     { name: 'Contact', path: '/contact' },
+    { name: 'Collaborator', path: '/collaborator' },
     { name: 'Profile (' + user?.username + ')', path: '/profile' },
     { name: 'Logout', path: '/', onClick: handleLogout }
   ]
