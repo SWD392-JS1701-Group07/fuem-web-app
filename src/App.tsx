@@ -22,6 +22,7 @@ import ProfilePage from './pages/home/ProfilePage'
 import CollaboratorList from './pages/dashboard/collaborator/CollaboratorList'
 import RegistedEventList from './pages/collaborator/RegistedEventList'
 import Cart from './pages/cart/Cart'
+import CartCallback from './pages/cart/CartCallback'
 
 function App() {
   //const { component: Component, path } = routes[3];
@@ -53,6 +54,7 @@ function App() {
           <Route path="event" element={<EventList />} />
           <Route path="event/:id" element={<EventDetail />} />
           <Route path="cart" element={<Cart />} />
+          <Route path="callback" element={<CartCallback />} />
           <Route
             path="dashboard"
             element={
@@ -70,7 +72,7 @@ function App() {
             <Route path="sponsor" element={<SponsorList />} />
             <Route path="operator/create" element={<OperatorAccCreate />} />
             <Route path="staff/create" element={<StaffCreate />} />
-            <Route path='collaborator' element={<CollaboratorList />} />
+            <Route path="collaborator" element={<CollaboratorList />} />
           </Route>
         </Route>
       </Routes>
