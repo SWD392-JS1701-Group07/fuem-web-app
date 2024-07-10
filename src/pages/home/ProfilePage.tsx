@@ -9,6 +9,10 @@ import { Edit, Save } from 'lucide-react'
 import { AVATAR_PLACEHOLDER_URL } from '@/constants/models/url'
 import { Account } from '@/constants/models/Account'
 import { formatDateTime } from '@/lib/utils'
+import 'react-toastify/dist/ReactToastify.css'
+import * as yup from 'yup'
+import { useToast } from '@/components/ui/use-toast'
+import { updateProfile } from '@/api/userAPI'
 
 const profileFields = {
   name: 'Name',
@@ -25,21 +29,49 @@ const profileFields = {
 // Fields to exclude from the Edit Profile form
 const excludeFromEdit = ['accountStatus', 'studentId', 'subjectId']
 
+type ProfileFields = keyof typeof profileFields
+
+const validationSchema = yup.object().shape({
+  name: yup.string().required('Name is required'),
+  email: yup.string().email('Invalid email address').required('Email is required'),
+  username: yup.string().required('Username is required'),
+  phoneNumber: yup
+    .string()
+    .matches(/^(0|\+84)[35789]\d{8}$/, 'Invalid Vietnamese phone number')
+    .required('Phone number is required'),
+  dob: yup
+    .date()
+    .required('Date of Birth is required')
+    .nullable()
+    .min(new Date(1900, 0, 1), 'Date of Birth cannot be before January 1, 1900')
+    .max(new Date(), 'Date of Birth cannot be in the future'),
+  gender: yup
+    .string()
+    .oneOf(['Male', 'Female', 'Others'], 'Invalid gender')
+    .required('Gender is required'),
+  subjectId: yup.string().required('Subject ID is required')
+})
+
 const ProfilePage: React.FC = () => {
   const { accessToken } = useSelector((state: AppState) => state.loginedUser)
   const [user, setUser] = useState<Account | null>(null)
   const [editMode, setEditMode] = useState(false)
+  const [formValues, setFormValues] = useState<Account | null>(null)
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const { toast } = useToast()
 
   useEffect(() => {
     const storedUser = localStorage.getItem('userProfile')
     if (storedUser) {
-      setUser(JSON.parse(storedUser))
+      const parsedUser = JSON.parse(storedUser)
+      setUser(parsedUser)
+      setFormValues(parsedUser)
     }
   }, [accessToken])
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value } = e.target
-    setUser((prevState) =>
+    setFormValues((prevState) =>
       prevState
         ? {
             ...prevState,
@@ -49,11 +81,65 @@ const ProfilePage: React.FC = () => {
     )
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setAvatarFile(e.target.files[0])
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setEditMode(false)
-    if (user) {
-      localStorage.setItem('userProfile', JSON.stringify(user))
+    if (formValues) {
+      try {
+        await validationSchema.validate(formValues, { abortEarly: false })
+
+        const formData = new FormData()
+        formData.append('Name', formValues.name)
+        formData.append('Email', formValues.email)
+        formData.append('PhoneNumber', formValues.phoneNumber)
+        formData.append('StudentId', formValues.studentId)
+        formData.append('Dob', formValues.dob.toString())
+        formData.append('Gender', formValues.gender)
+        formData.append('SubjectId', formValues.subjectId.toString())
+        if (avatarFile) {
+          formData.append('avatarFile', avatarFile)
+        }
+
+        await updateProfile(formValues.id.toString(), formData, accessToken)
+          .then((response) => {
+            localStorage.setItem('userProfile', JSON.stringify(response.data))
+            setUser(formValues)
+            toast({
+              title: 'Successfully updated!',
+              description: 'Some changes might only be visible when you refresh the page',
+              variant: 'default'
+            })
+          })
+          .catch((error) => {
+            toast({
+              title: 'Failed to update profile',
+              description: error.message,
+              variant: 'destructive'
+            })
+          })
+      } catch (error: any) {
+        if (error instanceof yup.ValidationError) {
+          error.inner.forEach((err) => {
+            toast({
+              title: 'Validation Error',
+              description: err.message,
+              variant: 'destructive'
+            })
+          })
+        } else {
+          toast({
+            title: 'Failed to update profile',
+            description: error.message,
+            variant: 'destructive'
+          })
+        }
+      }
     }
   }
 
@@ -83,7 +169,7 @@ const ProfilePage: React.FC = () => {
 
       <div className="mt-8">
         <h2 className="mb-4 text-3xl font-semibold">Profile Details</h2>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <form className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {Object.entries(profileFields).map(([key, label]) => (
             <div key={key} className="flex flex-col">
               <Label.Root htmlFor={key} className="mb-1 font-medium text-gray-300">
@@ -95,12 +181,11 @@ const ProfilePage: React.FC = () => {
                 id={key}
                 name={key}
                 value={
-                  key === 'dob'
-                    ? formatDateTime(user[key].toString(), 'date')
-                    : (user as any)[key] || ''
+                  (key === 'dob'
+                    ? formatDateTime(user[key as ProfileFields]?.toString(), 'date')
+                    : user[key as ProfileFields] || '') as any
                 }
-                onChange={handleInputChange}
-                disabled={!editMode}
+                disabled
               />
             </div>
           ))}
@@ -120,20 +205,52 @@ const ProfilePage: React.FC = () => {
                     <Label.Root htmlFor={key} className="mb-1 font-medium text-gray-300">
                       {label}
                     </Label.Root>
-                    <input
-                      className="rounded border border-gray-700 bg-gray-700 p-2 text-white"
-                      type="text"
-                      id={key}
-                      name={key}
-                      value={
-                        key === 'dob'
-                          ? formatDateTime(user[key].toString(), 'date')
-                          : (user as any)[key] || ''
-                      }
-                      onChange={handleInputChange}
-                    />
+                    {key === 'dob' ? (
+                      <input
+                        className="rounded border border-gray-700 bg-gray-700 p-2 text-white"
+                        type="date"
+                        id={key}
+                        name={key}
+                        value={(formValues?.[key as ProfileFields] as any) || ''}
+                        onChange={handleInputChange}
+                      />
+                    ) : key === 'gender' ? (
+                      <select
+                        className="rounded border border-gray-700 bg-gray-700 p-2 text-white"
+                        id={key}
+                        name={key}
+                        value={(formValues?.[key as ProfileFields] as any) || ''}
+                        onChange={handleInputChange}
+                      >
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Others">Others</option>
+                      </select>
+                    ) : (
+                      <input
+                        className="rounded border border-gray-700 bg-gray-700 p-2 text-white"
+                        type="text"
+                        id={key}
+                        name={key}
+                        value={(formValues?.[key as ProfileFields] as any) || ''}
+                        onChange={handleInputChange}
+                      />
+                    )}
                   </div>
                 ))}
+              <div className="flex flex-col">
+                <Label.Root htmlFor="avatarFile" className="mb-1 font-medium text-gray-300">
+                  Avatar
+                </Label.Root>
+                <input
+                  className="rounded border border-gray-700 bg-gray-700 p-2 text-white"
+                  type="file"
+                  id="avatarFile"
+                  name="avatarFile"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                />
+              </div>
               <div className="flex justify-end">
                 <button
                   type="submit"
