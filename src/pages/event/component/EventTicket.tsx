@@ -46,14 +46,29 @@ const EventTicket = ({ event }: { event: Event }) => {
     setAdditionalTickets((prevTickets) => {
       const updatedTickets = [...prevTickets]
       for (let i = prevTickets.length; i < newQuantity - 1; i++) {
-        updatedTickets.push({ name: '', email: '', phoneNumber: '', eventId: event.id })
+        updatedTickets.push({
+          name: '',
+          email: '',
+          phoneNumber: '',
+          price: event.price,
+          eventId: event.id
+        })
       }
       return updatedTickets.slice(0, newQuantity - 1)
     })
   }
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  const validatePhoneNumber = (phoneNumber: string) => {
+    const phoneRegex = /^(?:\+84|0)(?:3[2-9]|5[6|8|9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/
+    return phoneRegex.test(phoneNumber)
+  }
+
   const validateTickets = () => {
-    // Check for empty fields
     for (const ticket of additionalTickets) {
       if (!ticket.name || !ticket.email || !ticket.phoneNumber) {
         toast({
@@ -63,9 +78,24 @@ const EventTicket = ({ event }: { event: Event }) => {
         })
         return false
       }
+      if (!validateEmail(ticket.email)) {
+        toast({
+          title: 'Failed',
+          description: 'Invalid email format.',
+          variant: 'destructive'
+        })
+        return false
+      }
+      if (!validatePhoneNumber(ticket.phoneNumber)) {
+        toast({
+          title: 'Failed',
+          description: 'Invalid phone number format.',
+          variant: 'destructive'
+        })
+        return false
+      }
     }
 
-    // Check for duplicates
     const emails = new Set()
     const phoneNumbers = new Set()
     for (const ticket of [user, ...additionalTickets]) {
@@ -93,12 +123,14 @@ const EventTicket = ({ event }: { event: Event }) => {
         name: user.name,
         phoneNumber: user.phoneNumber,
         email: user.email,
+        price: event.price,
         eventId: event.id
       },
       ...additionalTickets.map((ticket) => ({
         name: ticket.name,
         phoneNumber: ticket.phoneNumber,
         email: ticket.email,
+        price: event.price,
         eventId: event.id
       }))
     ]
@@ -113,8 +145,6 @@ const EventTicket = ({ event }: { event: Event }) => {
       id: event.id as number,
       tickets: tickets
     }
-
-    // console.log('CART LOOKS LIKE THIS: ', cartItem)
 
     addToCart(cartItem)
     setOpen(false)
