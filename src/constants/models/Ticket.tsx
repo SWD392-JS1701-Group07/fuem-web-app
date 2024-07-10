@@ -4,6 +4,7 @@ export type Ticket = {
   name: string
   phoneNumber: string
   email: string
+  price: number,
   // eslint-disable-next-line @typescript-eslint/ban-types
   eventId: Number
 }
