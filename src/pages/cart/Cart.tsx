@@ -42,15 +42,16 @@ const Cart = () => {
 
     const orderData = {
       orderNotes: '',
+      name: cartItems[0].name,
       email: cartItems[0].email,
       phoneNumber: cartItems[0].phoneNumber,
       totalAmount,
-      customerId: 1,
       tickets
     }
 
     try {
       const response: OrderResponse = await createOrder(orderData)
+
       if (response.isSuccess) {
         const newTab = window.open()
         newTab?.location.assign(response.data)
