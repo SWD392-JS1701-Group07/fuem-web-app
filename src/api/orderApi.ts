@@ -6,7 +6,6 @@ type OrderData = {
   email: string
   phoneNumber: string
   totalAmount: number
-  customerId: number
   tickets: Ticket[]
 }
 
