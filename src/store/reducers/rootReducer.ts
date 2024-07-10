@@ -12,6 +12,7 @@ const initialState = {
 const rootReducers = (state = initialState, action: any) => {
   switch (action.type) {
     case 'LOGIN':
+      // eslint-disable-next-line no-case-declarations
       const { accessToken, role, accountId, accountDTO } = action.payload;
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('role', role);

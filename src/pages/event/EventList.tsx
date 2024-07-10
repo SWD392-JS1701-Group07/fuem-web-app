@@ -117,7 +117,7 @@ const EventList = () => {
             )}
           </div>
           {!loading && sortedData.length > 0 ? (
-            <div className="flex flex-wrap">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-10">
               {sortedData.slice(startIndex, endIndex).map((event) => (
                 <EventCard key={event.id as React.Key} event={event} />
               ))}

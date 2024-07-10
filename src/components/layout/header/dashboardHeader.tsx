@@ -1,14 +1,17 @@
 import { Separator } from '@/components/ui/separator'
+import { Account } from '@/constants/models/Account'
+import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 
 const DashBoardNavBar = () => {
+  const [user, setUser] = useState<Account | null>(null)
   // const loginedUser = useSelector((state: any) => state.loginedUser)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const handleLogout = () => {
-    ['role', 'userId', 'accessToken'].forEach(key => localStorage.removeItem(key));
     dispatch({ type: 'LOGOUT' })
+    setUser(null)
     navigate('/')
   }
   return (

@@ -16,8 +16,6 @@ const CartCallback: React.FC = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search)
-
-    console.log('All parameters:')
     params.forEach((value, key) => {
       console.log(`${key}: ${value}`)
     })
@@ -30,7 +28,6 @@ const CartCallback: React.FC = () => {
 
     setVnpayResponse(response)
 
-    // Countdown timer
     const timer = setInterval(() => {
       setCountdown((prevCountdown) => {
         if (prevCountdown <= 1) {

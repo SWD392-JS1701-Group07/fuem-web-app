@@ -41,7 +41,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
       onClick={() => handleEventClick(event.id as number)}
       className="relative m-5 max-w-md overflow-hidden rounded-lg border border-white/20 bg-[#282c34] bg-gradient-to-t from-[#282c34] to-[rgba(17,0,32,0.5)] shadow-[0_7px_20px_5px_rgba(0,0,0,0.53)] backdrop-blur-lg transition-all duration-500 before:fixed before:left-[-100%] before:top-[-10%] before:h-[60rem] before:rotate-[-45deg] before:shadow-[0_0_100px_40px_rgba(255,255,255,0.03)] before:transition-all before:duration-700 before:content-[''] hover:scale-105 hover:border-white/40 hover:shadow-[0_7px_50px_10px_rgba(0,0,0,0.67)] hover:brightness-125 hover:before:left-[200%] hover:before:top-[-100%]"
     >
-      <div className="mx-auto flex w-96 cursor-pointer flex-col p-4">
+      <div className="flex w-full cursor-pointer flex-col p-4 h-full">
         <img
           className="tokenImage h-64 w-full rounded-md object-cover"
           src={eventDetail?.avatarUrl || EVENT_PLACEHOLDER_URL}
@@ -59,7 +59,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
             .map((schedule) => schedule.place || 'unknown location')
             .join(', ')}
         </h2>
-        <p className="description my-2 text-gray-300">{truncateText(event.description, 100)}</p>
+        <p className="description my-2 text-gray-300 flex-grow">{truncateText(event.description, 100)}</p>
         <div className="tokenInfo my-4 flex items-center justify-between">
           <div className="price flex items-center font-bold text-indigo-300">
             <p>
@@ -77,28 +77,30 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
             </p>
           </div>
         </div>
-        <hr className="w-full border-t border-gray-400/50" />
-        <div className="mt-2 flex items-center justify-between">
-          <div className="flex flex-row">
-            <div className="wrapper flex items-center rounded-full border border-white/20 p-1 shadow-inner">
-              <img
-                src={eventDetail?.eventOperator.avatarUrl || AVATAR_PLACEHOLDER_URL}
-                className="h-8 w-8 rounded-full border border-white/20 object-cover"
-                alt="?"
-              />
+        <div className="mt-auto">
+          <hr className="w-full border-t border-gray-400/50" />
+          <div className="mt-2 flex items-center justify-between">
+            <div className="flex flex-row">
+              <div className="wrapper flex items-center rounded-full border border-white/20 p-1 shadow-inner">
+                <img
+                  src={eventDetail?.eventOperator.avatarUrl || AVATAR_PLACEHOLDER_URL}
+                  className="h-8 w-8 rounded-full border border-white/20 object-cover"
+                  alt="?"
+                />
+              </div>
+              <p className="ml-2 self-center text-gray-400">
+                <ins className="not-italic no-underline">Hosted by</ins>{' '}
+                {eventDetail?.eventOperator.name}
+              </p>
             </div>
-            <p className="ml-2 self-center text-gray-400">
-              <ins className="not-italic no-underline">Hosted by</ins>{' '}
-              {eventDetail?.eventOperator.name}
-            </p>
+            <button
+              className="flex h-12 w-12 items-center justify-center rounded-full bg-electric-indigo text-white"
+              aria-label="Join Event"
+              onClick={handleJoinEventClick}
+            >
+              <EventTicket event={event} />
+            </button>
           </div>
-          <button
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-electric-indigo text-white"
-            aria-label="Join Event"
-            onClick={handleJoinEventClick}
-          >
-            <EventTicket event={event} />
-          </button>
         </div>
       </div>
     </div>

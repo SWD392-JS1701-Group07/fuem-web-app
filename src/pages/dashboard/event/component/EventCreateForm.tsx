@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 //import { useParams } from "react-router-dom"
@@ -21,6 +21,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { Card } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useNavigate } from "react-router-dom"
+import { Textarea } from "@/components/ui/textarea"
 
 const formDetailSchema = z.object({
     name: z.string()
@@ -88,22 +89,11 @@ const Subject = [
 export function CreateEventForm() {
     const nav = useNavigate();
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    //const [error, setError] = useState<string | null>(null);
     const { toast } = useToast();
     const [Sponsorships, setSponsorships] = useState<Sponsorship[]>([]);
     const [schedules, setSchedules] = useState<Schedule[]>([{ id: 0, schedule: { startTime: new Date(), endTime: new Date(), place: "place" } }]);
 
-    useEffect(() => {
-        const initialize = async () => {
-            try {
-            } catch (err: any) {
-                setError(`Error initializing the app: ${err.message}`);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        initialize();
-    }, [])
     const defaultValues: Partial<FormDetailValues> = {
         name: "",
         description: "",
@@ -129,7 +119,7 @@ export function CreateEventForm() {
     async function onSubmit(values: FormDetailValues) {
         console.log("submit")
         //console.log("Sponsor avatar: ", values.sponsor ? values.sponsor[0].avatarFile : null)
-        let eventCreateModel: EventCreateModel = {
+        const eventCreateModel: EventCreateModel = {
             name: values.name,
             place: "place",
             description: values.description,
@@ -368,7 +358,7 @@ export function CreateEventForm() {
                                         <FormItem>
                                             <FormLabel>Description</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Event's description" {...field} />
+                                                <Textarea placeholder="Event's description" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

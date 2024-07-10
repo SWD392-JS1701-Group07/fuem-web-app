@@ -11,7 +11,7 @@ import { addCollaborator } from '@/api/collaboratorApi'
 import { CollaboratorCreateModel } from '@/constants/models/Collaborator'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTrigger } from '@/components/ui/dialog'
 import { useToast } from '@/components/ui/use-toast'
-import { er } from 'node_modules/@fullcalendar/core/internal-common'
+// import { er } from 'node_modules/@fullcalendar/core/internal-common'
 
 const EventDetail = () => {
   // const [isOpen, setIsOpen] = useState(false);
