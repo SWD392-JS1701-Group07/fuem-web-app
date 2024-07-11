@@ -25,3 +25,7 @@ export const updateStatus = async (id: number) => {
 export const getEventByCollaborator = async (id: number) => {
   return await axiosClient.get(`/api/events/collaborators/${id}`)
 }
+
+export const addEventImage = async (formData: FormData) => {
+  return await axiosClient.patch(`/api/events/image`, formData)
+}

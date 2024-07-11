@@ -1,8 +1,8 @@
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
-import interactionPlugin, { Draggable, DropArg } from '@fullcalendar/interaction'
+import interactionPlugin from '@fullcalendar/interaction'
 import timeGridPlugin from '@fullcalendar/timegrid'
-import { Event, EventDate } from '@/constants/models/Event'
+import { Event } from '@/constants/models/Event'
 
 type Props = {
     data: Event[]
@@ -23,6 +23,7 @@ const EventCalendar = ({ data }: Props) => {
             }}
             events={
                 function (info, successCallback, failureCallback) {
+                    console.log(info, failureCallback)
                     successCallback(
                         data.map(function (event) {
                             return {

@@ -165,7 +165,7 @@ export const columns: ColumnDef<Sponsor>[] = [
         enableHiding: false,
         cell: ({ row }) => {
             //const payment = row.original
-
+            console.log(row);
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>

@@ -4,13 +4,6 @@ import AccInfoBox from "./AccountInforBox"
 
 const AdminOverview = () => {
     const [Accounts, setAccounts] = React.useState([])
-    const [AccNumber, setAccNumber] = React.useState({
-        admin: 0,
-        visitor: 0,
-        sponsor: 0,
-        staff: 0,
-        operator: 0
-    })
     useEffect(() => {
         getAccounts().then(result => {
             setAccounts(result.data);

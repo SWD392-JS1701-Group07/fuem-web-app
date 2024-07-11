@@ -1,8 +1,6 @@
 import * as React from "react"
 import {
     CaretSortIcon,
-    ChevronDownIcon,
-    DotsHorizontalIcon,
 } from "@radix-ui/react-icons"
 import {
     ColumnDef,
@@ -17,15 +15,6 @@ import {
     useReactTable,
 } from "@tanstack/react-table"
 import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import {
     Table,
     TableBody,
     TableCell,
@@ -34,9 +23,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { useNavigate } from "react-router-dom"
 import { CollaboratorInEvent } from "@/constants/models/Collaborator"
-import { Schedule } from "@/constants/models/schedule"
 
 type Props = {
     data: CollaboratorInEvent[]
@@ -177,7 +164,6 @@ export const columns: ColumnDef<CollaboratorInEvent>[] = [
 
 const RegistedEventTable = ({ data }: Props) => {
     const [sorting, setSorting] = React.useState<SortingState>([])
-    const nav = useNavigate();
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []
     )

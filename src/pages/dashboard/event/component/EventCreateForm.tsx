@@ -13,7 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { create } from "@/api/eventApi"
+import { addEventImage, create } from "@/api/eventApi"
 import { EventCreateModel, ScheduleCreateModel, SponsorshipCreateModel } from "@/constants/models/Event"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { useToast } from "@/components/ui/use-toast"
@@ -83,7 +83,7 @@ const Subject = [
 
 export function CreateEventForm() {
     const nav = useNavigate();
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [avatarFile, setAvatarFile] = useState<File | null>(null)
     //const [error, setError] = useState<string | null>(null);
     const { toast } = useToast();
     const [Sponsorships, setSponsorships] = useState<Sponsorship[]>([]);
@@ -144,20 +144,35 @@ export function CreateEventForm() {
                         email: sponsor?.email || "",
                         phoneNumber: sponsor?.phoneNumber || "",
                         avatarUrl: "#",
-                        accountId: 0
+                        accountId: null
                     }
                 }
             }) : [] as SponsorshipCreateModel[]
         };
         create(eventCreateModel)
             .then((res) => {
-                res.data;
-                //UploadAvatar(res.data.id, values.avatarUrl);
-                toast({
-                    title: "Create success",
-                    description: "Event has been created",
+                console.log("Create event success", res);
+
+                const formData = new FormData();
+                //@ts-expect-error
+                formData.append('id', res.id.toString());
+                //@ts-expect-error
+                formData.append('avatarProfile', avatarFile);
+                console.log("formData", formData.get('id'), formData.get('avatarProfile'));
+                addEventImage(formData).then(() => {
+                    toast({
+                        title: "Create success",
+                        description: "Event has been created",
+                    })
+                    nav("/dashboard/event");
+                }).catch((error) => {
+                    console.log("Add image fail", error)
+                    toast({
+                        title: "Create fail",
+                        description: error.response.data.title,
+                        variant: "destructive",
+                    })
                 })
-                nav("/dashboard/event");
             })
             .catch((error) => {
                 toast({
@@ -165,12 +180,9 @@ export function CreateEventForm() {
                     description: error.response.data,
                     variant: "destructive",
                 })
-                setIsLoading(false);
             })
             .finally(() => {
-                setIsLoading(false);
             })
-        setIsLoading(false);
     }
 
     const handleAddSponsor = (ev: React.MouseEvent) => {
@@ -188,7 +200,7 @@ export function CreateEventForm() {
                         email: "aaa",
                         phoneNumber: "123",
                         avatarUrl: "#",
-                        accountId: 0
+                        accountId: null
                     }
                 }
             }])
@@ -205,7 +217,7 @@ export function CreateEventForm() {
                         email: "aaa",
                         phoneNumber: "123",
                         avatarUrl: "#",
-                        accountId: 0
+                        accountId: null
                     }
                 }
             }])
@@ -241,6 +253,12 @@ export function CreateEventForm() {
         ev.preventDefault();
         setSchedules(schedules.filter(schedule => schedule.id !== id))
     }
+    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setAvatarFile(e.target.files[0])
+        }
+    }
+
     return (
         <>
             <Form {...form}>
@@ -262,6 +280,7 @@ export function CreateEventForm() {
                                         </FormItem>
                                     )}
                                 />
+                                <input type="file" accept="image/*" placeholder="Name of the event" onChange={handleAvatarChange} />
                                 <FormField
                                     control={form.control}
                                     name="subjectId"
