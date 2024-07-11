@@ -1,12 +1,28 @@
+import React, { useState } from "react";
+import { Operator } from "@/constants/models/Operator";
+import { useNavigate } from "react-router-dom";
+import { getByRole } from "@/api/accountApi";
 import OperatorTable from "./Component/OperatorTable";
 
-const OperatorList = () => {
+const DashboardOperatorList = () => {
+    const [data, setData] = useState<Operator[]>([]);
+    const nav = useNavigate();
+
+    React.useEffect(() => {
+        getOperators();
+    }, [])
+
+    const getOperators = async () => {
+            const response = await getByRole(5); 
+            setData(response.data);
+    };
+
+
     return (
-        <div className="w-full h-screen">
-            <p className="text-3xl">Operator</p>
-            <OperatorTable />
+        <div className="w-full">
+            <OperatorTable data={data} />
         </div>
     );
-}
+};
 
-export default OperatorList;
+export default DashboardOperatorList;

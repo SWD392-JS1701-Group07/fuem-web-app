@@ -1,12 +1,25 @@
-import VisitorTable from "./Component/VisitorTable";
+import React, { useState } from "react";
+import { Operator } from "@/constants/models/Operator";
+import { getByRole } from "@/api/accountApi";
+import OperatorTable from "./Component/VisitorTable";
 
-const VisitorList = () => {
+const DashboardOperatorList = () => {
+    const [data, setData] = useState<Operator[]>([]);
+
+    React.useEffect(() => {
+        getStaffs();
+    }, [])
+
+    const getStaffs = async () => {
+            const response = await getByRole(2); 
+            setData(response.data);
+    };
+    
     return (
-        <div className="h-screen w-full">
-            <p className="text-3xl">Visitor</p>
-            <VisitorTable />
+        <div className="w-full">
+            <OperatorTable data={data} />
         </div>
     );
-}
+};
 
-export default VisitorList;
+export default DashboardOperatorList;

@@ -1,12 +1,24 @@
-import StaffTable from "./Component/StaffTable";
+import React, { useState } from "react";
+import { Operator } from "@/constants/models/Operator";
+import { getByRole } from "@/api/accountApi";
+import OperatorTable from "./Component/StaffTable";
 
-const StaffList = () => {
+const DashboardOperatorList = () => {
+    const [data, setData] = useState<Operator[]>([]);
+    React.useEffect(() => {
+        getStaffs();
+    }, [])
+
+    const getStaffs = async () => {
+            const response = await getByRole(4); 
+            setData(response.data);
+    };
+
     return (
-        <div className="w-full h-screen">
-            <p className="text-3xl">Staff</p>
-            <StaffTable />
+        <div className="w-full">
+            <OperatorTable data={data} />
         </div>
     );
-}
+};
 
-export default StaffList;
+export default DashboardOperatorList;
