@@ -36,10 +36,7 @@ import {
 } from "@/components/ui/table"
 import { useNavigate } from "react-router-dom";
 import { approve, assignTask, reject } from "@/api/collaboratorApi";
-import { toast, useToast } from "@/components/ui/use-toast";
-import { Toast } from "@/components/ui/toast";
-import { Popover, PopoverContent } from "@/components/ui/popover";
-import { PopoverTrigger } from "@radix-ui/react-popover";
+import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 
 type Props = {
@@ -142,8 +139,8 @@ export const columns: ColumnDef<Collaborator>[] = [
             const nav = useNavigate();
             const handleUpdateStatus = (mess: string) => {
                 if (state === 1) {
-                    approve(collaborator.id).then((res) => {
-                        assignTask(collaborator.eventId, collaborator.accountId, mess).then((res) => {
+                    approve(collaborator.id).then(() => {
+                        assignTask(collaborator.eventId, collaborator.accountId, mess).then(() => {
                             toast({
                                 title: "Success",
                                 description: "Approve collaborator successfully"
@@ -165,7 +162,7 @@ export const columns: ColumnDef<Collaborator>[] = [
                         })
                     })
                 } else if (state === 2) {
-                    reject(collaborator.id).then((res) => {
+                    reject(collaborator.id).then(() => {
                         toast({
                             title: "Success",
                             description: "Reject collaborator successfully"
@@ -247,7 +244,6 @@ export const columns: ColumnDef<Collaborator>[] = [
 ]
 const CollaboratorTable = ({ data }: Props) => {
     const [sorting, setSorting] = React.useState<SortingState>([])
-    const nav = useNavigate();
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []
     )

@@ -1,7 +1,6 @@
-import { useState } from "react";
+
 
 const HomePages = () => {
-    const [menuOpen, setMenuOpen] = useState(false);
     return (
         <div className="min-h-screen flex flex-col bg-gray-100">
             <main className="flex-grow flex flex-col items-center justify-center p-4">

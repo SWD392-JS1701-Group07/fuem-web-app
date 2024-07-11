@@ -3,10 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { Account, AccountCreateModel } from "@/constants/models/Account";
-import { cn } from "@/lib/utils";
+import { AccountCreateModel } from "@/constants/models/Account";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -44,22 +42,7 @@ type FormDetailValues = z.infer<typeof formDetailSchema>
 
 const OperatorAccForm = () => {
     //const { dietId } = useParams();
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
     const { toast } = useToast();
-    const [Account, setAccount] = useState<Account[]>([]);
-
-    useEffect(() => {
-        const initialize = async () => {
-            try {
-            } catch (err: any) {
-                setError(`Error initializing the app: ${err.message}`);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        initialize();
-    }, [])
     const defaultValues: Partial<FormDetailValues> = {
         name: "",
         subjectId: 0,
@@ -105,7 +88,6 @@ const OperatorAccForm = () => {
                     title: "Create success",
                     description: "Operator account has been created",
                 })
-                setIsLoading(false);
             })
             .catch((error) => {
                 toast({
@@ -114,12 +96,9 @@ const OperatorAccForm = () => {
                     variant: "destructive"
                 })
                 console.log("error", error)
-                setIsLoading(false);
             })
             .finally(() => {
-                setIsLoading(false);
             })
-        setIsLoading(false);
         //router.push(`/dashboard/diets/${dietId}/view`);
     }
     return (

@@ -14,6 +14,7 @@ const DashBoardNavBar = () => {
     setUser(null)
     navigate('/')
   }
+  console.log(user)
   return (
     <div>
       <header className="z-50 w-full bg-white">

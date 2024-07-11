@@ -71,13 +71,10 @@ const EventDashboardDetail = () => {
             })
         }
     }
-    const handlebuild = () => {
-        console.log("build")
-    }
     console.log("data:", event);
     return (
         <div className="w-full">
-            <div className="flex justify-between w-full p-3 bg-purple-400 text-gray-50 flex">
+            <div className="flex justify-between w-full p-3 bg-purple-400 text-gray-50">
                 <div className="flex">
                     <h1 className="text-5xl">{event?.name}</h1>
                     <Button className={`border-4 border-${color} bg-white text-${color} rounded-3xl m-0 p-0 px-2`}>{event?.eventStatus}</Button>

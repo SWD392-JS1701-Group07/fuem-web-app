@@ -1,5 +1,3 @@
-"use client"
-import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import {
     BarChart,
@@ -66,7 +64,6 @@ const data = [
 ];
 
 const ColumnDiagram = ({ }: Props) => {
-    const [loading, setLoading] = useState(true);
 
     return (
         <div className="w-4/6 m-2 mx-5">

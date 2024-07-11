@@ -2,9 +2,7 @@
 
 import {
     HandCoins, LandPlot, LayoutDashboard, LucideFootprints,
-    Newspaper,
     PawPrint, PocketKnife, Rabbit, ShoppingBag, Star,
-    Ticket,
     User, UserCog, UtensilsCrossed
 } from 'lucide-react'
 import { useState } from 'react'

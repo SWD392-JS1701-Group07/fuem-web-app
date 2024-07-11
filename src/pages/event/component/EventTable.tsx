@@ -198,6 +198,7 @@ export const columns: ColumnDef<Event>[] = [
         id: "actions",
         enableHiding: false,
         header: ({ column }) => {
+            console.log(column)
             return (
                 // <Button
                 //     variant="ghost"
@@ -210,8 +211,8 @@ export const columns: ColumnDef<Event>[] = [
             )
         },
         cell: ({ row }) => {
-            const payment = row.original
-
+            // const payment = row.original
+            console.log(row)
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
