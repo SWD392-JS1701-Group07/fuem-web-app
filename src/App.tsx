@@ -23,6 +23,9 @@ import CollaboratorList from './pages/dashboard/collaborator/CollaboratorList'
 import RegistedEventList from './pages/collaborator/RegistedEventList'
 import Cart from './pages/cart/Cart'
 import CartCallback from './pages/cart/CartCallback'
+import OperatorList from './pages/dashboard/operator/OperatorList'
+import VisitorList from './pages/dashboard/Visitor/VisitorList'
+import StaffList from './pages/dashboard/Staff/StaffList'
 
 function App() {
   //const { component: Component, path } = routes[3];
@@ -70,6 +73,9 @@ function App() {
             <Route path="event/:id" element={<EventDashboardDetail />} />
             <Route path="event/create" element={<CreateEvent />} />
             <Route path="sponsor" element={<SponsorList />} />
+            <Route path="operator" element={<OperatorList />} />
+            <Route path="visitor" element={<VisitorList />} />
+            <Route path="staff" element={<StaffList />} />
             <Route path="operator/create" element={<OperatorAccCreate />} />
             <Route path="staff/create" element={<StaffCreate />} />
             <Route path="collaborator" element={<CollaboratorList />} />

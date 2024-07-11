@@ -32,6 +32,7 @@ const SponsorList = () => {
     console.log(data)
     return (
         <div className="w-full h-screen">
+            <p className="text-3xl">Sponsor</p>
             <SponsorTable data={data} />
         </div>
     );

@@ -13,13 +13,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-//import { useParams } from "react-router-dom"
 import { create } from "@/api/eventApi"
 import { EventCreateModel, ScheduleCreateModel, SponsorshipCreateModel } from "@/constants/models/Event"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { useToast } from "@/components/ui/use-toast"
 import { Card } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
 import { useNavigate } from "react-router-dom"
 import { Textarea } from "@/components/ui/textarea"
 
@@ -30,44 +28,41 @@ const formDetailSchema = z.object({
     endSellDate: z.string(),
     description: z.string()
         .min(3, { message: 'Name must be at least 3 characters.' }),
-    price: z.number({
+    price: z.string({
         required_error: "required",
-        invalid_type_error: "must be a number",
     }),
-    quantity: z.number({
+    quantity: z.string({
         required_error: "required",
-        invalid_type_error: "must be a number",
     })
         .min(1, { message: 'Quantity must be at least 1.' }),
     avatarUrl: z.string()
         .optional(),
     subjectId: z.string(),
     schedules: z.array(z.object({
-        date: z.string(),
-        startTime: z.string(),
-        endTime: z.string(),
-        place: z.string(),
-    })
-    ).optional(),
+        date: z.string().optional(),
+        startTime: z.string().optional(),
+        endTime: z.string().optional(),
+        place: z.string().optional(),
+    }).optional()
+    ),
     sponsor: z.array(z.object({
         name: z.string().
-            min(3, { message: 'Name must be at least 3 characters.' }),
-        email: z.string().email(),
+            min(3, { message: 'Name must be at least 3 characters.' }).optional(),
+        email: z.string().email().optional(),
         phoneNumber: z.string()
             .min(9, { message: 'Phone number must be 9 or 10 characters.' })
-            .max(10, { message: 'Phone number must be 9 or 10 characters.' }),
+            .max(10, { message: 'Phone number must be 9 or 10 characters.' }).optional(),
         sponsorType: z.string()
             .min(3, { message: 'Name must be at least 3 characters.' })
             .max(50, { message: 'Name must be at most 50 characters.' })
             .optional(),
-        sponsorSum: z.number({
+        sponsorSum: z.string({
             required_error: "required",
-            invalid_type_error: "must be a number",
-        }).min(1000, { message: 'Sum must be greater than 0.' }),
+        }).min(1000, { message: 'Sum must be greater than 0.' }).optional(),
         sponsorDescription: z.string().optional(),
-        avatarFile: z.string().optional(),
-        newAccount: z.boolean().optional()
-    })).optional()
+        avatarFile: z.string().optional()
+    }).optional()
+    ).optional()
 })
 
 type FormDetailValues = z.infer<typeof formDetailSchema>
@@ -97,8 +92,8 @@ export function CreateEventForm() {
     const defaultValues: Partial<FormDetailValues> = {
         name: "",
         description: "",
-        price: 0,
-        quantity: 0,
+        price: "",
+        quantity: "",
         avatarUrl: "",
         subjectId: "0",
         schedules: [],
@@ -125,29 +120,29 @@ export function CreateEventForm() {
             description: values.description,
             startSellDate: new Date(values.startSellDate),
             endSellDate: new Date(values.endSellDate),
-            price: values.price,
-            quantity: values.quantity,
+            price: parseInt(values.price),
+            quantity: parseInt(values.quantity),
             avatarUrl: values.avatarUrl ? values.avatarUrl : null,
             ownerId: 5,
             eventStatus: "2",
             subjectId: parseInt(values.subjectId),
             scheduleList: values.schedules ? values.schedules.map((schedule) => {
                 return {
-                    startTime: new Date(schedule.date.split('T')[0] + "T" + schedule.startTime + ":00Z"),
-                    endTime: new Date(schedule.date.split('T')[0] + "T" + schedule.endTime + ":00Z"),
-                    place: schedule.place
+                    startTime: new Date(schedule?.date?.split('T')[0] + "T" + schedule?.startTime + ":00Z"),
+                    endTime: new Date(schedule?.date?.split('T')[0] + "T" + schedule?.endTime + ":00Z"),
+                    place: schedule?.place || "" // Provide a default value of an empty string if place is undefined
                 }
             }) : [],
             sponsorships: values.sponsor ? values.sponsor.map((sponsor) => {
                 return {
-                    description: sponsor.sponsorDescription || "",
-                    type: sponsor.sponsorType || "",
-                    title: sponsor.name,
-                    sum: sponsor.sponsorSum,
+                    description: sponsor?.sponsorDescription || "",
+                    type: sponsor?.sponsorType || "",
+                    title: sponsor?.name || "",
+                    sum: parseInt(sponsor?.sponsorSum || "0"),
                     sponsor: {
-                        name: sponsor.name,
-                        email: sponsor.email,
-                        phoneNumber: sponsor.phoneNumber,
+                        name: sponsor?.name || "",
+                        email: sponsor?.email || "",
+                        phoneNumber: sponsor?.phoneNumber || "",
                         avatarUrl: "#",
                         accountId: 0
                     }
@@ -155,7 +150,9 @@ export function CreateEventForm() {
             }) : [] as SponsorshipCreateModel[]
         };
         create(eventCreateModel)
-            .then(() => {
+            .then((res) => {
+                res.data;
+                //UploadAvatar(res.data.id, values.avatarUrl);
                 toast({
                     title: "Create success",
                     description: "Event has been created",
@@ -292,7 +289,7 @@ export function CreateEventForm() {
                                                     <FormLabel>Ticket quantity*</FormLabel>
                                                     <FormDescription>ticket quantity</FormDescription>
                                                     <FormControl>
-                                                        <Input type="number" min="0" placeholder="0" step={1} {...field} onChange={event => field.onChange(+event.target.value)} />
+                                                        <Input type="number" min="1" placeholder="0" step={1} {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -309,7 +306,7 @@ export function CreateEventForm() {
                                                     <FormDescription>Enter 0 if the event is free</FormDescription>
                                                     <div className="flex">
                                                         <FormControl>
-                                                            <Input type="number" min="0" placeholder="0" step={1000} {...field} onChange={event => field.onChange(+event.target.value)} />
+                                                            <Input type="number" min="10000" placeholder="0" step={1000} {...field} />
                                                         </FormControl>
                                                         <FormLabel className="text-lg self-end">VND</FormLabel>
                                                     </div>
@@ -388,7 +385,7 @@ export function CreateEventForm() {
                                                 <FormItem>
                                                     <FormLabel>Date*</FormLabel>
                                                     <FormControl>
-                                                        <Input type="date" {...field} min={new Date().toISOString().split('T')[0]} />
+                                                        <Input required type="date" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -401,7 +398,7 @@ export function CreateEventForm() {
                                                 <FormItem>
                                                     <FormLabel>start Time*</FormLabel>
                                                     <FormControl>
-                                                        <Input type="time" {...field} />
+                                                        <Input required type="time" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -414,7 +411,7 @@ export function CreateEventForm() {
                                                 <FormItem>
                                                     <FormLabel>End Time*</FormLabel>
                                                     <FormControl>
-                                                        <Input type="time" {...field} />
+                                                        <Input required type="time" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -427,7 +424,7 @@ export function CreateEventForm() {
                                                 <FormItem>
                                                     <FormLabel>Place*</FormLabel>
                                                     <FormControl>
-                                                        <Input {...field} />
+                                                        <Input required {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -465,7 +462,7 @@ export function CreateEventForm() {
                                                 <FormItem>
                                                     <FormLabel>name*</FormLabel>
                                                     <FormControl>
-                                                        <Input {...field} />
+                                                        <Input required {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -478,7 +475,7 @@ export function CreateEventForm() {
                                                 <FormItem>
                                                     <FormLabel>Email*</FormLabel>
                                                     <FormControl>
-                                                        <Input {...field} />
+                                                        <Input required {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -491,7 +488,7 @@ export function CreateEventForm() {
                                                 <FormItem>
                                                     <FormLabel>Phone Number*</FormLabel>
                                                     <FormControl>
-                                                        <Input {...field} />
+                                                        <Input required {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -506,7 +503,7 @@ export function CreateEventForm() {
                                                         <FormItem>
                                                             <FormLabel>Sponsor Type</FormLabel>
                                                             <FormControl>
-                                                                <Input {...field} />
+                                                                <Input required {...field} />
                                                             </FormControl>
                                                             <FormMessage />
                                                         </FormItem>
@@ -522,7 +519,7 @@ export function CreateEventForm() {
                                                             <FormLabel>Sponsor Sum</FormLabel>
                                                             <div className="flex">
                                                                 <FormControl>
-                                                                    <Input type="number" min="0" placeholder="0" step={1000} {...field} onChange={event => field.onChange(+event.target.value)} />
+                                                                    <Input required type="number" min="10000" placeholder="0" step={1000} {...field} />
                                                                 </FormControl>
                                                                 <FormLabel className="text-lg self-end">VND</FormLabel>
                                                             </div>
@@ -532,32 +529,6 @@ export function CreateEventForm() {
                                                 />
                                             </div>
                                         </div>
-                                        {/* <FormField
-                                            control={form.control}
-                                            name={`sponsor.${sponsor.id}.avatarFile`}
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Sponsor Image</FormLabel>
-                                                    <FormControl>
-                                                        <Input {...field} type="file" />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        /> */}
-                                        <FormField
-                                            control={form.control}
-                                            name={`sponsor.${sponsor.id}.newAccount`}
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Create a new account:    </FormLabel>
-                                                    <FormControl>
-                                                        <Checkbox {...field} value={(field.value == null ? "false" : "true")} />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
                                     </Card>
                                 ))}
                             </AccordionContent>

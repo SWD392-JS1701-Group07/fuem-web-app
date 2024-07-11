@@ -28,12 +28,12 @@ const adminSidebarLinks = [
     },
     {
         icon: <UserCog className="w-6 h-6" />,
-        route: '/dashboard/staffs',
+        route: '/dashboard/staff',
         label: 'Staffs'
     },
     {
         icon: <LucideFootprints className="w-6 h-6" />,
-        route: '/dashboard/visitors',
+        route: '/dashboard/visitor',
         label: 'Visitors'
     },
 ]
