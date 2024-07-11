@@ -2,22 +2,19 @@ import { OrderTicket } from '@/constants/models/Ticket'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import { ColumnDef } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
+import TicketDetail from './TicketDetail'
 
 export const columns: ColumnDef<OrderTicket>[] = [
   {
     accessorKey: 'id',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Id
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      )
+    header: () => {
+      return <></>
     },
-    cell: ({ row }) => <div className="capitalize">{row.getValue('id')}</div>
+    cell: ({ row }) => (
+      <div className="capitalize">
+        <TicketDetail ticketId={row.getValue('id')} />
+      </div>
+    )
   },
   {
     accessorKey: 'name',

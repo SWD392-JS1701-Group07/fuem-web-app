@@ -26,9 +26,8 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { OrderTicket } from '@/constants/models/Ticket' // Make sure to create and import the Ticket model
+import { OrderTicket } from '@/constants/models/Ticket'
 import { columns } from './TicketColumns'
-import TicketDetail from './TicketDetail'
 
 type Props = {
   data: OrderTicket[]
@@ -39,7 +38,6 @@ const TicketTable = ({ data }: Props) => {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-  const [selectedTicketId, setSelectedTicketId] = React.useState<string | null>(null)
 
   const table = useReactTable({
     data,
@@ -63,9 +61,6 @@ const TicketTable = ({ data }: Props) => {
   console.log(table)
   return (
     <div className="w-full">
-      <TicketDetail
-        ticketId="1fa9b4be-43d8-4e73-8aaa-ebdc2efd3b14"
-      />
       <div className="flex items-center pb-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -112,12 +107,7 @@ const TicketTable = ({ data }: Props) => {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  onClick={() => setSelectedTicketId(row.original.id)}
-                  className="cursor-pointer"
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
