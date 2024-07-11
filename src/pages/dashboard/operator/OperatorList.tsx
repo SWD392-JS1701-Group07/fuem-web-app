@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Operator } from "@/constants/models/Operator";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import { getByRole } from "@/api/accountApi";
 import OperatorTable from "./Component/OperatorTable";
 
 const DashboardOperatorList = () => {
     const [data, setData] = useState<Operator[]>([]);
-    const nav = useNavigate();
+  //  const nav = useNavigate();
 
     React.useEffect(() => {
         getOperators();
