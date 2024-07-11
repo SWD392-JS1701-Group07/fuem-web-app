@@ -15,3 +15,7 @@ export const getTickets = async (params: {
     throw error
   }
 }
+
+export const getTicketDetail = async (id: string) => {
+  return await axiosClient.get(`api/tickets/${id}`)
+}
