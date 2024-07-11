@@ -164,7 +164,7 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="mx-auto h-screen bg-black p-4 px-10 pt-10 text-white">
+    <div className="mx-auto bg-black p-4 px-10 pt-10 text-white">
       <div className="flex items-center space-x-4">
         <Avatar className="h-40 w-40 rounded-full">
           <AvatarImage src={user.avatarUrl || AVATAR_PLACEHOLDER_URL} alt={user.name} />
@@ -183,7 +183,7 @@ const ProfilePage: React.FC = () => {
         </button>
       </div>
 
-      <div className="mt-8">
+      <div className="my-8">
         <h2 className="mb-4 text-3xl font-semibold">Profile Details</h2>
         <form className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {Object.entries(profileFields).map(([key, label]) => (
@@ -281,6 +281,7 @@ const ProfilePage: React.FC = () => {
         </Dialog.Portal>
       </Dialog.Root>
 
+      <h2 className="mb-4 mt-10 text-3xl font-semibold">Your Purchased Tickets</h2>
       <div className="dark">
         <TicketTable data={ticketList} />
       </div>
