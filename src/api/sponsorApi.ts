@@ -12,3 +12,6 @@ export const searchSponsor = async (search: string) => {
         }
     });
 }
+export const getSponsorById = async (id: number) => {
+    return await axiosClient.get(`/api/sponsors/${id}`);
+}
