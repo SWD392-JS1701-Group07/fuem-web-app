@@ -15,7 +15,7 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { addEventImage, create } from "@/api/eventApi"
-import { EventCreateModel, ScheduleCreateModel, SponsorshipCreateModel } from "@/constants/models/Event"
+import { EventCreateModel, SponsorshipCreateModel, Subject } from "@/constants/models/Event"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { useToast } from "@/components/ui/use-toast"
 import { Card } from "@/components/ui/card"
@@ -31,6 +31,7 @@ import {
 import { Sponsor } from "@/constants/models/Sponsor"
 import { searchSponsor } from "@/api/sponsorApi"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { getAll } from "@/api/subjectApi"
 
 const formDetailSchema = z.object({
     name: z.string()
@@ -49,48 +50,16 @@ const formDetailSchema = z.object({
     avatarUrl: z.string()
         .optional(),
     subjectId: z.string(),
-    schedules: z.array(z.object({
-        date: z.string().optional(),
-        startTime: z.string().optional(),
-        endTime: z.string().optional(),
-        place: z.string().optional(),
-    }).optional()
-    ),
-    sponsor: z.array(z.object({
-        name: z.string().
-            min(3, { message: 'Name must be at least 3 characters.' }).optional(),
-        email: z.string().email().optional(),
-        phoneNumber: z.string()
-            .min(9, { message: 'Phone number must be 9 or 10 characters.' })
-            .max(10, { message: 'Phone number must be 9 or 10 characters.' }).optional(),
-        sponsorType: z.string()
-            .min(3, { message: 'Name must be at least 3 characters.' })
-            .max(50, { message: 'Name must be at most 50 characters.' })
-            .optional(),
-        sponsorSum: z.string({
-            required_error: "required",
-        }).min(1000, { message: 'Sum must be greater than 0.' }).optional(),
-        sponsorDescription: z.string().optional(),
-        avatarFile: z.string().optional()
-    }).optional()
-    ).optional()
 })
 
 type FormDetailValues = z.infer<typeof formDetailSchema>
-type Sponsorship = {
-    id: number,
-    sponsorship: SponsorshipCreateModel
-}
-type Schedule = {
-    id: number,
-    schedule: ScheduleCreateModel
+type ScheduleInCreate = {
+    date: string,
+    startTime: string,
+    endTime: string,
+    place: string
 }
 
-const Subject = [
-    { id: 1, name: "Computer fundamental" },
-    { id: 2, name: "Software Engineering" },
-    { id: 3, name: "Mathematics" },
-]
 export function CreateEventForm() {
     const nav = useNavigate();
     const [avatarFile, setAvatarFile] = useState<File | null>(null)
@@ -98,16 +67,25 @@ export function CreateEventForm() {
     const [searchValue, setSearchValue] = useState("")
     const [searchSponsorList, setSearchSponsorList] = useState<Sponsor[]>([])
     const { toast } = useToast();
-    const [Sponsorships, setSponsorships] = useState<Sponsorship[]>([]);
-    const [schedules, setSchedules] = useState<Schedule[]>([{ id: 0, schedule: { startTime: new Date(), endTime: new Date(), place: "place" } }]);
+    const [Subject, setSubject] = useState<Subject[]>([])
+    const [Sponsorships, setSponsorships] = useState<SponsorshipCreateModel[]>([]);
+    const [schedules, setSchedules] = useState<ScheduleInCreate[]>([{ date: new Date().toString(), startTime: new Date().toString(), endTime: new Date().toString(), place: "" }]);
     useEffect(() => {
         searchSponsor(searchValue).then((res) => {
             console.log("search sponsor", res.data)
             setSearchSponsorList(res.data)
-        }).catch(() => {
+        }).catch((error) => {
+            console.log("search sponsor fail", error)
             setSearchSponsorList([])
         })
     }, [searchValue])
+    useEffect(() => {
+        getAll().then((res) => {
+            setSubject(res.data)
+        }).catch((error) => {
+            console.log("Get subject fail", error)
+        })
+    }, [])
     const defaultValues: Partial<FormDetailValues> = {
         name: "",
         description: "",
@@ -115,8 +93,6 @@ export function CreateEventForm() {
         quantity: "",
         avatarUrl: "",
         subjectId: "0",
-        schedules: [],
-        sponsor: []
     }
 
     const form = useForm<FormDetailValues>({
@@ -132,7 +108,7 @@ export function CreateEventForm() {
 
     async function onSubmit(values: FormDetailValues) {
         console.log("submit")
-        //console.log("Sponsor avatar: ", values.sponsor ? values.sponsor[0].avatarFile : null)
+
         const eventCreateModel: EventCreateModel = {
             name: values.name,
             place: "place",
@@ -142,31 +118,30 @@ export function CreateEventForm() {
             price: parseInt(values.price),
             quantity: parseInt(values.quantity),
             avatarUrl: values.avatarUrl ? values.avatarUrl : null,
-            ownerId: 5,
+            ownerId: localStorage.getItem("userId") ? parseInt(localStorage.getItem("userId") as string) : 0,
             eventStatus: "2",
             subjectId: parseInt(values.subjectId),
-            scheduleList: values.schedules ? values.schedules.map((schedule) => {
+            scheduleList: schedules ? schedules.map((schedule) => {
                 return {
                     startTime: new Date(schedule?.date?.split('T')[0] + "T" + schedule?.startTime + ":00Z"),
                     endTime: new Date(schedule?.date?.split('T')[0] + "T" + schedule?.endTime + ":00Z"),
-                    place: schedule?.place || "" // Provide a default value of an empty string if place is undefined
+                    place: schedule?.place || ""
                 }
             }) : [],
-            sponsorships: values.sponsor ? values.sponsor.map((sponsor) => {
+            sponsorships: Sponsorships.map((sponsorship) => {
                 return {
-                    description: sponsor?.sponsorDescription || "",
-                    type: sponsor?.sponsorType || "",
-                    title: sponsor?.name || "",
-                    sum: parseInt(sponsor?.sponsorSum || "0"),
+                    description: sponsorship.description || "",
+                    type: sponsorship.type || "",
+                    title: sponsorship.title || "",
+                    sum: sponsorship.sum || 0,
                     sponsor: {
-                        name: sponsor?.name || "",
-                        email: sponsor?.email || "",
-                        phoneNumber: sponsor?.phoneNumber || "",
-                        avatarUrl: "#",
+                        name: sponsorship.sponsor.name || "",
+                        email: sponsorship.sponsor.email || "",
+                        phoneNumber: sponsorship.sponsor.phoneNumber || "",
                         accountId: null
                     }
                 }
-            }) : [] as SponsorshipCreateModel[]
+            })
         };
         create(eventCreateModel)
             .then((res) => {
@@ -178,20 +153,32 @@ export function CreateEventForm() {
                 //@ts-expect-error
                 formData.append('avatarProfile', avatarFile);
                 console.log("formData", formData.get('id'), formData.get('avatarProfile'));
-                addEventImage(formData).then(() => {
+                if (avatarFile) {
+                    addEventImage(formData).then(() => {
+                        toast({
+                            title: "Create success",
+                            description: "Event has been created",
+                        })
+                        nav("/dashboard/event");
+                    }).catch((error) => {
+                        console.log("Add image fail", error)
+                        toast({
+                            title: "Event created without Image",
+                            description: "Event has been created but event image has not been uploaded",
+                            style: {
+                                backgroundColor: "yellow",
+                                color: "black"
+                            }
+                        })
+                        nav("/dashboard/event");
+                    })
+                } else {
                     toast({
                         title: "Create success",
                         description: "Event has been created",
                     })
                     nav("/dashboard/event");
-                }).catch((error) => {
-                    console.log("Add image fail", error)
-                    toast({
-                        title: "Create fail",
-                        description: error.response.data.title,
-                        variant: "destructive",
-                    })
-                })
+                }
             })
             .catch((error) => {
                 toast({
@@ -208,107 +195,94 @@ export function CreateEventForm() {
         ev.preventDefault();
         if (Sponsorships.length == 0) {
             setSponsorships([{
-                id: Sponsorships.length,
-                sponsorship: {
-                    description: "",
-                    type: "",
-                    title: "",
-                    sum: 0,
-                    sponsor: {
-                        name: "",
-                        email: "",
-                        phoneNumber: "",
-                        avatarUrl: "",
-                        accountId: null
-                    }
+
+                description: "",
+                type: "",
+                title: "",
+                sum: 0,
+                sponsor: {
+                    name: "",
+                    email: "",
+                    phoneNumber: "",
+                    accountId: null
                 }
-            }])
+            }
+            ])
         } else {
             setSponsorships([...Sponsorships, {
-                id: Sponsorships.length,
-                sponsorship: {
-                    description: "",
-                    type: "",
-                    title: "",
-                    sum: 0,
-                    sponsor: {
-                        name: "",
-                        email: "",
-                        phoneNumber: "",
-                        avatarUrl: "",
-                        accountId: null
-                    }
+                description: "",
+                type: "",
+                title: "",
+                sum: 0,
+                sponsor: {
+                    name: "",
+                    email: "",
+                    phoneNumber: "",
+                    accountId: null
                 }
-            }])
+            }
+            ])
         }
     }
     const handleAddSponsor = (ev: React.MouseEvent, sponsor: Sponsor) => {
         ev.preventDefault();
         if (Sponsorships.length == 0) {
             setSponsorships([{
-                id: Sponsorships.length,
-                sponsorship: {
-                    description: "",
-                    type: "",
-                    title: "",
-                    sum: 0,
-                    sponsor: {
-                        name: sponsor?.name || "",
-                        email: sponsor?.email || "",
-                        phoneNumber: sponsor?.phoneNumber || "",
-                        avatarUrl: sponsor?.avatarUrl || "",
-                        accountId: sponsor?.accountId || null
-                    }
+                description: "",
+                type: "",
+                title: "",
+                sum: 0,
+                sponsor: {
+                    name: sponsor?.name || "",
+                    email: sponsor?.email || "",
+                    phoneNumber: sponsor?.phoneNumber || "",
+                    accountId: sponsor?.accountId || null
                 }
-            }])
+            }
+            ])
         } else {
             setSponsorships([...Sponsorships, {
-                id: Sponsorships.length,
-                sponsorship: {
-                    description: "",
-                    type: "",
-                    title: "",
-                    sum: 0,
-                    sponsor: {
-                        name: sponsor?.name || "",
-                        email: sponsor?.email || "",
-                        phoneNumber: sponsor?.phoneNumber || "",
-                        avatarUrl: sponsor?.avatarUrl || "",
-                        accountId: sponsor?.accountId || null
-                    }
+                description: "",
+                type: "",
+                title: "",
+                sum: 0,
+                sponsor: {
+                    name: sponsor?.name || "",
+                    email: sponsor?.email || "",
+                    phoneNumber: sponsor?.phoneNumber || "",
+                    accountId: sponsor?.accountId || null
                 }
-            }])
+            }
+            ])
         }
     }
     const handleAddSchedule = (ev: React.MouseEvent) => {
         ev.preventDefault();
         if (schedules.length == 0) {
             setSchedules([{
-                id: schedules.length,
-                schedule: {
-                    startTime: new Date(),
-                    endTime: new Date(),
-                    place: "place"
-                }
-            }])
+                date: new Date().toString(),
+                startTime: new Date().toString(),
+                endTime: new Date().toString(),
+                place: ""
+            }
+            ])
         } else {
             setSchedules([...schedules, {
-                id: schedules.length,
-                schedule: {
-                    startTime: new Date(),
-                    endTime: new Date(),
-                    place: "place"
-                }
-            }])
+                date: new Date().toString(),
+                startTime: new Date().toString(),
+                endTime: new Date().toString(),
+                place: ""
+            }
+            ])
         }
     }
     const handleDeleteSponsor = (id: number, ev: React.MouseEvent) => {
         ev.preventDefault();
-        setSponsorships(Sponsorships.filter(sponsorship => sponsorship.id !== id))
+        setSponsorships(Sponsorships.filter(sponsorship => sponsorship !== Sponsorships[id]))
     }
     const handleDeleteSchedule = (id: number, ev: React.MouseEvent) => {
         ev.preventDefault();
-        setSchedules(schedules.filter(schedule => schedule.id !== id))
+        setSchedules(schedules.filter(schedule => schedule !== schedules[id]))
     }
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -320,13 +294,13 @@ export function CreateEventForm() {
         <>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                    <Accordion type="multiple" defaultValue={["general"]}>
+                    <Accordion type="multiple" defaultValue={["general", "schedule"]}>
                         <AccordionItem title="Event Detail" value="general">
                             <AccordionTrigger className="bg-slate-200 pl-2">General information*</AccordionTrigger>
                             <AccordionContent>
                                 <div className="flex w-full">
                                     <div>
-                                        {avatarFile ? <img src={URL.createObjectURL(avatarFile)} alt="avatar" /> : <img src={EVENT_PLACEHOLDER_URL} />}
+                                        {avatarFile ? <img src={URL.createObjectURL(avatarFile)} alt="avatar" className="max-h-80" /> : <img src={EVENT_PLACEHOLDER_URL} />}
                                         <input type="file" accept="image/*" placeholder="Name of the event" onChange={handleAvatarChange} />
                                     </div>
                                     <div className="w-full ml-5">
@@ -408,7 +382,7 @@ export function CreateEventForm() {
                                                         <FormControl>
                                                             <Input type="number" min="10000" placeholder="0" step={1000} {...field} />
                                                         </FormControl>
-                                                        <FormLabel className="text-lg self-end">VND</FormLabel>
+                                                        <FormLabel className="text-lg self-end ml-1">VND</FormLabel>
                                                     </div>
                                                     <FormMessage />
                                                 </FormItem>
@@ -454,75 +428,62 @@ export function CreateEventForm() {
                             <AccordionTrigger className="bg-slate-200 pl-2" >Schedule*</AccordionTrigger>
                             <AccordionContent>
                                 <Button onClick={handleAddSchedule}>Add Schedule</Button>
-                                {schedules.map((schedule) => (
+                                {schedules.map((schedule, id) => (
                                     <Card>
                                         <div className="flex justify-between m-2">
-                                            <h1 className="text-lg">Schedule {schedule.id + 1}*</h1>
+                                            <h1 className="text-lg">Schedule {id + 1}*</h1>
                                             {(schedules.length > 1) ?
                                                 <Button
-                                                    onClick={(e) => handleDeleteSchedule(schedule.id, e)}
+                                                    onClick={(e) => handleDeleteSchedule(id, e)}
                                                 >Remove</Button>
                                                 : null
                                             }
                                         </div>
                                         <div className="mt-5">
-                                            <FormField
-                                                control={form.control}
-                                                name={`schedules.${schedule.id}.date`}
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel>Date*</FormLabel>
-                                                        <FormControl>
-                                                            <Input required type="date" {...field} />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
+                                            <span>Date*</span>
+                                            <Input required type="date" value={schedule.date} onChange={(e) => {
+                                                setSchedules(schedules.map((schedule, index) => {
+                                                    if (index === id) {
+                                                        return { ...schedule, date: e.target.value }
+                                                    }
+                                                    return schedule
+                                                }))
+                                            }} />
+                                        </div>
+                                        <div className="mt-5">
+                                            <span>Start Time*</span>
+                                            <Input required type="time" value={schedule.startTime} onChange={(e) => {
+                                                setSchedules(schedules.map((schedule, index) => {
+                                                    if (index === id) {
+                                                        return { ...schedule, startTime: e.target.value }
+                                                    }
+                                                    return schedule
+                                                }))
+                                            }}
                                             />
                                         </div>
                                         <div className="mt-5">
-                                            <FormField
-                                                control={form.control}
-                                                name={`schedules.${schedule.id}.startTime`}
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel>start Time*</FormLabel>
-                                                        <FormControl>
-                                                            <Input required type="time" {...field} />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
+                                            <span>End Time*</span>
+                                            <Input required type="time" value={schedule.endTime} onChange={(e) => {
+                                                setSchedules(schedules.map((schedule, index) => {
+                                                    if (index === id) {
+                                                        return { ...schedule, endTime: e.target.value }
+                                                    }
+                                                    return schedule
+                                                }))
+                                            }}
                                             />
                                         </div>
                                         <div className="mt-5">
-                                            <FormField
-                                                control={form.control}
-                                                name={`schedules.${schedule.id}.endTime`}
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel>End Time*</FormLabel>
-                                                        <FormControl>
-                                                            <Input required type="time" {...field} />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </div>
-                                        <div className="mt-5">
-                                            <FormField
-                                                control={form.control}
-                                                name={`schedules.${schedule.id}.place`}
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel>Place*</FormLabel>
-                                                        <FormControl>
-                                                            <Input required {...field} />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
+                                            <span>Place*</span>
+                                            <Input required value={schedule.place} onChange={(e) => {
+                                                setSchedules(schedules.map((schedule, index) => {
+                                                    if (index === id) {
+                                                        return { ...schedule, place: e.target.value }
+                                                    }
+                                                    return schedule
+                                                }))
+                                            }}
                                             />
                                         </div>
                                     </Card>
@@ -567,94 +528,88 @@ export function CreateEventForm() {
                                                 </ScrollArea>
                                             </PopoverContent>
                                         </Popover>
-                                        <Button>clear</Button>
                                     </div>
                                 </div>
-                                {Sponsorships.map((sponsor) => (
+                                {Sponsorships.map((sponsorship, id) => (
                                     <Card className="my-2">
                                         <div className="flex justify-between m-2">
-                                            <h1 className="text-lg">Sponsor {sponsor.id + 1}</h1>
-                                            <Button onClick={(e) => handleDeleteSponsor(sponsor.id, e)}>Remove</Button>
+                                            <h1 className="text-lg">Sponsor {id + 1}</h1>
+                                            <Button onClick={(e) => handleDeleteSponsor(id, e)}>Remove</Button>
                                         </div>
-                                        <FormField
-                                            control={form.control}
-                                            name={`sponsor.${sponsor.id}.name`}
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>name*</FormLabel>
-                                                    <FormControl>
-                                                        {(Sponsorships[sponsor.id].sponsorship.sponsor.name != "") ?
-                                                            <Input required {...field} value={Sponsorships[sponsor.id].sponsorship.sponsor.name} disabled /> :
-                                                            <Input required {...field} />}
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <div>
-                                            <FormField
-                                                control={form.control}
-                                                name={`sponsor.${sponsor.id}.email`}
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel>Email*</FormLabel>
-                                                        <FormControl>
-                                                            {(Sponsorships[sponsor.id].sponsorship.sponsor.email != "") ?
-                                                                <Input required {...field} value={Sponsorships[sponsor.id].sponsorship.sponsor.email} disabled /> :
-                                                                <Input required {...field} />}
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
+                                        <div className="mt-5">
+                                            <span>Name*</span>
+                                            {(sponsorship.sponsor.name != "") ?
+                                                <Input required value={sponsorship.sponsor.name} disabled /> :
+                                                <Input required value={sponsorship.sponsor.name} onChange={(e) => {
+                                                    setSponsorships(Sponsorships.map((sponsorship, index) => {
+                                                        if (index === id) {
+                                                            return { ...sponsorship, sponsor: { ...sponsorship.sponsor, name: e.target.value } }
+                                                        }
+                                                        return sponsorship
+                                                    }))
+                                                }
+                                                }
+                                                />}
                                         </div>
-                                        <FormField
-                                            control={form.control}
-                                            name={`sponsor.${sponsor.id}.phoneNumber`}
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Phone Number*</FormLabel>
-                                                    <FormControl>
-                                                        {(Sponsorships[sponsor.id].sponsorship.sponsor.phoneNumber != "") ?
-                                                            <Input required {...field} value={Sponsorships[sponsor.id].sponsorship.sponsor.phoneNumber} disabled /> :
-                                                            <Input required {...field} />}
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <div className="flex">
+                                        <div className="mt-5">
+                                            <span>Email*</span>
+                                            {(sponsorship.sponsor.email != "") ?
+                                                <Input required value={sponsorship.sponsor.email} disabled /> :
+                                                <Input required value={sponsorship.sponsor.email} onChange={(e) => {
+                                                    setSponsorships(Sponsorships.map((sponsorship, index) => {
+                                                        if (index === id) {
+                                                            return { ...sponsorship, sponsor: { ...sponsorship.sponsor, email: e.target.value } }
+                                                        }
+                                                        return sponsorship
+                                                    }))
+                                                }}
+                                                />}
+                                        </div>
+                                        <div className="mt-5">
+                                            <span>Phone number*</span>
+                                            {(sponsorship.sponsor.phoneNumber != "") ?
+                                                <Input required value={sponsorship.sponsor.phoneNumber} disabled /> :
+                                                <Input required value={sponsorship.sponsor.phoneNumber} onChange={(e) => {
+                                                    setSponsorships(Sponsorships.map((sponsorship, index) => {
+                                                        if (index === id) {
+                                                            return { ...sponsorship, sponsor: { ...sponsorship.sponsor, phoneNumber: e.target.value } }
+                                                        }
+                                                        return sponsorship
+                                                    }))
+                                                }}
+                                                />}
+                                        </div>
+                                        <div className="flex mt-5">
                                             <div className="w-full mr-10">
-                                                <FormField
-                                                    control={form.control}
-                                                    name={`sponsor.${sponsor.id}.sponsorType`}
-                                                    render={({ field }) => (
-                                                        <FormItem>
-                                                            <FormLabel>Sponsor Type</FormLabel>
-                                                            <FormControl>
-                                                                <Input required {...field} />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    )}
-                                                />
+                                                <span>Sponsor Type*</span>
+                                                <Input required value={sponsorship.type} onChange={
+                                                    (e) => {
+                                                        setSponsorships(Sponsorships.map((sponsorship, index) => {
+                                                            if (index === id) {
+                                                                return { ...sponsorship, type: e.target.value }
+                                                            }
+                                                            return sponsorship
+                                                        }))
+                                                    }
+                                                } />
                                             </div>
                                             <div className="w-full pr-4">
-                                                <FormField
-                                                    control={form.control}
-                                                    name={`sponsor.${sponsor.id}.sponsorSum`}
-                                                    render={({ field }) => (
-                                                        <FormItem>
-                                                            <FormLabel>Sponsor Sum</FormLabel>
-                                                            <div className="flex">
-                                                                <FormControl>
-                                                                    <Input required type="number" min="10000" placeholder="0" step={1000} {...field} />
-                                                                </FormControl>
-                                                                <FormLabel className="text-lg self-end">VND</FormLabel>
-                                                            </div>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    )}
+                                                <span>Sponsorship Sum*</span>
+                                                <Input
+                                                    required
+                                                    type="number"
+                                                    min="10000"
+                                                    placeholder="0"
+                                                    step={1000}
+                                                    value={sponsorship.sum}
+                                                    onChange={(e) => {
+                                                        setSponsorships(Sponsorships.map((sponsorship, index) => {
+                                                            if (index === id) {
+                                                                return { ...sponsorship, sum: parseInt(e.target.value) }
+                                                            }
+                                                            return sponsorship
+                                                        }))
+                                                    }}
                                                 />
                                             </div>
                                         </div>

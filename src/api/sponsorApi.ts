@@ -14,11 +14,16 @@ export const getById = async (id: string) => {
 }
 
 export const searchSponsor = async (search: string) => {
-  return await axiosClient.get(`/api/sponsors`, {
-    params: {
-      searchTerm: search,
-      page: 1,
-      pageSize: 1000
-    }
-  })
+    return await axiosClient.get(`/api/sponsors`, {
+        params: {
+            searchTerm: search,
+            page: 1,
+            pageSize: 1000
+        }
+    });
 }
+
+export const getSponsorById = async (id: number) => {
+    return await axiosClient.get(`/api/sponsors/${id}`)
+}
+

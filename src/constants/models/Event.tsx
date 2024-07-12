@@ -1,5 +1,5 @@
 import { Operator } from './Operator'
-import { SponsorDetail } from './Sponsor'
+import { Sponsor, SponsorDetail } from './Sponsor'
 
 export type Event = {
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -18,6 +18,7 @@ export type Event = {
   ownerId: number
   subjectId: number
   scheduleList: ScheduleList[]
+  sponsorships: Sponsorships[]
 }
 
 export type Subject = {
@@ -89,7 +90,18 @@ export type SponsorshipCreateModel = {
     name: string
     email: string
     phoneNumber: string
-    avatarUrl: string
     accountId: number | null
   }
 }
+
+export type Sponsorships =
+  {
+    id: number,
+    description: string,
+    type: string,
+    title: string,
+    sum: string,
+    sponsorId: number,
+    eventId: number,
+    sponsor: Sponsor
+  }

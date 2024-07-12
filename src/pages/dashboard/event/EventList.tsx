@@ -13,8 +13,7 @@ const DashboardEventList = () => {
         getEvents();
     }, [])
     const getEvents = async () => {
-        //const response = await getAll();
-        const response = await getAll();
+        const response = await getAll("");
         //@ts-expect-error
         setData(response);
         console.log("data: ", response)
