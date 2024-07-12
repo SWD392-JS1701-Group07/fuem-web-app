@@ -4,9 +4,22 @@ export type Ticket = {
   name: string
   phoneNumber: string
   email: string
-  price: number,
+  price: number
   // eslint-disable-next-line @typescript-eslint/ban-types
   eventId: Number
+}
+
+export type TicketDetail = {
+  id: string
+  name: string
+  phoneNumber: string
+  qrcode: string
+  email: string
+  eventId: number
+  price: number
+  isCheckIn: string
+  ordersId: string
+  event: Event
 }
 
 export type CartItem = {
@@ -27,4 +40,16 @@ export type OrderResponse = {
   data: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   errors: any | null
+}
+
+export type OrderTicket = {
+  id: string
+  name: string
+  phoneNumber: string
+  qrcode: string
+  email: string
+  eventId: number
+  price: number
+  isCheckIn: string
+  orderId: string
 }

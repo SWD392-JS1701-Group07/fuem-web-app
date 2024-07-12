@@ -13,6 +13,9 @@ import 'react-toastify/dist/ReactToastify.css'
 import * as yup from 'yup'
 import { useToast } from '@/components/ui/use-toast'
 import { updateProfile } from '@/api/userAPI'
+import TicketTable from '../ticket/TicketList'
+import { getTickets } from '@/api/ticketApi'
+import { OrderTicket } from '@/constants/models/Ticket'
 
 const profileFields = {
   name: 'Name',
@@ -25,6 +28,19 @@ const profileFields = {
   studentId: 'Student ID',
   subjectId: 'Subject ID'
 }
+
+const getEmail = () => {
+  const userProfile = localStorage.getItem('userProfile')
+  if (userProfile) {
+    const parsedProfile: Account = JSON.parse(userProfile)
+    return parsedProfile.email
+  }
+  return null
+}
+
+console.log('EMAIL IS:', getEmail())
+const ticketList: OrderTicket[] = (await getTickets({ email: getEmail() as string })).data
+console.log('ticketList: ', ticketList)
 
 // Fields to exclude from the Edit Profile form
 const excludeFromEdit = ['accountStatus', 'studentId', 'subjectId']
@@ -148,7 +164,7 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="mx-auto h-screen bg-black p-4 px-10 pt-10 text-white">
+    <div className="mx-auto bg-black p-4 px-10 pt-10 text-white">
       <div className="flex items-center space-x-4">
         <Avatar className="h-40 w-40 rounded-full">
           <AvatarImage src={user.avatarUrl || AVATAR_PLACEHOLDER_URL} alt={user.name} />
@@ -167,7 +183,7 @@ const ProfilePage: React.FC = () => {
         </button>
       </div>
 
-      <div className="mt-8">
+      <div className="my-8">
         <h2 className="mb-4 text-3xl font-semibold">Profile Details</h2>
         <form className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {Object.entries(profileFields).map(([key, label]) => (
@@ -264,6 +280,11 @@ const ProfilePage: React.FC = () => {
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
+
+      <h2 className="mb-4 mt-10 text-3xl font-semibold">Your Purchased Tickets</h2>
+      <div className="dark">
+        <TicketTable data={ticketList} />
+      </div>
     </div>
   )
 }
