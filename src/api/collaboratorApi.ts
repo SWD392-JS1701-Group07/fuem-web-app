@@ -14,7 +14,13 @@ export const getCollaboratorById = async (id: number) => {
 }
 
 export const getCollaboratorByEvent = async (id: number) => {
-    return await axiosClient.get(`/api/collaborators/${id}/event`);
+    return await axiosClient.get(`/api/collaborators/${id}/event`, {
+        params: {
+            searchTerm: "",
+            page: 1,
+            pageSize: 100
+        }
+    });
 }
 
 export const getCollaboratorByOperator = async (id: number) => {

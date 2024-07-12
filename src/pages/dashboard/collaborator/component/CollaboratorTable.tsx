@@ -198,12 +198,22 @@ export const columns: ColumnDef<Collaborator>[] = [
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem
+                            {(collaborator.collabStatus === "Pending") ? (<>
+                                <DropdownMenuItem
+                                    onClick={() => { handleClick(1) }}
+                                >Approve</DropdownMenuItem>
+                                <DropdownMenuItem
+                                    onClick={() => { handleClick(2) }}
+                                >Reject</DropdownMenuItem>
+                            </>) : (null)}
+                            {(collaborator.collabStatus === "Approved") ? (
+                                <DropdownMenuItem
+                                    onClick={() => { handleClick(2) }}
+                                >Reject</DropdownMenuItem>
+                            ) : (null)}
+                            {(collaborator.collabStatus === "Rejected") ? (<DropdownMenuItem
                                 onClick={() => { handleClick(1) }}
-                            >Approve</DropdownMenuItem>
-                            <DropdownMenuItem
-                                onClick={() => { handleClick(2) }}
-                            >Reject</DropdownMenuItem>
+                            >Approve</DropdownMenuItem>) : (null)}
                             <DropdownMenuItem onClick={() => { nav(collaborator.id) }}>View</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
