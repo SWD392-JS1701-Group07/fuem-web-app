@@ -16,6 +16,10 @@ export const getTickets = async (params: {
   }
 }
 
+export const getTicketByEventId = async (eventId: string) => {
+  return await axiosClient.get(`api/tickets/event/${eventId}`)
+}
+
 export const getTicketDetail = async (id: string) => {
   return await axiosClient.get(`api/tickets/${id}`)
 }

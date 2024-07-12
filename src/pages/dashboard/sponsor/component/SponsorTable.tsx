@@ -312,7 +312,7 @@ const SponsorTable = ({ data }: Props) => {
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
-                                    onClick={() => nav(`/event/${row.original.id}`)}
+                                    onClick={() => nav(`/dashboard/sponsor/${row.original.id}`)}
                                     data-state={row.getIsSelected() && "selected"}
                                 >
                                     {row.getVisibleCells().map((cell) => (

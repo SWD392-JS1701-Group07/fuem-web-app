@@ -1,7 +1,7 @@
 import { RefreshTokenCredentials } from "@/constants/models/common";
 import axios, { AxiosResponse } from "axios";
 
-const baseURL = "https://localhost:7297";
+const baseURL = "/";
 
 const axiosClient = axios.create({
     baseURL: baseURL,

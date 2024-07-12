@@ -171,4 +171,4 @@ const EventDashboardDetail = () => {
     );
 }
 
-export default EventDashboardDetail;
+export default EventDashboardDetail

@@ -1,8 +1,18 @@
-import axiosClient from "../api/axios";
+import axiosClient from '../api/axios'
 
 export const getAll = async () => {
-    return await axiosClient.get("/api/sponsors");
+  return await axiosClient.get(`/api/sponsors`, {
+    params: {
+      page: 1,
+      pageSize: 1000
+    }
+  })
 }
+
+export const getById = async (id: string) => {
+  return await axiosClient.get(`/api/sponsors/${id}`)
+}
+
 export const searchSponsor = async (search: string) => {
     return await axiosClient.get(`/api/sponsors`, {
         params: {
@@ -12,6 +22,8 @@ export const searchSponsor = async (search: string) => {
         }
     });
 }
+
 export const getSponsorById = async (id: number) => {
-    return await axiosClient.get(`/api/sponsors/${id}`);
+    return await axiosClient.get(`/api/sponsors/${id}`)
 }
+
