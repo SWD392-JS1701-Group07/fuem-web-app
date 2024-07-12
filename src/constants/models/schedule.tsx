@@ -1,7 +1,7 @@
 export type Schedule = {
-    id: number,
+    id?: number | null,
     startTime: string,
     endTime: string,
     place: string,
-    eventId: number
+    eventId?: number | null
 }

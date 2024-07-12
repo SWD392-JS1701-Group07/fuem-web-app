@@ -89,7 +89,6 @@ export type SponsorshipCreateModel = {
     name: string
     email: string
     phoneNumber: string
-    avatarUrl: string
     accountId: number | null
   }
 }
