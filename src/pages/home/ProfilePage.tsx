@@ -13,9 +13,9 @@ import 'react-toastify/dist/ReactToastify.css'
 import * as yup from 'yup'
 import { useToast } from '@/components/ui/use-toast'
 import { updateProfile } from '@/api/userAPI'
-import TicketTable from '../ticket/TicketList'
-import { getTickets } from '@/api/ticketApi'
 import { OrderTicket } from '@/constants/models/Ticket'
+import { getTickets } from '@/api/ticketApi'
+import TicketTable from '../ticket/TicketList'
 
 const profileFields = {
   name: 'Name',
@@ -175,7 +175,7 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="mx-auto bg-black p-4 px-10 pt-10 text-white">
+    <div className="mx-auto h-screen bg-black p-4 px-10 pt-10 text-white">
       <div className="flex items-center space-x-4">
         <Avatar className="h-40 w-40 rounded-full">
           <AvatarImage src={user.avatarUrl || AVATAR_PLACEHOLDER_URL} alt={user.name} />
@@ -194,7 +194,7 @@ const ProfilePage: React.FC = () => {
         </button>
       </div>
 
-      <div className="my-8">
+      <div className="mt-8">
         <h2 className="mb-4 text-3xl font-semibold">Profile Details</h2>
         <form className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {Object.entries(profileFields).map(([key, label]) => (
