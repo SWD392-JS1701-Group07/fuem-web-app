@@ -10,14 +10,10 @@ export const logout = async (param: string) => {
 }
 
 export const updateProfile = async (userId: string, formData: FormData, accessToken: string) => {
-  return await axiosClient.put(
-    `https://localhost:7297/api/accounts/update-profile/${userId}`,
-    formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Authorization: `Bearer ${accessToken}`
-      }
+  return await axiosClient.put(`/api/accounts/update-profile/${userId}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Authorization: `Bearer ${accessToken}`
     }
-  )
+  })
 }
