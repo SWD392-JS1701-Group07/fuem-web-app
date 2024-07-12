@@ -21,7 +21,7 @@ import {
   PaginationNext,
   PaginationPrevious
 } from '@/components/ui/pagination'
-import { Calendar, List, WalletCards } from 'lucide-react'
+import { Calendar, List, WalletCards, Search } from 'lucide-react'
 
 const EventList = () => {
   const cardsPerPage = 12
@@ -31,14 +31,15 @@ const EventList = () => {
   const [loading, setLoading] = useState(true)
   const [sortOrder, setSortOrder] = useState('Newest')
   const [selectedTab, setSelectedTab] = useState('card')
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     getEvents()
   }, [])
 
-  const getEvents = async () => {
+  const getEvents = async (searchParam = '') => {
     try {
-      const response = await getAll()
+      const response = await getAll(searchParam)
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-expect-error
       setData(response)
@@ -46,6 +47,16 @@ const EventList = () => {
       setLoading(false)
     } catch (error) {
       console.error('Error fetching events:', error)
+    }
+  }
+
+  const handleSearch = () => {
+    getEvents(searchQuery)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch()
     }
   }
 
@@ -92,32 +103,51 @@ const EventList = () => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="card">
-          <div className="flex justify-start pb-4">
+          <div className="flex justify-between pb-4">
             {selectedTab === 'card' && (
-              <div className="z-10 flex justify-start pb-4">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="inline-flex items-center justify-center rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800">
-                      Sort by: {sortOrder}
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="mt-2 w-56 rounded-md bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    {['Newest', 'Oldest', 'Price Asc', 'Price Desc'].map((order) => (
-                      <DropdownMenuItem
-                        key={order}
-                        className="block px-4 py-2 text-sm text-white hover:bg-gray-700"
-                        onClick={() => setSortOrder(order)}
-                      >
-                        {order}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+              <>
+                <div className="z-10 flex space-x-2">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Search events"
+                    className="h-10 w-60 rounded-md border border-gray-700 bg-gray-800 px-4 text-white focus:border-indigo-500 focus:ring-indigo-500"
+                  />
+                  <button
+                    onClick={handleSearch}
+                    className="inline-flex items-center justify-center rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800"
+                  >
+                    <Search className="mr-2" />
+                    Search
+                  </button>
+                </div>
+                <div className="z-10 flex">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="inline-flex items-center justify-center rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800">
+                        Sort by: {sortOrder}
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="mt-2 w-56 rounded-md bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      {['Newest', 'Oldest', 'Price Asc', 'Price Desc'].map((order) => (
+                        <DropdownMenuItem
+                          key={order}
+                          className="block px-4 py-2 text-sm text-white hover:bg-gray-700"
+                          onClick={() => setSortOrder(order)}
+                        >
+                          {order}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </>
             )}
           </div>
           {!loading && sortedData.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
               {sortedData.slice(startIndex, endIndex).map((event) => (
                 <EventCard key={event.id as React.Key} event={event} />
               ))}
