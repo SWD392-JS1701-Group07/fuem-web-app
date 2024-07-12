@@ -16,6 +16,7 @@ import { updateProfile } from '@/api/userAPI'
 import { OrderTicket } from '@/constants/models/Ticket'
 import { getTickets } from '@/api/ticketApi'
 import TicketTable from '../ticket/TicketList'
+import { getAll as getAllSubjects } from '@/api/subjectApi'
 
 const profileFields = {
   name: 'Name',
@@ -24,8 +25,6 @@ const profileFields = {
   phoneNumber: 'Phone Number',
   dob: 'Date of Birth',
   gender: 'Gender',
-  accountStatus: 'Account Status',
-  studentId: 'Student ID',
   subjectId: 'Subject ID'
 }
 
@@ -39,7 +38,7 @@ const getEmail = () => {
 }
 
 // Fields to exclude from the Edit Profile form
-const excludeFromEdit = ['accountStatus', 'studentId', 'subjectId']
+const excludeFromEdit = ['accountStatus']
 
 type ProfileFields = keyof typeof profileFields
 
@@ -61,7 +60,11 @@ const validationSchema = yup.object().shape({
     .string()
     .oneOf(['Male', 'Female', 'Others'], 'Invalid gender')
     .required('Gender is required'),
-  subjectId: yup.string().required('Subject ID is required')
+  subjectId: yup.string().required('Subject ID is required'),
+  studentId: yup
+    .string()
+    .matches(/^S\d{6,}$/, 'Student ID must start with an S followed by at least 6 digits')
+    .required('Student ID is required')
 })
 
 const ProfilePage: React.FC = () => {
@@ -71,6 +74,7 @@ const ProfilePage: React.FC = () => {
   const [formValues, setFormValues] = useState<Account | null>(null)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [ticketList, setTicketList] = useState<OrderTicket[]>([])
+  const [subjects, setSubjects] = useState<any[]>([])
   const { toast } = useToast()
 
   useEffect(() => {
@@ -96,6 +100,19 @@ const ProfilePage: React.FC = () => {
     }
   }, [accessToken])
 
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        const response = await getAllSubjects()
+        setSubjects(response.data)
+      } catch (error) {
+        console.error('Error fetching subjects:', error)
+      }
+    }
+
+    fetchSubjects()
+  }, [])
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value } = e.target
     setFormValues((prevState) =>
@@ -116,7 +133,7 @@ const ProfilePage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setEditMode(false)
+    // setEditMode(false)
     if (formValues) {
       try {
         await validationSchema.validate(formValues, { abortEarly: false })
@@ -175,7 +192,7 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="mx-auto h-screen bg-black p-4 px-10 pt-10 text-white">
+    <div className="mx-auto bg-black p-4 px-10 pt-10 text-white">
       <div className="flex items-center space-x-4">
         <Avatar className="h-40 w-40 rounded-full">
           <AvatarImage src={user.avatarUrl || AVATAR_PLACEHOLDER_URL} alt={user.name} />
@@ -222,7 +239,7 @@ const ProfilePage: React.FC = () => {
       <Dialog.Root open={editMode} onOpenChange={setEditMode}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-75" />
-          <Dialog.Content className="fixed left-1/2 top-1/2 max-h-screen w-full max-w-lg -translate-x-1/2 -translate-y-1/2 transform overflow-y-auto rounded bg-gray-800 p-6 shadow-lg">
+          <Dialog.Content className="fixed left-1/2 top-1/2 max-h-[80vh] w-full max-w-lg -translate-x-1/2 -translate-y-1/2 transform overflow-y-auto rounded bg-gray-800 p-6 shadow-lg">
             <Dialog.Title className="text-2xl font-semibold text-white">Edit Profile</Dialog.Title>
             <form onSubmit={handleSubmit} className="mt-4 space-y-4">
               {Object.entries(profileFields)
@@ -253,6 +270,20 @@ const ProfilePage: React.FC = () => {
                         <option value="Female">Female</option>
                         <option value="Others">Others</option>
                       </select>
+                    ) : key === 'subjectId' ? (
+                      <select
+                        className="rounded border border-gray-700 bg-gray-700 p-2 text-white"
+                        id={key}
+                        name={key}
+                        value={(formValues?.[key as ProfileFields] as any) || ''}
+                        onChange={handleInputChange}
+                      >
+                        {subjects.map((subject) => (
+                          <option key={subject.id} value={subject.id}>
+                            {subject.name}
+                          </option>
+                        ))}
+                      </select>
                     ) : (
                       <input
                         className="rounded border border-gray-700 bg-gray-700 p-2 text-white"
@@ -265,6 +296,20 @@ const ProfilePage: React.FC = () => {
                     )}
                   </div>
                 ))}
+              <div className="flex flex-col">
+                <Label.Root htmlFor="studentId" className="mb-1 font-medium text-gray-300">
+                  Student ID
+                </Label.Root>
+                <input
+                  className="rounded border border-gray-700 bg-gray-700 p-2 text-white"
+                  type="text"
+                  id="studentId"
+                  name="studentId"
+                  value={(formValues?.studentId as any) || ''}
+                  onChange={handleInputChange}
+                  maxLength={8}
+                />
+              </div>
               <div className="flex flex-col">
                 <Label.Root htmlFor="avatarFile" className="mb-1 font-medium text-gray-300">
                   Avatar
