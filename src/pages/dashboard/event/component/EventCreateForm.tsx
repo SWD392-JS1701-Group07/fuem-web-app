@@ -1,3 +1,4 @@
+"use client"
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -10,7 +11,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { addEventImage, create } from "@/api/eventApi"
@@ -20,6 +21,16 @@ import { useToast } from "@/components/ui/use-toast"
 import { Card } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
 import { Textarea } from "@/components/ui/textarea"
+import { EVENT_PLACEHOLDER_URL } from "@/constants/models/url"
+import { ChevronsUpDown } from "lucide-react"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import { Sponsor } from "@/constants/models/Sponsor"
+import { searchSponsor } from "@/api/sponsorApi"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 const formDetailSchema = z.object({
     name: z.string()
@@ -80,15 +91,23 @@ const Subject = [
     { id: 2, name: "Software Engineering" },
     { id: 3, name: "Mathematics" },
 ]
-
 export function CreateEventForm() {
     const nav = useNavigate();
     const [avatarFile, setAvatarFile] = useState<File | null>(null)
-    //const [error, setError] = useState<string | null>(null);
+    const [open, setOpen] = useState(false)
+    const [searchValue, setSearchValue] = useState("")
+    const [searchSponsorList, setSearchSponsorList] = useState<Sponsor[]>([])
     const { toast } = useToast();
     const [Sponsorships, setSponsorships] = useState<Sponsorship[]>([]);
     const [schedules, setSchedules] = useState<Schedule[]>([{ id: 0, schedule: { startTime: new Date(), endTime: new Date(), place: "place" } }]);
-
+    useEffect(() => {
+        searchSponsor(searchValue).then((res) => {
+            console.log("search sponsor", res.data)
+            setSearchSponsorList(res.data)
+        }).catch(() => {
+            setSearchSponsorList([])
+        })
+    }, [searchValue])
     const defaultValues: Partial<FormDetailValues> = {
         name: "",
         description: "",
@@ -185,21 +204,21 @@ export function CreateEventForm() {
             })
     }
 
-    const handleAddSponsor = (ev: React.MouseEvent) => {
+    const handleAddNewSponsor = (ev: React.MouseEvent) => {
         ev.preventDefault();
         if (Sponsorships.length == 0) {
             setSponsorships([{
                 id: Sponsorships.length,
                 sponsorship: {
-                    description: "description",
-                    type: "type",
-                    title: "title",
+                    description: "",
+                    type: "",
+                    title: "",
                     sum: 0,
                     sponsor: {
-                        name: "sponsor",
-                        email: "aaa",
-                        phoneNumber: "123",
-                        avatarUrl: "#",
+                        name: "",
+                        email: "",
+                        phoneNumber: "",
+                        avatarUrl: "",
                         accountId: null
                     }
                 }
@@ -208,16 +227,54 @@ export function CreateEventForm() {
             setSponsorships([...Sponsorships, {
                 id: Sponsorships.length,
                 sponsorship: {
-                    description: "description",
-                    type: "type",
-                    title: "title",
+                    description: "",
+                    type: "",
+                    title: "",
                     sum: 0,
                     sponsor: {
-                        name: "sponsor",
-                        email: "aaa",
-                        phoneNumber: "123",
-                        avatarUrl: "#",
+                        name: "",
+                        email: "",
+                        phoneNumber: "",
+                        avatarUrl: "",
                         accountId: null
+                    }
+                }
+            }])
+        }
+    }
+    const handleAddSponsor = (ev: React.MouseEvent, sponsor: Sponsor) => {
+        ev.preventDefault();
+        if (Sponsorships.length == 0) {
+            setSponsorships([{
+                id: Sponsorships.length,
+                sponsorship: {
+                    description: "",
+                    type: "",
+                    title: "",
+                    sum: 0,
+                    sponsor: {
+                        name: sponsor?.name || "",
+                        email: sponsor?.email || "",
+                        phoneNumber: sponsor?.phoneNumber || "",
+                        avatarUrl: sponsor?.avatarUrl || "",
+                        accountId: sponsor?.accountId || null
+                    }
+                }
+            }])
+        } else {
+            setSponsorships([...Sponsorships, {
+                id: Sponsorships.length,
+                sponsorship: {
+                    description: "",
+                    type: "",
+                    title: "",
+                    sum: 0,
+                    sponsor: {
+                        name: sponsor?.name || "",
+                        email: sponsor?.email || "",
+                        phoneNumber: sponsor?.phoneNumber || "",
+                        avatarUrl: sponsor?.avatarUrl || "",
+                        accountId: sponsor?.accountId || null
                     }
                 }
             }])
@@ -267,38 +324,62 @@ export function CreateEventForm() {
                         <AccordionItem title="Event Detail" value="general">
                             <AccordionTrigger className="bg-slate-200 pl-2">General information*</AccordionTrigger>
                             <AccordionContent>
-                                <FormField
-                                    control={form.control}
-                                    name="name"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Name*</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder="Name of the event" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <input type="file" accept="image/*" placeholder="Name of the event" onChange={handleAvatarChange} />
-                                <FormField
-                                    control={form.control}
-                                    name="subjectId"
-                                    render={({ field }) => (
-                                        <FormItem className="mb-2">
-                                            <FormLabel>Subject*</FormLabel>
-                                            <FormControl>
-                                                <select {...field} className="w-full p-2 border border-gray-200 rounded-md">
-                                                    {Subject.map((subject) => (
-                                                        <option key={subject.id} value={subject.id}>{subject.name}</option>
-                                                    ))}
-                                                </select>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <div className="flex justify-start">
+                                <div className="flex w-full">
+                                    <div>
+                                        {avatarFile ? <img src={URL.createObjectURL(avatarFile)} alt="avatar" /> : <img src={EVENT_PLACEHOLDER_URL} />}
+                                        <input type="file" accept="image/*" placeholder="Name of the event" onChange={handleAvatarChange} />
+                                    </div>
+                                    <div className="w-full ml-5">
+                                        <FormField
+                                            control={form.control}
+                                            name="name"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Name*</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="Name of the event" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <div className="mt-5">
+                                            <FormField
+                                                control={form.control}
+                                                name="description"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel >Description</FormLabel>
+                                                        <FormControl>
+                                                            <Textarea className="h-44" placeholder="Event's description" {...field} />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="mt-5">
+                                    <FormField
+                                        control={form.control}
+                                        name="subjectId"
+                                        render={({ field }) => (
+                                            <FormItem className="mb-2">
+                                                <FormLabel>Subject*</FormLabel>
+                                                <FormControl>
+                                                    <select {...field} className="w-full p-2 border border-gray-200 rounded-md">
+                                                        {Subject.map((subject) => (
+                                                            <option key={subject.id} value={subject.id}>{subject.name}</option>
+                                                        ))}
+                                                    </select>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <div className="flex justify-start mt-5">
                                     <div className="pr-44">
                                         <FormField
                                             control={form.control}
@@ -367,19 +448,6 @@ export function CreateEventForm() {
                                         />
                                     </div>
                                 </div>
-                                <FormField
-                                    control={form.control}
-                                    name="description"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Description</FormLabel>
-                                            <FormControl>
-                                                <Textarea placeholder="Event's description" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem title="Schedule" value="schedule" className="my-1">
@@ -389,7 +457,7 @@ export function CreateEventForm() {
                                 {schedules.map((schedule) => (
                                     <Card>
                                         <div className="flex justify-between m-2">
-                                            <h1>Schedule {schedule.id + 1}*</h1>
+                                            <h1 className="text-lg">Schedule {schedule.id + 1}*</h1>
                                             {(schedules.length > 1) ?
                                                 <Button
                                                     onClick={(e) => handleDeleteSchedule(schedule.id, e)}
@@ -397,58 +465,66 @@ export function CreateEventForm() {
                                                 : null
                                             }
                                         </div>
-                                        <FormField
-                                            control={form.control}
-                                            name={`schedules.${schedule.id}.date`}
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Date*</FormLabel>
-                                                    <FormControl>
-                                                        <Input required type="date" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name={`schedules.${schedule.id}.startTime`}
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>start Time*</FormLabel>
-                                                    <FormControl>
-                                                        <Input required type="time" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name={`schedules.${schedule.id}.endTime`}
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>End Time*</FormLabel>
-                                                    <FormControl>
-                                                        <Input required type="time" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name={`schedules.${schedule.id}.place`}
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Place*</FormLabel>
-                                                    <FormControl>
-                                                        <Input required {...field} />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
+                                        <div className="mt-5">
+                                            <FormField
+                                                control={form.control}
+                                                name={`schedules.${schedule.id}.date`}
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Date*</FormLabel>
+                                                        <FormControl>
+                                                            <Input required type="date" {...field} />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                        <div className="mt-5">
+                                            <FormField
+                                                control={form.control}
+                                                name={`schedules.${schedule.id}.startTime`}
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>start Time*</FormLabel>
+                                                        <FormControl>
+                                                            <Input required type="time" {...field} />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                        <div className="mt-5">
+                                            <FormField
+                                                control={form.control}
+                                                name={`schedules.${schedule.id}.endTime`}
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>End Time*</FormLabel>
+                                                        <FormControl>
+                                                            <Input required type="time" {...field} />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                        <div className="mt-5">
+                                            <FormField
+                                                control={form.control}
+                                                name={`schedules.${schedule.id}.place`}
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Place*</FormLabel>
+                                                        <FormControl>
+                                                            <Input required {...field} />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
                                     </Card>
                                 ))}
                             </AccordionContent>
@@ -456,23 +532,49 @@ export function CreateEventForm() {
                         <AccordionItem title="Sponsor information" value={"sponsor"}>
                             <AccordionTrigger className="bg-slate-200 pl-2" >Sponsor information</AccordionTrigger>
                             <AccordionContent>
-                                <Button onClick={handleAddSponsor}>Add new sponsor</Button>
+                                <div className="flex justify-between m-2">
+                                    <Button onClick={handleAddNewSponsor}>Add new sponsor</Button>
+                                    <div className="flex">
+                                        <Popover open={open} onOpenChange={setOpen}>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                    variant="outline"
+                                                    role="combobox"
+                                                    aria-expanded={open}
+                                                    className="w-[200px] justify-between"
+                                                    onClick={() => { setSearchValue("") }}
+                                                >
+                                                    Search Sponsor
+                                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-[200px] p-0">
+                                                <ScrollArea>
+                                                    <Input
+                                                        placeholder="Search sponsor"
+                                                        onChange={(e) => setSearchValue(e.target.value)}
+                                                    />
+                                                    {(searchSponsorList.length > 0) ? (
+                                                        searchSponsorList.map((sponsor) => (
+                                                            <Button
+                                                                onClick={(e) => { handleAddSponsor(e, sponsor), setOpen(false) }}
+                                                                className="w-full"
+                                                            >
+                                                                {sponsor.name}
+                                                            </Button>
+                                                        ))) : (<Button className="w-full">no Result</Button>)
+                                                    }
+                                                </ScrollArea>
+                                            </PopoverContent>
+                                        </Popover>
+                                        <Button>clear</Button>
+                                    </div>
+                                </div>
                                 {Sponsorships.map((sponsor) => (
                                     <Card className="my-2">
                                         <div className="flex justify-between m-2">
-                                            <h1>Sponsor {sponsor.id + 1}</h1>
-                                            <div className="flex">
-                                                <Input
-                                                    placeholder="Filter emails..."
-                                                    // value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-                                                    // onChange={(event) =>
-                                                    //     table.getColumn("email")?.setFilterValue(event.target.value)
-                                                    // }
-                                                    className="max-w-sm mr-2"
-                                                />
-                                                <Button>clear</Button>
-                                                <Button onClick={(e) => handleDeleteSponsor(sponsor.id, e)}>Remove</Button>
-                                            </div>
+                                            <h1 className="text-lg">Sponsor {sponsor.id + 1}</h1>
+                                            <Button onClick={(e) => handleDeleteSponsor(sponsor.id, e)}>Remove</Button>
                                         </div>
                                         <FormField
                                             control={form.control}
@@ -481,25 +583,31 @@ export function CreateEventForm() {
                                                 <FormItem>
                                                     <FormLabel>name*</FormLabel>
                                                     <FormControl>
-                                                        <Input required {...field} />
+                                                        {(Sponsorships[sponsor.id].sponsorship.sponsor.name != "") ?
+                                                            <Input required {...field} value={Sponsorships[sponsor.id].sponsorship.sponsor.name} disabled /> :
+                                                            <Input required {...field} />}
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
                                         />
-                                        <FormField
-                                            control={form.control}
-                                            name={`sponsor.${sponsor.id}.email`}
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Email*</FormLabel>
-                                                    <FormControl>
-                                                        <Input required {...field} />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
+                                        <div>
+                                            <FormField
+                                                control={form.control}
+                                                name={`sponsor.${sponsor.id}.email`}
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Email*</FormLabel>
+                                                        <FormControl>
+                                                            {(Sponsorships[sponsor.id].sponsorship.sponsor.email != "") ?
+                                                                <Input required {...field} value={Sponsorships[sponsor.id].sponsorship.sponsor.email} disabled /> :
+                                                                <Input required {...field} />}
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
                                         <FormField
                                             control={form.control}
                                             name={`sponsor.${sponsor.id}.phoneNumber`}
@@ -507,7 +615,9 @@ export function CreateEventForm() {
                                                 <FormItem>
                                                     <FormLabel>Phone Number*</FormLabel>
                                                     <FormControl>
-                                                        <Input required {...field} />
+                                                        {(Sponsorships[sponsor.id].sponsorship.sponsor.phoneNumber != "") ?
+                                                            <Input required {...field} value={Sponsorships[sponsor.id].sponsorship.sponsor.phoneNumber} disabled /> :
+                                                            <Input required {...field} />}
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
