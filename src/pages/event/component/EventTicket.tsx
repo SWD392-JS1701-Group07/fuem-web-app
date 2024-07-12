@@ -27,7 +27,9 @@ const EventTicket = ({ event }: { event: Event }) => {
   const [open, setOpen] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const [user, setUser] = useState<Account | null>(null)
-  const [additionalTickets, setAdditionalTickets] = useState<Ticket[]>([])
+  const [additionalTickets, setAdditionalTickets] = useState<Ticket[]>([
+    { name: '', email: '', phoneNumber: '', price: event.price, eventId: event.id }
+  ])
   const { addToCart } = useCart()
   const { toast } = useToast()
   const { id } = useParams()
@@ -114,12 +116,10 @@ const EventTicket = ({ event }: { event: Event }) => {
   }
 
   const handleAddToCart = () => {
-    if (!user) return
-
     if (!validateTickets()) return
 
     const tickets: Ticket[] = [
-      {
+      user && {
         name: user.name,
         phoneNumber: user.phoneNumber,
         email: user.email,
@@ -133,12 +133,12 @@ const EventTicket = ({ event }: { event: Event }) => {
         price: event.price,
         eventId: event.id
       }))
-    ]
+    ].filter(Boolean) as Ticket[]
 
     const cartItem: CartItem = {
-      name: user.name,
-      phoneNumber: user.phoneNumber,
-      email: user.email,
+      name: user?.name || additionalTickets[0].name,
+      phoneNumber: user?.phoneNumber || additionalTickets[0].phoneNumber,
+      email: user?.email || additionalTickets[0].email,
       event: event,
       price: event.price,
       quantity: quantity,
@@ -155,6 +155,64 @@ const EventTicket = ({ event }: { event: Event }) => {
     newTickets[index] = { ...newTickets[index], [field]: value }
     setAdditionalTickets(newTickets)
   }
+
+  const isUserInfoEmpty = !user?.name || !user?.email || !user?.phoneNumber
+
+  const renderUserInfo = () => (
+    <div className="grid gap-2">
+      <p className="text-lg font-semibold text-white">User Info</p>
+      <div className="flex justify-between">
+        <div className="pr-2">
+          <div className="flex justify-between space-x-3">
+            <p className="text-lg text-gray-400">Name</p>
+            <p className="text-lg font-semibold text-white">{user?.name}</p>
+          </div>
+          <div className="flex justify-between space-x-3">
+            <p className="text-lg text-gray-400">Email</p>
+            <p className="text-lg font-semibold text-white">{user?.email}</p>
+          </div>
+          <div className="flex items-center justify-between space-x-3">
+            <p className="text-lg text-gray-400">Phone Number</p>
+            <p className="text-lg font-semibold text-white">{user?.phoneNumber}</p>
+          </div>
+        </div>
+        {quantity > 1 && renderAdditionalTickets()}
+      </div>
+    </div>
+  )
+
+  const renderAdditionalTickets = () => (
+    <div className="flex flex-row space-x-2 pl-2">
+      {additionalTickets.map((ticket, index) => (
+        <div key={index} className="mb-4">
+          <p className="text-lg font-semibold text-white">Additional Ticket {index + 1}</p>
+          <div className="flex flex-col gap-2">
+            <input
+              type="text"
+              placeholder="Name"
+              value={ticket.name}
+              onChange={(e) => handleAdditionalTicketChange(index, 'name', e.target.value)}
+              className="h-10 w-full border border-gray-700 bg-black px-2 text-white"
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              value={ticket.email}
+              onChange={(e) => handleAdditionalTicketChange(index, 'email', e.target.value)}
+              className="h-10 w-full border border-gray-700 bg-black px-2 text-white"
+            />
+            <input
+              type="text"
+              placeholder="Phone Number"
+              value={ticket.phoneNumber}
+              onChange={(e) => handleAdditionalTicketChange(index, 'phoneNumber', e.target.value)}
+              className="h-10 w-full border border-gray-700 bg-black px-2 text-white"
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
 
   const total = event.price * quantity
   const schedule = event.scheduleList
@@ -208,65 +266,7 @@ const EventTicket = ({ event }: { event: Event }) => {
             </div>
           </div>
           <div className="mb-4 grid gap-4">
-            <div className="grid gap-2">
-              <p className="text-lg font-semibold text-white">User Info</p>
-              <div className="flex justify-between">
-                <div className="pr-2">
-                  <div className="flex justify-between space-x-3">
-                    <p className="text-lg text-gray-400">Name</p>
-                    <p className="text-lg font-semibold text-white">{user?.name}</p>
-                  </div>
-                  <div className="flex justify-between space-x-3">
-                    <p className="text-lg text-gray-400">Email</p>
-                    <p className="text-lg font-semibold text-white">{user?.email}</p>
-                  </div>
-                  <div className="flex items-center justify-between space-x-3">
-                    <p className="text-lg text-gray-400">Phone Number</p>
-                    <p className="text-lg font-semibold text-white">{user?.phoneNumber}</p>
-                  </div>
-                </div>
-                {quantity > 1 && (
-                  <div className="flex flex-row space-x-2 pl-2">
-                    {additionalTickets.map((ticket, index) => (
-                      <div key={index} className="mb-4">
-                        <p className="text-lg font-semibold text-white">
-                          Additional Ticket {index + 1}
-                        </p>
-                        <div className="flex flex-col gap-2">
-                          <input
-                            type="text"
-                            placeholder="Name"
-                            value={ticket.name}
-                            onChange={(e) =>
-                              handleAdditionalTicketChange(index, 'name', e.target.value)
-                            }
-                            className="h-10 w-full border border-gray-700 bg-black px-2 text-white"
-                          />
-                          <input
-                            type="email"
-                            placeholder="Email"
-                            value={ticket.email}
-                            onChange={(e) =>
-                              handleAdditionalTicketChange(index, 'email', e.target.value)
-                            }
-                            className="h-10 w-full border border-gray-700 bg-black px-2 text-white"
-                          />
-                          <input
-                            type="text"
-                            placeholder="Phone Number"
-                            value={ticket.phoneNumber}
-                            onChange={(e) =>
-                              handleAdditionalTicketChange(index, 'phoneNumber', e.target.value)
-                            }
-                            className="h-10 w-full border border-gray-700 bg-black px-2 text-white"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
+            {isUserInfoEmpty ? renderAdditionalTickets() : renderUserInfo()}
           </div>
           <div className="mb-4 grid gap-4">
             <div className="grid gap-2">

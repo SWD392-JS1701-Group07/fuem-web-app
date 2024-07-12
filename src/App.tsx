@@ -26,6 +26,7 @@ import CartCallback from './pages/cart/CartCallback'
 import OperatorList from './pages/dashboard/operator/OperatorList'
 import VisitorList from './pages/dashboard/Visitor/VisitorList'
 import StaffList from './pages/dashboard/Staff/StaffList'
+import OperatorDashboardDetail from './pages/dashboard/operator/Component/OperatorDashboardDetail'
 
 function App() {
   //const { component: Component, path } = routes[3];
@@ -74,6 +75,7 @@ function App() {
             <Route path="event/create" element={<CreateEvent />} />
             <Route path="sponsor" element={<SponsorList />} />
             <Route path="operator" element={<OperatorList />} />
+            <Route path="operator/:id" element={<OperatorDashboardDetail />} />
             <Route path="visitor" element={<VisitorList />} />
             <Route path="staff" element={<StaffList />} />
             <Route path="operator/create" element={<OperatorAccCreate />} />
