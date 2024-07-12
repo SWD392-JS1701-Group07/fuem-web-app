@@ -27,6 +27,8 @@ import OperatorList from './pages/dashboard/operator/OperatorList'
 import VisitorList from './pages/dashboard/Visitor/VisitorList'
 import StaffList from './pages/dashboard/Staff/StaffList'
 import OperatorDashboardDetail from './pages/dashboard/operator/Component/OperatorDashboardDetail'
+import StaffDashboardDetail from './pages/dashboard/Staff/Component/StaffDashboardDetail'
+import VisitorDashboardDetail from './pages/dashboard/Visitor/Component/VisitorDashboardDetail'
 
 function App() {
   //const { component: Component, path } = routes[3];
@@ -77,7 +79,9 @@ function App() {
             <Route path="operator" element={<OperatorList />} />
             <Route path="operator/:id" element={<OperatorDashboardDetail />} />
             <Route path="visitor" element={<VisitorList />} />
+            <Route path="visitor/:id" element={<VisitorDashboardDetail />} />
             <Route path="staff" element={<StaffList />} />
+            <Route path="staff/:id" element={<StaffDashboardDetail />} />
             <Route path="operator/create" element={<OperatorAccCreate />} />
             <Route path="staff/create" element={<StaffCreate />} />
             <Route path="collaborator" element={<CollaboratorList />} />
