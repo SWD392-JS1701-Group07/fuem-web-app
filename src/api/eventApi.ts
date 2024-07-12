@@ -1,11 +1,12 @@
 import { EventCreateModel } from '@/constants/models/Event'
 import axiosClient from '../api/axios'
 
-export const getAll = async () => {
+export const getAll = async (searchTerm?: string) => {
   return await axiosClient.get('/api/events', {
     params: {
       page: 1,
-      pageSize: 10
+      pageSize: 10,
+      searchTerm: searchTerm
     }
   })
 }
