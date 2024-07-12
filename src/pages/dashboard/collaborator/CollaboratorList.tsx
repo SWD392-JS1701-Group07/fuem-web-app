@@ -10,7 +10,7 @@ const CollaboratorList = () => {
         getCollaboratorByOperator(userId).then((res) => {
             getData(res.data);
         });
-    }, [getCollaboratorByOperator, userId])
+    })
     return (
         <div className="h-screen w-full">
             <CollaboratorTable data={data} />

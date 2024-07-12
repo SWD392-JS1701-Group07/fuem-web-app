@@ -146,7 +146,18 @@ const EventDashboardDetail = () => {
                 <AccordionItem title="Event Detail" value="sponsor">
                     <AccordionTrigger className="bg-slate-200 pl-2">Sponsor</AccordionTrigger>
                     <AccordionContent>
-
+                        {(event?.sponsorships && event?.sponsorships.length > 0) ? event?.sponsorships.map((sponsorship) => (
+                            <>
+                                { }
+                                <Card className="pt-2 text-lg" >
+                                    <CardContent>Name: {sponsorship.sponsor.name}</CardContent>
+                                    <CardContent>EMail: {sponsorship.sponsor.email}</CardContent>
+                                    <CardContent>PhoneNumber: {sponsorship.sponsor.phoneNumber}</CardContent>
+                                    <CardContent>Type: {sponsorship.type}</CardContent>
+                                    <CardContent>Sum: {sponsorship.sum}</CardContent>
+                                </Card>
+                            </>
+                        )) : (<></>)}
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem title="Event Detail" value="Collaborator">
@@ -156,7 +167,7 @@ const EventDashboardDetail = () => {
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>
-        </div>
+        </div >
     );
 }
 
