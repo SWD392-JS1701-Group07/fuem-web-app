@@ -9,6 +9,7 @@ import { motion } from 'framer-motion'
 const HomePage = () => {
   const [data, setData] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
+  const [randomIndexes, setRandomIndexes] = useState<number[]>([])
 
   useEffect(() => {
     getEvents()
@@ -16,59 +17,56 @@ const HomePage = () => {
 
   const getEvents = async () => {
     try {
-      const response = await getAll()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const response: any = await getAll()
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      //@ts-expect-error
       setData(response)
-      console.log('DATA IS ', response)
       setLoading(false)
+
+      // Generate random indexes after data is set
+      if (response.length > 0) {
+        const indexes = new Set<number>()
+        while (indexes.size < 3) {
+          indexes.add(Math.floor(Math.random() * response.length))
+        }
+        setRandomIndexes(Array.from(indexes))
+      }
     } catch (error) {
       console.error('Error fetching events:', error)
     }
   }
 
-  const randomIndexes =
-    data.length > 0
-      ? (() => {
-          const indexes = new Set<number>()
-          while (indexes.size < 3) {
-            indexes.add(Math.floor(Math.random() * data.length))
-          }
-          return Array.from(indexes)
-        })()
-      : [0, 1, 2]
-
   const events =
-    data.length > 0
+    data.length > 0 && randomIndexes.length === 3
       ? [
           {
-            id: data[randomIndexes[0]].id,
-            date: formatDateTime(data[randomIndexes[0]].startSellDate.toString(), 'date'),
-            title: data[randomIndexes[0]].name,
-            location: 'Địa điểm: ' + data[randomIndexes[0]].scheduleList[0].place,
-            price: data[randomIndexes[0]].price + 'đ/ticket',
+            id: data[randomIndexes[0]]?.id,
+            date: formatDateTime(data[randomIndexes[0]]?.startSellDate.toString(), 'date'),
+            title: data[randomIndexes[0]]?.name,
+            location: 'Địa điểm: ' + data[randomIndexes[0]]?.scheduleList[0].place,
+            price: data[randomIndexes[0]]?.price + 'đ/ticket',
             backgroundImage:
               'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-35.png)',
             backgroundColor: 'bg-crayola',
             textColor: 'text-black'
           },
           {
-            id: data[randomIndexes[1]].id,
-            date: formatDateTime(data[randomIndexes[1]].startSellDate.toString(), 'date'),
-            title: data[randomIndexes[1]].name,
-            location: 'Địa điểm: ' + data[randomIndexes[1]].scheduleList[0].place,
-            price: data[randomIndexes[1]].price + 'đ/ticket',
+            id: data[randomIndexes[1]]?.id,
+            date: formatDateTime(data[randomIndexes[1]]?.startSellDate.toString(), 'date'),
+            title: data[randomIndexes[1]]?.name,
+            location: 'Địa điểm: ' + data[randomIndexes[1]]?.scheduleList[0].place,
+            price: data[randomIndexes[1]]?.price + 'đ/ticket',
             backgroundImage:
               'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-33.png)',
             backgroundColor: 'bg-electric-indigo',
             textColor: 'text-white'
           },
           {
-            id: data[randomIndexes[2]].id,
-            date: formatDateTime(data[randomIndexes[2]].startSellDate.toString(), 'date'),
-            title: data[randomIndexes[2]].name,
-            location: 'Địa điểm: ' + data[randomIndexes[2]].scheduleList[0].place,
-            price: data[randomIndexes[2]].price + 'đ/ticket',
+            id: data[randomIndexes[2]]?.id,
+            date: formatDateTime(data[randomIndexes[2]]?.startSellDate.toString(), 'date'),
+            title: data[randomIndexes[2]]?.name,
+            location: 'Địa điểm: ' + data[randomIndexes[2]]?.scheduleList[0].place,
+            price: data[randomIndexes[2]]?.price + 'đ/ticket',
             backgroundImage:
               'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-34.png)',
             backgroundColor: 'bg-yellow-sun',
