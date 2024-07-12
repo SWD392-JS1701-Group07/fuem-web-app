@@ -38,10 +38,6 @@ const getEmail = () => {
   return null
 }
 
-console.log('EMAIL IS:', getEmail())
-const ticketList: OrderTicket[] = (await getTickets({ email: getEmail() as string })).data
-console.log('ticketList: ', ticketList)
-
 // Fields to exclude from the Edit Profile form
 const excludeFromEdit = ['accountStatus', 'studentId', 'subjectId']
 
@@ -74,7 +70,22 @@ const ProfilePage: React.FC = () => {
   const [editMode, setEditMode] = useState(false)
   const [formValues, setFormValues] = useState<Account | null>(null)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const [ticketList, setTicketList] = useState<OrderTicket[]>([])
   const { toast } = useToast()
+
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const email = getEmail() as string
+        const response = await getTickets({ email })
+        setTicketList(response?.data || [])
+      } catch (error) {
+        console.error('Error fetching tickets:', error)
+      }
+    }
+
+    fetchTickets()
+  }, [])
 
   useEffect(() => {
     const storedUser = localStorage.getItem('userProfile')
@@ -282,8 +293,12 @@ const ProfilePage: React.FC = () => {
       </Dialog.Root>
 
       <h2 className="mb-4 mt-10 text-3xl font-semibold">Your Purchased Tickets</h2>
-      <div className="dark">
-        <TicketTable data={ticketList} />
+      <div className="dark mb-10">
+        {ticketList ? (
+          <TicketTable data={ticketList} />
+        ) : (
+          <h1>You have not purchased any tickets.</h1>
+        )}
       </div>
     </div>
   )
