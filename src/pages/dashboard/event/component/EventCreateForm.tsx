@@ -15,7 +15,7 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { addEventImage, create } from "@/api/eventApi"
-import { EventCreateModel, SponsorshipCreateModel } from "@/constants/models/Event"
+import { EventCreateModel, SponsorshipCreateModel, Subject } from "@/constants/models/Event"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { useToast } from "@/components/ui/use-toast"
 import { Card } from "@/components/ui/card"
@@ -31,6 +31,7 @@ import {
 import { Sponsor } from "@/constants/models/Sponsor"
 import { searchSponsor } from "@/api/sponsorApi"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { getAll } from "@/api/subjectApi"
 
 const formDetailSchema = z.object({
     name: z.string()
@@ -59,12 +60,6 @@ type ScheduleInCreate = {
     place: string
 }
 
-const Subject = [
-    { id: 1, name: "Computer fundamental" },
-    { id: 2, name: "Software Engineering" },
-    { id: 3, name: "Mathematics" },
-]
-
 export function CreateEventForm() {
     const nav = useNavigate();
     const [avatarFile, setAvatarFile] = useState<File | null>(null)
@@ -72,6 +67,7 @@ export function CreateEventForm() {
     const [searchValue, setSearchValue] = useState("")
     const [searchSponsorList, setSearchSponsorList] = useState<Sponsor[]>([])
     const { toast } = useToast();
+    const [Subject, setSubject] = useState<Subject[]>([])
     const [Sponsorships, setSponsorships] = useState<SponsorshipCreateModel[]>([]);
     const [schedules, setSchedules] = useState<ScheduleInCreate[]>([{ date: new Date().toString(), startTime: new Date().toString(), endTime: new Date().toString(), place: "" }]);
     useEffect(() => {
@@ -83,6 +79,13 @@ export function CreateEventForm() {
             setSearchSponsorList([])
         })
     }, [searchValue])
+    useEffect(() => {
+        getAll().then((res) => {
+            setSubject(res.data)
+        }).catch((error) => {
+            console.log("Get subject fail", error)
+        })
+    }, [])
     const defaultValues: Partial<FormDetailValues> = {
         name: "",
         description: "",
@@ -115,14 +118,14 @@ export function CreateEventForm() {
             price: parseInt(values.price),
             quantity: parseInt(values.quantity),
             avatarUrl: values.avatarUrl ? values.avatarUrl : null,
-            ownerId: 5,
+            ownerId: localStorage.getItem("userId") ? parseInt(localStorage.getItem("userId") as string) : 0,
             eventStatus: "2",
             subjectId: parseInt(values.subjectId),
             scheduleList: schedules ? schedules.map((schedule) => {
                 return {
                     startTime: new Date(schedule?.date?.split('T')[0] + "T" + schedule?.startTime + ":00Z"),
                     endTime: new Date(schedule?.date?.split('T')[0] + "T" + schedule?.endTime + ":00Z"),
-                    place: schedule?.place || "" // Provide a default value of an empty string if place is undefined
+                    place: schedule?.place || ""
                 }
             }) : [],
             sponsorships: Sponsorships.map((sponsorship) => {

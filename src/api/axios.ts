@@ -2,9 +2,10 @@ import { RefreshTokenCredentials } from "@/constants/models/common";
 import axios, { AxiosResponse } from "axios";
 
 const baseURL = "http://fptevent.one:3011";
+const baseURL2 = "https://localhost:7297";
 
 const axiosClient = axios.create({
-    baseURL: baseURL,
+    baseURL: baseURL2,
     headers: {
         "Content-Type": "application/json",
     },

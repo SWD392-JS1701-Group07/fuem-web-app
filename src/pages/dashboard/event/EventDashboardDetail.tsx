@@ -9,21 +9,32 @@ import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Ellipsis } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import CollaboratorTable from "../collaborator/component/CollaboratorTable";
+import { Collaborator } from "@/constants/models/Collaborator";
+import { getCollaboratorByEvent } from "@/api/collaboratorApi";
 
 const EventDashboardDetail = () => {
     const { id } = useParams<{ id: string }>();
     const [event, setEvent] = useState<Event>();
     const [color, setColor] = useState("red-500");
+    const [Collaborators, setCollaborators] = useState<Collaborator[]>([]);
     useEffect(() => {
         getById(Number(id)).then((res) => {
             setEvent(res.data);
         });
     }, [id]);
     useEffect(() => {
-        if (event?.eventStatus === "Active") {
+        getCollaboratorByEvent(Number(id)).then((res) => {
+            setCollaborators(res.data);
+        });
+    }, [id]);
+    useEffect(() => {
+        if (event?.eventStatus === "Active" || event?.eventStatus === "Completed") {
             setColor("green-500");
         } else if (event?.eventStatus === "Pending") {
             setColor("gray-500");
+        } else if (event?.eventStatus === "Ongoing") {
+            setColor("blue-500");
         } else {
             setColor("red-500");
         }
@@ -141,7 +152,7 @@ const EventDashboardDetail = () => {
                 <AccordionItem title="Event Detail" value="Collaborator">
                     <AccordionTrigger className="bg-slate-200 pl-2">Collaborators</AccordionTrigger>
                     <AccordionContent>
-
+                        <CollaboratorTable data={Collaborators} />
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>
