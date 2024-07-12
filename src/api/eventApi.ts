@@ -5,7 +5,7 @@ export const getAll = async (searchTerm?: string) => {
   return await axiosClient.get('/api/events', {
     params: {
       page: 1,
-      pageSize: 10,
+      pageSize: 1000,
       searchTerm: searchTerm
     }
   })
