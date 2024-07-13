@@ -81,7 +81,7 @@ const ProfilePage: React.FC = () => {
     const fetchTickets = async () => {
       try {
         const email = getEmail() as string
-        const response = await getTickets({ email })
+        const response = await getTickets({ email, isBought: true })
         setTicketList(response?.data || [])
       } catch (error) {
         console.error('Error fetching tickets:', error)
