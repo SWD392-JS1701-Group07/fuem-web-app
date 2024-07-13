@@ -81,6 +81,7 @@ export function CreateEventForm() {
     }, [searchValue])
     useEffect(() => {
         getAll().then((res) => {
+            console.log("Get subject success", res.data)
             setSubject(res.data)
         }).catch((error) => {
             console.log("Get subject fail", error)
@@ -343,7 +344,7 @@ export function CreateEventForm() {
                                             <FormItem className="mb-2">
                                                 <FormLabel>Subject*</FormLabel>
                                                 <FormControl>
-                                                    <select {...field} className="w-full p-2 border border-gray-200 rounded-md">
+                                                    <select {...field} className="w-full p-2 border border-gray-200 rounded-md" defaultValue={1}>
                                                         {Subject.map((subject) => (
                                                             <option key={subject.id} value={subject.id}>{subject.name}</option>
                                                         ))}
