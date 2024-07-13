@@ -1,4 +1,4 @@
-import { getById, updateStatus } from "@/api/eventApi";
+import { approveEvent, getById } from "@/api/eventApi";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -59,49 +59,20 @@ const EventDashboardDetail = () => {
         }
     }, [event]);
     const handleActive = () => {
-        if (event?.eventStatus === "Planning") {
-            updateStatus(Number(id)).then(() => {
-                updateStatus(Number(id)).then((res) => {
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    //@ts-expect-error
-                    setEvent(res);
-                    toast({
-                        title: "Active success",
-                        description: "Event is active",
-                        variant: "default"
-                    })
-                }).catch(() => {
-                    toast({
-                        title: "Active fail",
-                        description: "Event is not active",
-                        variant: "destructive"
-                    })
-                }).catch(() => {
-                    toast({
-                        title: "Active fail",
-                        description: "Event is not active",
-                        variant: "destructive"
-                    })
-                })
-            });
-        } else {
-            updateStatus(Number(id)).then((res) => {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                //@ts-expect-error
-                setEvent(res);
-                toast({
-                    title: "Active success",
-                    description: "Event is active",
-                    variant: "default"
-                })
-            }).catch(() => {
-                toast({
-                    title: "Active fail",
-                    description: "Event is not active",
-                    variant: "destructive"
-                })
+
+        approveEvent(Number(id)).then(() => {
+            toast({
+                title: "Active success",
+                description: "Event is active",
+                variant: "default"
             })
-        }
+        }).catch(() => {
+            toast({
+                title: "Active fail",
+                description: "",
+                variant: "destructive"
+            })
+        })
     }
     console.log("data:", event);
     return (
