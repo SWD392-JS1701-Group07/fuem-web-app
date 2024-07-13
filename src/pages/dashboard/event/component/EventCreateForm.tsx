@@ -119,7 +119,7 @@ export function CreateEventForm() {
             quantity: parseInt(values.quantity),
             avatarUrl: values.avatarUrl ? values.avatarUrl : null,
             ownerId: localStorage.getItem("userId") ? parseInt(localStorage.getItem("userId") as string) : 0,
-            eventStatus: "2",
+            eventStatus: "1",
             subjectId: parseInt(values.subjectId),
             scheduleList: schedules ? schedules.map((schedule) => {
                 return {
@@ -380,7 +380,7 @@ export function CreateEventForm() {
                                                     <FormDescription>Enter 0 if the event is free</FormDescription>
                                                     <div className="flex">
                                                         <FormControl>
-                                                            <Input type="number" min="10000" placeholder="0" step={1000} {...field} />
+                                                            <Input type="number" {...field} />
                                                         </FormControl>
                                                         <FormLabel className="text-lg self-end ml-1">VND</FormLabel>
                                                     </div>
@@ -598,9 +598,6 @@ export function CreateEventForm() {
                                                 <Input
                                                     required
                                                     type="number"
-                                                    min="10000"
-                                                    placeholder="0"
-                                                    step={1000}
                                                     value={sponsorship.sum}
                                                     onChange={(e) => {
                                                         setSponsorships(Sponsorships.map((sponsorship, index) => {

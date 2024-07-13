@@ -22,6 +22,9 @@ export const create = async (data: EventCreateModel) => {
 export const updateStatus = async (id: number) => {
   return await axiosClient.put(`/api/events/${id}`)
 }
+export const approveEvent = async (id: number) => {
+  return await axiosClient.put(`/api/events/events/${id}/approve`)
+}
 
 export const getEventByCollaborator = async (id: number) => {
   return await axiosClient.get(`/api/events/collaborators/${id}`)
