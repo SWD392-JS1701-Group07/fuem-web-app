@@ -181,9 +181,10 @@ export function CreateEventForm() {
                 }
             })
             .catch((error) => {
+                console.log("Create event fail", error);
                 toast({
                     title: "Create fail",
-                    description: error.response.data,
+                    description: "",
                     variant: "destructive",
                 })
             })
