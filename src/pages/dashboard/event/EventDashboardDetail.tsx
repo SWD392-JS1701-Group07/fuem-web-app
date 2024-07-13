@@ -113,7 +113,7 @@ const EventDashboardDetail = () => {
                                 - {event?.endSellDate.toString().substring(5, 10)}
                                 -{event?.endSellDate.toString().substring(0, 4)}
                             </CardContent>
-                            <CardContent>Ticket Price: {event?.price} VND</CardContent>
+                            {(event?.price == 0) ? <CardContent>Price: Free</CardContent> : <CardContent>Price: {event?.price} VND</CardContent>}
                             <CardContent>Ticket Quantity: {event?.quantity}</CardContent>
                             <CardContent>Event Status: {event?.eventStatus}</CardContent>
                             <CardContent>Description: {event?.description}</CardContent>
@@ -145,7 +145,7 @@ const EventDashboardDetail = () => {
                                     <CardContent>EMail: {sponsorship.sponsor.email}</CardContent>
                                     <CardContent>PhoneNumber: {sponsorship.sponsor.phoneNumber}</CardContent>
                                     <CardContent>Type: {sponsorship.type}</CardContent>
-                                    <CardContent>Sum: {sponsorship.sum}</CardContent>
+                                    <CardContent>Sum: {sponsorship.sum} VND</CardContent>
                                 </Card>
                             </>
                         )) : (<></>)}

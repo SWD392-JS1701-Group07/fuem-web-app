@@ -597,19 +597,22 @@ export function CreateEventForm() {
                                             </div>
                                             <div className="w-full pr-4">
                                                 <span>Sponsorship Sum*</span>
-                                                <Input
-                                                    required
-                                                    type="number"
-                                                    value={sponsorship.sum}
-                                                    onChange={(e) => {
-                                                        setSponsorships(Sponsorships.map((sponsorship, index) => {
-                                                            if (index === id) {
-                                                                return { ...sponsorship, sum: parseInt(e.target.value) }
-                                                            }
-                                                            return sponsorship
-                                                        }))
-                                                    }}
-                                                />
+                                                <div className="flex">
+                                                    <Input
+                                                        required
+                                                        type="number"
+                                                        value={sponsorship.sum}
+                                                        onChange={(e) => {
+                                                            setSponsorships(Sponsorships.map((sponsorship, index) => {
+                                                                if (index === id) {
+                                                                    return { ...sponsorship, sum: parseInt(e.target.value) }
+                                                                }
+                                                                return sponsorship
+                                                            }))
+                                                        }}
+                                                    />
+                                                    <span className="ml-2 mt-auto text-lg" > VND</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </Card>
