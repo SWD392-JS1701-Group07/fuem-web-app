@@ -12,12 +12,31 @@ import { useParams } from "react-router-dom";
 import CollaboratorTable from "../collaborator/component/CollaboratorTable";
 import { Collaborator } from "@/constants/models/Collaborator";
 import { getCollaboratorByEvent } from "@/api/collaboratorApi";
+import TicketTable from "@/pages/ticket/TicketList";
+import { getTicketByEventId } from "@/api/ticketApi";
+import { OrderTicket } from "@/constants/models/Ticket";
 
 const EventDashboardDetail = () => {
     const { id } = useParams<{ id: string }>();
     const [event, setEvent] = useState<Event>();
     const [color, setColor] = useState("red-500");
     const [Collaborators, setCollaborators] = useState<Collaborator[]>([]);
+    
+  const [ticketList, setTicketList] = useState<OrderTicket[]>([])
+
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const response = await getTicketByEventId(id as string)
+        setTicketList(response?.data || [])
+      } catch (error) {
+        console.error('Error fetching tickets:', error)
+      }
+    }
+
+    fetchTickets()
+  }, [id])
+  
     useEffect(() => {
         getById(Number(id)).then((res) => {
             setEvent(res.data);
@@ -43,6 +62,7 @@ const EventDashboardDetail = () => {
         if (event?.eventStatus === "Planning") {
             updateStatus(Number(id)).then(() => {
                 updateStatus(Number(id)).then((res) => {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     //@ts-expect-error
                     setEvent(res);
                     toast({
@@ -66,6 +86,7 @@ const EventDashboardDetail = () => {
             });
         } else {
             updateStatus(Number(id)).then((res) => {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-expect-error
                 setEvent(res);
                 toast({
@@ -166,6 +187,18 @@ const EventDashboardDetail = () => {
                         <CollaboratorTable data={Collaborators} />
                     </AccordionContent>
                 </AccordionItem>
+                <AccordionItem title="Event Detail" value="ticket">
+          <AccordionTrigger className="bg-slate-200 pl-2">Tickets</AccordionTrigger>
+          <AccordionContent>
+            <div className="light mb-10 max-w-screen-2xl">
+              {ticketList ? (
+                <TicketTable data={ticketList} />
+              ) : (
+                <h1>There are no tickets for this event.</h1>
+              )}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
             </Accordion>
         </div >
     );
