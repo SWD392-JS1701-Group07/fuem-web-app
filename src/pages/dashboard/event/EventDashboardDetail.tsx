@@ -9,9 +9,9 @@ import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Ellipsis } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import CollaboratorTable from "../collaborator/component/CollaboratorTable";
 import { Collaborator } from "@/constants/models/Collaborator";
 import { getCollaboratorByEvent } from "@/api/collaboratorApi";
+import CollaboratorTable from "./component/CollaboratorTable";
 
 const EventDashboardDetail = () => {
     const { id } = useParams<{ id: string }>();
