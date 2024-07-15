@@ -1,9 +1,10 @@
 'use client'
 
 import {
+    Coins,
     HandCoins, LandPlot, LayoutDashboard, LucideFootprints,
-    PawPrint, PocketKnife, Rabbit, ShoppingBag, Star,
-    User, UserCog, UtensilsCrossed
+    ShoppingBag, 
+    User, UserCog, 
 } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -104,39 +105,9 @@ const sponsorSidebarLinks = [
         label: 'Overview'
     },
     {
-        icon: <PocketKnife className="w-6 h-6" />,
-        route: '/dashboard/experience',
-        label: 'Experience'
-    },
-    {
-        icon: <Star className="w-6 h-6" />,
-        route: '/dashboard/skills',
-        label: 'Skills'
-    },
-    {
-        icon: <LandPlot className="w-6 h-6" />,
-        route: '/dashboard/areas',
-        label: 'Areas'
-    },
-    {
-        icon: <PawPrint className="w-6 h-6" />,
-        route: '/dashboard/types',
-        label: 'Animal Types'
-    },
-    {
-        icon: <Rabbit className="w-6 h-6" />,
-        route: '/dashboard/animals',
-        label: 'Animals'
-    },
-    {
-        icon: <ShoppingBag className="w-6 h-6" />,
-        route: '/dashboard/species',
-        label: 'Species'
-    },
-    {
-        icon: <UtensilsCrossed className="w-6 h-6" />,
-        route: '/dashboard/diets',
-        label: 'Diets'
+        icon: <Coins className="w-6 h-6" />,
+        route: '/dashboard/sponsorship',
+        label: 'Sponsorships'
     },
 ]
 //1 admin
@@ -146,6 +117,7 @@ const sponsorSidebarLinks = [
 //5 Operator
 //6 collaborator
 
+// eslint-disable-next-line no-empty-pattern
 function LeftSidebar({ }) {
     const [user] = useState(localStorage.getItem('role'));
     console.log(user)
