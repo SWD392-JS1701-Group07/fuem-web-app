@@ -9,7 +9,7 @@ import {
   DrawerTitle,
   DrawerTrigger
 } from '@/components/ui/drawer'
-import { Event } from '@/constants/models/Event'
+import { Event, EventDetail } from '@/constants/models/Event'
 import { formatDateTime } from '@/lib/utils'
 import { Calendar, CalendarPlus, MapPin } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -20,6 +20,7 @@ import { useCart } from '../../cart/UseCart'
 import { CartItem, type Ticket } from '@/constants/models/Ticket'
 import { useParams } from 'react-router-dom'
 import { useToast } from '@/components/ui/use-toast'
+import { getById } from '@/api'
 
 const EventTicket = ({ event }: { event: Event }) => {
   const MAX_TICKETS = 5
@@ -27,6 +28,7 @@ const EventTicket = ({ event }: { event: Event }) => {
   const [open, setOpen] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const [user, setUser] = useState<Account | null>(null)
+  const [eventDetail, setEventDetail] = useState<EventDetail | undefined>(undefined)
   const [additionalTickets, setAdditionalTickets] = useState<Ticket[]>([
     { name: '', email: '', phoneNumber: '', price: event.price, eventId: event.id }
   ])
@@ -42,8 +44,24 @@ const EventTicket = ({ event }: { event: Event }) => {
     }
   }, [accessToken])
 
+  useEffect(() => {
+    const getEventDetail = async () => {
+      try {
+        const response = await getById(parseInt(id as string))
+        setEventDetail(response.data)
+      } catch (error) {
+        console.error('Failed to fetch event details', error)
+      }
+    }
+
+    if (id) {
+      getEventDetail()
+    }
+  }, [id])
+
   const handleQuantityChange = (value: number) => {
-    const newQuantity = Math.max(1, Math.min(MAX_TICKETS, value))
+    const remainingTickets = eventDetail?.remaining || 0
+    const newQuantity = Math.max(1, Math.min(MAX_TICKETS, Math.min(value, remainingTickets)))
     setQuantity(newQuantity)
     setAdditionalTickets((prevTickets) => {
       const updatedTickets = [...prevTickets]
@@ -59,7 +77,6 @@ const EventTicket = ({ event }: { event: Event }) => {
       return updatedTickets.slice(0, newQuantity - 1)
     })
   }
-
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return emailRegex.test(email)
