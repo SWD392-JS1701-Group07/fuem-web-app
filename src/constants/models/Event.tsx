@@ -103,5 +103,6 @@ export type Sponsorships =
     sum: string,
     sponsorId: number,
     eventId: number,
+    eventName: string,
     sponsor: Sponsor
   }
