@@ -59,17 +59,3 @@ export const getSponsorshipsBySponsorId = async (
 export const createSponsorship = async (formData: formData) => {
   return await axiosClient.post('/api/sponsorships', formData)
 }
-
-export const editSponsorship = async (formData: Sponsorships) => {
-  return await axiosClient.put(`/api/sponsorships/${formData?.id}`, {
-    description: formData.description,
-    title: formData.title,
-    sum: parseInt(formData.sum),
-    sponsorId: formData.sponsorId,
-    eventId: formData.eventId
-  })
-}
-
-export const deleteSponsorship = async (id: number) => {
-  return await axiosClient.delete(`/api/sponsorships/${id}`)
-}
