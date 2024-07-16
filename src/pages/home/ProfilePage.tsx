@@ -336,7 +336,7 @@ const ProfilePage: React.FC = () => {
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
-      {(user.roleId && (user.roleId === 0 || user.roleId === 2)) ?? (
+      {user.roleId ?? (user.roleId === 0 || user.roleId === 2) ? (
         <>
           <h2 className="mb-4 mt-10 text-3xl font-semibold">Your Purchased Tickets</h2>
           <div className="dark mb-10">
@@ -347,6 +347,8 @@ const ProfilePage: React.FC = () => {
             )}
           </div>
         </>
+      ) : (
+        <></>
       )}
     </div>
   )
