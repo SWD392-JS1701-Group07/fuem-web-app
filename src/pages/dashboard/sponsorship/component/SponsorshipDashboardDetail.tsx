@@ -1,5 +1,5 @@
 import { getById } from '@/api/eventApi'
-import { getById as getSubjectById } from '@/api/subjectApi'
+import { getSubjectById as getSubjectById } from '@/api/subjectApi'
 import { getSponsorshipsById } from '@/api/sponsorApi'
 import {
   Accordion,

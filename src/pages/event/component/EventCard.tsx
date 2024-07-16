@@ -50,7 +50,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
         <h2 className="mt-4 text-2xl font-bold text-white">
           {event.name}{' '}
           <span className="ml-1 rounded-xl bg-indigo-400 px-4 text-xl font-semibold not-italic text-white">
-            {eventDetail?.subject.name}
+            {eventDetail?.subject ? eventDetail.subject.name : 'Unknown'}
           </span>
         </h2>
         <h2 className="mt-1 italic text-gray-300">
