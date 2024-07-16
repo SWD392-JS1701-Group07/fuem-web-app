@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { toast } from "@/components/ui/use-toast";
-import { Event } from "@/constants/models/Event";
+import { Event, Subject } from "@/constants/models/Event";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Ellipsis } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -15,13 +15,14 @@ import TicketTable from "@/pages/ticket/TicketList";
 import { getTicketByEventId } from "@/api/ticketApi";
 import { OrderTicket } from "@/constants/models/Ticket";
 import CollaboratorTable from "./component/CollaboratorTable";
+import { getAllSubject } from "@/api/subjectApi";
 
 const EventDashboardDetail = () => {
     const { id } = useParams<{ id: string }>();
     const [event, setEvent] = useState<Event>();
     const [color, setColor] = useState("red-500");
     const [Collaborators, setCollaborators] = useState<Collaborator[]>([]);
-
+    const [subject, setSubject] = useState<Subject>()
     const [ticketList, setTicketList] = useState<OrderTicket[]>([])
 
     useEffect(() => {
@@ -45,6 +46,12 @@ const EventDashboardDetail = () => {
     useEffect(() => {
         getCollaboratorByEvent(Number(id)).then((res) => {
             setCollaborators(res.data);
+        });
+        getAllSubject().then((res) => {
+            console.log("sub: ", res.data);
+            setSubject(res.data.find((sub: Subject) =>
+                (sub.id === event?.subjectId)))
+            console.log("subOb: ", subject);
         });
     }, [id]);
     useEffect(() => {
@@ -117,7 +124,7 @@ const EventDashboardDetail = () => {
                             <CardContent>Ticket Quantity: {event?.quantity}</CardContent>
                             <CardContent>Event Status: {event?.eventStatus}</CardContent>
                             <CardContent>Description: {event?.description}</CardContent>
-                            {/* <CardContent>Subject Id</CardContent> */}
+                            <CardContent>Subject Id: {subject?.name ? subject?.name : ""}</CardContent>
                         </Card>
                     </AccordionContent>
                 </AccordionItem>

@@ -1,9 +1,9 @@
 import axiosClient from './axios'
 
-export const getAll = async () => {
+export const getAllSubject = async () => {
   return await axiosClient.get('/api/subjects')
 }
 
-export const getById = async (id: number) => {
+export const getSubjectById = async (id: number) => {
   return await axiosClient.get(`/api/subjects/${id}`)
 }

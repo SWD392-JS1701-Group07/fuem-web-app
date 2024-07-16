@@ -31,7 +31,7 @@ import {
 import { Sponsor } from "@/constants/models/Sponsor"
 import { searchSponsor } from "@/api/sponsorApi"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { getAll } from "@/api/subjectApi"
+import { getAllSubject } from "@/api/subjectApi"
 
 const formDetailSchema = z.object({
     name: z.string()
@@ -80,7 +80,7 @@ export function CreateEventForm() {
         })
     }, [searchValue])
     useEffect(() => {
-        getAll().then((res) => {
+        getAllSubject().then((res) => {
             console.log("Get subject success", res.data)
             setSubject(res.data)
         }).catch((error) => {
@@ -121,7 +121,7 @@ export function CreateEventForm() {
             avatarUrl: values.avatarUrl ? values.avatarUrl : null,
             ownerId: localStorage.getItem("userId") ? parseInt(localStorage.getItem("userId") as string) : 0,
             eventStatus: "1",
-            subjectId: parseInt(values.subjectId),
+            subjectId: values.subjectId == "0" ? 1 : parseInt(values.subjectId),
             scheduleList: schedules ? schedules.map((schedule) => {
                 return {
                     startTime: new Date(schedule?.date?.split('T')[0] + "T" + schedule?.startTime + ":00Z"),
@@ -541,7 +541,7 @@ export function CreateEventForm() {
                                         <div className="mt-5">
                                             <span>Name*</span>
                                             {(sponsorship.sponsor.name != "") ?
-                                                <Input required value={sponsorship.sponsor.name} disabled /> :
+                                                <Input required value={sponsorship.sponsor.name} /> :
                                                 <Input required value={sponsorship.sponsor.name} onChange={(e) => {
                                                     setSponsorships(Sponsorships.map((sponsorship, index) => {
                                                         if (index === id) {
@@ -556,7 +556,7 @@ export function CreateEventForm() {
                                         <div className="mt-5">
                                             <span>Email*</span>
                                             {(sponsorship.sponsor.email != "") ?
-                                                <Input required value={sponsorship.sponsor.email} disabled /> :
+                                                <Input required value={sponsorship.sponsor.email} /> :
                                                 <Input required value={sponsorship.sponsor.email} onChange={(e) => {
                                                     setSponsorships(Sponsorships.map((sponsorship, index) => {
                                                         if (index === id) {
@@ -570,7 +570,7 @@ export function CreateEventForm() {
                                         <div className="mt-5">
                                             <span>Phone number*</span>
                                             {(sponsorship.sponsor.phoneNumber != "") ?
-                                                <Input required value={sponsorship.sponsor.phoneNumber} disabled /> :
+                                                <Input required value={sponsorship.sponsor.phoneNumber} /> :
                                                 <Input required value={sponsorship.sponsor.phoneNumber} onChange={(e) => {
                                                     setSponsorships(Sponsorships.map((sponsorship, index) => {
                                                         if (index === id) {
@@ -583,12 +583,12 @@ export function CreateEventForm() {
                                         </div>
                                         <div className="flex mt-5">
                                             <div className="w-full mr-10">
-                                                <span>Sponsor Type*</span>
+                                                <span>Sponsor Title*</span>
                                                 <Input required value={sponsorship.type} onChange={
                                                     (e) => {
                                                         setSponsorships(Sponsorships.map((sponsorship, index) => {
                                                             if (index === id) {
-                                                                return { ...sponsorship, type: e.target.value }
+                                                                return { ...sponsorship, title: e.target.value }
                                                             }
                                                             return sponsorship
                                                         }))
