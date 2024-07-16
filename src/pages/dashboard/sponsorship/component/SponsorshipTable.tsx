@@ -150,8 +150,14 @@ export const columns: ColumnDef<Sponsorships>[] = [
               View details
             </DropdownMenuItem>
             {/* <DropdownMenuSeparator /> */}
-            <DropdownMenuItem>Buy ticket</DropdownMenuItem>
-            <DropdownMenuItem>Register as collaborator</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                const navigate = useNavigate()
+                navigate(`/dashboard/sponsorship/${row.getValue('id')}/edit`)
+              }}
+            >
+              Edit
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
