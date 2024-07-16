@@ -336,15 +336,20 @@ const ProfilePage: React.FC = () => {
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
-
-      <h2 className="mb-4 mt-10 text-3xl font-semibold">Your Purchased Tickets</h2>
-      <div className="dark mb-10">
-        {ticketList ? (
-          <TicketTable data={ticketList} />
-        ) : (
-          <h1>You have not purchased any tickets.</h1>
-        )}
-      </div>
+      {user.roleId ?? (user.roleId === 0 || user.roleId === 2) ? (
+        <>
+          <h2 className="mb-4 mt-10 text-3xl font-semibold">Your Purchased Tickets</h2>
+          <div className="dark mb-10">
+            {ticketList ? (
+              <TicketTable data={ticketList} />
+            ) : (
+              <h1>You have not purchased any tickets.</h1>
+            )}
+          </div>
+        </>
+      ) : (
+        <></>
+      )}
     </div>
   )
 }

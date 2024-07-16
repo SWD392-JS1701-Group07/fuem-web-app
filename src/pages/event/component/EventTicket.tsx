@@ -9,7 +9,7 @@ import {
   DrawerTitle,
   DrawerTrigger
 } from '@/components/ui/drawer'
-import { Event } from '@/constants/models/Event'
+import { Event, EventDetail } from '@/constants/models/Event'
 import { formatDateTime } from '@/lib/utils'
 import { Calendar, CalendarPlus, MapPin } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -20,6 +20,7 @@ import { useCart } from '../../cart/UseCart'
 import { CartItem, type Ticket } from '@/constants/models/Ticket'
 import { useParams } from 'react-router-dom'
 import { useToast } from '@/components/ui/use-toast'
+import { getById } from '@/api'
 
 const EventTicket = ({ event }: { event: Event }) => {
   const MAX_TICKETS = 5
@@ -27,6 +28,7 @@ const EventTicket = ({ event }: { event: Event }) => {
   const [open, setOpen] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const [user, setUser] = useState<Account | null>(null)
+  const [eventDetail, setEventDetail] = useState<EventDetail | undefined>(undefined)
   const [additionalTickets, setAdditionalTickets] = useState<Ticket[]>([
     { name: '', email: '', phoneNumber: '', price: event.price, eventId: event.id }
   ])
@@ -42,22 +44,51 @@ const EventTicket = ({ event }: { event: Event }) => {
     }
   }, [accessToken])
 
-  const handleQuantityChange = (value: number) => {
-    const newQuantity = Math.max(1, Math.min(MAX_TICKETS, value))
-    setQuantity(newQuantity)
-    setAdditionalTickets((prevTickets) => {
-      const updatedTickets = [...prevTickets]
-      for (let i = prevTickets.length; i < newQuantity - 1; i++) {
-        updatedTickets.push({
-          name: '',
-          email: '',
-          phoneNumber: '',
-          price: event.price,
-          eventId: event.id
-        })
+  useEffect(() => {
+    const getEventDetail = async () => {
+      try {
+        const response = await getById(parseInt(id as string))
+        setEventDetail(response.data)
+      } catch (error) {
+        console.error('Failed to fetch event details', error)
       }
-      return updatedTickets.slice(0, newQuantity - 1)
-    })
+    }
+
+    if (id) {
+      getEventDetail()
+    }
+  }, [id])
+  const handleQuantityChange = (value: number) => {
+    const remainingTickets = eventDetail?.remaining || 0
+    const newQuantity = Math.max(1, Math.min(MAX_TICKETS, Math.min(value, remainingTickets)))
+    setQuantity(newQuantity)
+
+    if (!user) {
+      const newAdditionalTickets = Array.from({ length: newQuantity }, () => ({
+        name: '',
+        email: '',
+        phoneNumber: '',
+        price: event.price,
+        eventId: event.id
+      }))
+      setAdditionalTickets(newAdditionalTickets)
+    } else
+      setAdditionalTickets((prevTickets) => {
+        if (newQuantity > 1) {
+          const updatedTickets = [...prevTickets]
+          for (let i = prevTickets.length; i < newQuantity - 1; i++) {
+            updatedTickets.push({
+              name: '',
+              email: '',
+              phoneNumber: '',
+              price: event.price,
+              eventId: event.id
+            })
+          }
+          return updatedTickets.slice(0, newQuantity - 1)
+        }
+        return []
+      })
   }
 
   const validateEmail = (email: string) => {
@@ -91,7 +122,8 @@ const EventTicket = ({ event }: { event: Event }) => {
       if (!validatePhoneNumber(ticket.phoneNumber)) {
         toast({
           title: 'Failed',
-          description: 'Invalid phone number format.',
+          description:
+            'Invalid phone number format. Please enter a valid Vietnamese phone number in the format +84 or 0 followed by 10 digits.',
           variant: 'destructive'
         })
         return false
@@ -150,6 +182,10 @@ const EventTicket = ({ event }: { event: Event }) => {
     setOpen(false)
   }
 
+  const today = new Date().toISOString().split('T')[0]
+  const startSellDate = new Date(event.startSellDate).toISOString().split('T')[0]
+  const endSellDate = new Date(event.endSellDate).toISOString().split('T')[0]
+
   const handleAdditionalTicketChange = (index: number, field: keyof Account, value: string) => {
     const newTickets = [...additionalTickets]
     newTickets[index] = { ...newTickets[index], [field]: value }
@@ -185,7 +221,7 @@ const EventTicket = ({ event }: { event: Event }) => {
     <div className="flex flex-row space-x-2 pl-2">
       {additionalTickets.map((ticket, index) => (
         <div key={index} className="mb-4">
-          <p className="text-lg font-semibold text-white">Additional Ticket {index + 1}</p>
+          <p className="text-lg font-semibold text-white">Ticket {index + 1}</p>
           <div className="flex flex-col gap-2">
             <input
               type="text"
@@ -223,7 +259,7 @@ const EventTicket = ({ event }: { event: Event }) => {
         <div>
           {isEventPage ? (
             <Button className="mt-4 h-14 rounded-none border border-yellow-sun bg-black px-8 text-xl text-yellow-sun hover:bg-yellow-sun hover:text-black">
-              Buy Ticket
+              {today >= startSellDate && today <= endSellDate ? 'Buy Ticket' : 'Sold Out'}
             </Button>
           ) : (
             <button

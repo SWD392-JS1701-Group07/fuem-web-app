@@ -30,6 +30,8 @@ import OperatorDashboardDetail from './pages/dashboard/operator/Component/Operat
 import StaffDashboardDetail from './pages/dashboard/Staff/Component/StaffDashboardDetail'
 import VisitorDashboardDetail from './pages/dashboard/Visitor/Component/VisitorDashboardDetail'
 import SponsorDashboardDetail from './pages/dashboard/sponsor/component/SponsorDashboardDetail'
+import SponsorshipList from './pages/dashboard/sponsorship/SponsorshipList'
+import SponsorshipDashboardDetail from './pages/dashboard/sponsorship/component/SponsorshipDashboardDetail'
 
 function App() {
   //const { component: Component, path } = routes[3];
@@ -78,6 +80,8 @@ function App() {
             <Route path="event/create" element={<CreateEvent />} />
             <Route path="sponsor" element={<SponsorList />} />
             <Route path="sponsor/:id" element={<SponsorDashboardDetail />} />
+            <Route path="sponsorship" element={<SponsorshipList />} />
+            <Route path="sponsorship/:id" element={<SponsorshipDashboardDetail />} />
             <Route path="operator" element={<OperatorList />} />
             <Route path="operator/:id" element={<OperatorDashboardDetail />} />
             <Route path="visitor" element={<VisitorList />} />
