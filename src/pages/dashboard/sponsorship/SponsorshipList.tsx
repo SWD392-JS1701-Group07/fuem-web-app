@@ -25,8 +25,8 @@ const SponsorshipList = () => {
   }, [])
 
   return (
-    <div className="h-screen w-full">
-      <p className="text-3xl">Sponsor</p>
+    <div className="h-screen w-full p-4">
+      <p className="text-3xl font-semibold">Sponsor</p>
       <SponsorshipTable data={data} />
     </div>
   )
