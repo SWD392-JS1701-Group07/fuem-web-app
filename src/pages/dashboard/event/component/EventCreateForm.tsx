@@ -584,7 +584,7 @@ export function CreateEventForm() {
                                         <div className="flex mt-5">
                                             <div className="w-full mr-10">
                                                 <span>Sponsor Title*</span>
-                                                <Input required value={sponsorship.type} onChange={
+                                                <Input required value={sponsorship.title} onChange={
                                                     (e) => {
                                                         setSponsorships(Sponsorships.map((sponsorship, index) => {
                                                             if (index === id) {
