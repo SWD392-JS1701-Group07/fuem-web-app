@@ -1,6 +1,16 @@
 import { Sponsorships } from '@/constants/models/Event'
 import axiosClient from '../api/axios'
 import { AxiosResponse } from 'axios'
+import { Sponsor } from '@/constants/models/Sponsor'
+
+interface formData {
+  description: string
+  title: string
+  sum: number
+  sponsorId: number | null
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  eventId: Number | undefined
+}
 
 export const getAll = async () => {
   return await axiosClient.get(`/api/sponsors`, {
@@ -25,6 +35,10 @@ export const searchSponsor = async (search: string) => {
   })
 }
 
+export const getSponsorByEmail = async (email: string): Promise<Sponsor> => {
+  return await axiosClient.get(`/api/sponsors/email/${email}`)
+}
+
 export const getSponsorshipsById = async (id: number) => {
   return await axiosClient.get(`/api/sponsorships/${id}`)
 }
@@ -40,4 +54,8 @@ export const getSponsorshipsBySponsorId = async (
       pageSize: 1000
     }
   })
+}
+
+export const createSponsorship = async (formData: formData) => {
+  return await axiosClient.post('/api/sponsorships', formData)
 }
