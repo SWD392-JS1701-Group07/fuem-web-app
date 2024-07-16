@@ -42,6 +42,7 @@ type Props = {
     data: Event[]
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const columns: ColumnDef<Event>[] = [
     {
         accessorKey: "id",
@@ -173,6 +174,7 @@ export const columns: ColumnDef<Event>[] = [
         enableHiding: false,
         cell: ({ row }) => {
             const event = row.original
+            // eslint-disable-next-line react-hooks/rules-of-hooks
             const nav = useNavigate();
 
             return (
