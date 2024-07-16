@@ -16,7 +16,7 @@ import { updateProfile } from '@/api/userAPI'
 import { OrderTicket } from '@/constants/models/Ticket'
 import { getTickets } from '@/api/ticketApi'
 import TicketTable from '../ticket/TicketList'
-import { getAll as getAllSubjects } from '@/api/subjectApi'
+import { getAllSubject as getAllSubjects } from '@/api/subjectApi'
 
 const profileFields = {
   name: 'Name',
@@ -118,9 +118,9 @@ const ProfilePage: React.FC = () => {
     setFormValues((prevState) =>
       prevState
         ? {
-            ...prevState,
-            [name]: value
-          }
+          ...prevState,
+          [name]: value
+        }
         : null
     )
   }
