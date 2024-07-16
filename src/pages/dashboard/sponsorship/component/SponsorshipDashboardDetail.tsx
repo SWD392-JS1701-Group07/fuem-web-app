@@ -13,10 +13,11 @@ import { Sponsorships, Event, Subject } from '@/constants/models/Event'
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
 import { Ellipsis } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const SponsorshipDashboardDetail = () => {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
   const [sponsorship, setSponsorship] = useState<Sponsorships>()
   const [event, setEvent] = useState<Event>()
   const [subject, setSubject] = useState<Subject>()
@@ -52,7 +53,13 @@ const SponsorshipDashboardDetail = () => {
               <Ellipsis />
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem>Edit</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  navigate(`/dashboard/sponsorship/${id}/edit`)
+                }}
+              >
+                Edit
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
