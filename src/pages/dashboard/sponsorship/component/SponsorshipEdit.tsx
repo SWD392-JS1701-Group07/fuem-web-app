@@ -61,7 +61,7 @@ const SponsorshipEdit = () => {
             variant: 'default'
           })
           setTimeout(() => {
-            navigate(`/dashboard/sponsorship/${formData.sponsorId}`)
+            navigate(`/dashboard/sponsorship/${formData.id}`)
           }, 500)
         } else {
           toast({
