@@ -187,7 +187,7 @@ export function CreateEventForm() {
                 console.log("Create event fail", error);
                 toast({
                     title: "Create fail",
-                    description: error.response ? error.response.data : null,
+                    description: error.response == undefined ? "" : error.response.data,
                     variant: "destructive",
                 })
             })
