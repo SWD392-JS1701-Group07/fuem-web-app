@@ -29,9 +29,7 @@ const EventTicket = ({ event }: { event: Event }) => {
   const [quantity, setQuantity] = useState(1)
   const [user, setUser] = useState<Account | null>(null)
   const [eventDetail, setEventDetail] = useState<EventDetail | undefined>(undefined)
-  const [additionalTickets, setAdditionalTickets] = useState<Ticket[]>([
-    { name: '', email: '', phoneNumber: '', price: event.price, eventId: event.id }
-  ])
+  const [additionalTickets, setAdditionalTickets] = useState<Ticket[]>([])
   const { addToCart } = useCart()
   const { toast } = useToast()
   const { id } = useParams()
