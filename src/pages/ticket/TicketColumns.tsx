@@ -3,6 +3,8 @@ import { CaretSortIcon } from '@radix-ui/react-icons'
 import { ColumnDef } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import TicketDetail from './TicketDetail'
+import { Link } from 'react-router-dom'
+import { View } from 'lucide-react'
 
 export const columns: ColumnDef<OrderTicket>[] = [
   {
@@ -74,7 +76,11 @@ export const columns: ColumnDef<OrderTicket>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className="capitalize">{row.getValue('eventId')}</div>
+    cell: ({ row }) => <div className="capitalize">
+      <Link to={`/event/${row.getValue('eventId')}`} className='flex flex-row items-center'>
+        {row.getValue('eventId') + ' '} <Button className='ml-2'>View Event <View className="ml-2" /></Button>
+      </Link>
+      </div>
   },
   {
     accessorKey: 'price',
