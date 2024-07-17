@@ -149,38 +149,38 @@ export function CreateEventForm() {
         create(eventCreateModel)
             .then((res) => {
                 console.log("Create event success", res);
-
-                const formData = new FormData();
-                //@ts-expect-error
-                formData.append('id', res.id.toString());
-                //@ts-expect-error
-                formData.append('avatarProfile', avatarFile);
-                console.log("formData", formData.get('id'), formData.get('avatarProfile'));
-                if (avatarFile) {
-                    addEventImage(formData).then(() => {
+                if (res.data) {
+                    const formData = new FormData();
+                    formData.append('id', res.data.id.toString());
+                    //@ts-expect-error
+                    formData.append('avatarProfile', avatarFile);
+                    console.log("formData", formData.get('id'), formData.get('avatarProfile'));
+                    if (avatarFile) {
+                        addEventImage(formData).then(() => {
+                            toast({
+                                title: "Create success",
+                                description: "Event has been created",
+                            })
+                            nav("/dashboard/event");
+                        }).catch((error) => {
+                            console.log("Add image fail", error)
+                            toast({
+                                title: "Event created without Image",
+                                description: "Event has been created but event image has not been uploaded",
+                                style: {
+                                    backgroundColor: "yellow",
+                                    color: "black"
+                                }
+                            })
+                            nav("/dashboard/event");
+                        })
+                    } else {
                         toast({
                             title: "Create success",
                             description: "Event has been created",
                         })
                         nav("/dashboard/event");
-                    }).catch((error) => {
-                        console.log("Add image fail", error)
-                        toast({
-                            title: "Event created without Image",
-                            description: "Event has been created but event image has not been uploaded",
-                            style: {
-                                backgroundColor: "yellow",
-                                color: "black"
-                            }
-                        })
-                        nav("/dashboard/event");
-                    })
-                } else {
-                    toast({
-                        title: "Create success",
-                        description: "Event has been created",
-                    })
-                    nav("/dashboard/event");
+                    }
                 }
             })
             .catch((error) => {
