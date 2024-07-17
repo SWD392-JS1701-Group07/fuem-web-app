@@ -252,23 +252,24 @@ const EventTicket = ({ event }: { event: Event }) => {
 
   const total = event.price * quantity
   const schedule = event.scheduleList
+  const remaining = eventDetail?.remaining
 
   return (
-    <Drawer open={open && today >= startSellDate && today <= endSellDate} onOpenChange={setOpen}>
+    <Drawer open={(open && today >= startSellDate && today <= endSellDate && remaining! > 0)} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <div>
           {isEventPage ? (
             <Button
               className="mt-4 h-14 rounded-none border border-yellow-sun bg-black px-8 text-xl text-yellow-sun hover:bg-yellow-sun hover:text-black"
-              disabled={!(today >= startSellDate && today <= endSellDate)}
+              disabled={!(today >= startSellDate && today <= endSellDate) || (remaining! <= 0)}
             >
-              {today >= startSellDate && today <= endSellDate ? 'Buy Ticket' : 'Sold Out'}
+              {((today >= startSellDate && today <= endSellDate) || remaining! > 0)  ? 'Buy Ticket' : 'Sold Out'}
             </Button>
           ) : (
             <button
               className="flex h-12 w-12 items-center justify-center rounded-full bg-electric-indigo text-white"
               aria-label="Join Event"
-              disabled={!(today >= startSellDate && today <= endSellDate)}
+              disabled={!(today >= startSellDate && today <= endSellDate) || (remaining! <= 0)}
             >
               <CalendarPlus className="h-6 w-6" />
             </button>
