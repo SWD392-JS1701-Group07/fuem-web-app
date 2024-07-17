@@ -14,6 +14,7 @@ const DashboardEventList = () => {
     }, [])
     const getEvents = async () => {
         const response = await getAll("");
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-expect-error
         setData(response);
         console.log("data: ", response)
