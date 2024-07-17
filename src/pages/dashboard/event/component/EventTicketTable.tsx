@@ -1,7 +1,8 @@
+import { CaretSortIcon } from '@radix-ui/react-icons'
+import { ColumnDef } from '@tanstack/react-table'
 import * as React from 'react'
-import { CaretSortIcon, ChevronDownIcon, DotsHorizontalIcon } from '@radix-ui/react-icons'
+import { ChevronDownIcon } from '@radix-ui/react-icons'
 import {
-  ColumnDef,
   ColumnFiltersState,
   SortingState,
   VisibilityState,
@@ -17,8 +18,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import {
@@ -29,145 +28,131 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { useNavigate } from 'react-router-dom'
-import { Sponsorships } from '@/constants/models/Event'
-
-type Props = {
-  data: Sponsorships[]
-}
+import { OrderTicket } from '@/constants/models/Ticket'
+import EventCheckinButton from './EventCheckinButton'
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const columns: ColumnDef<Sponsorships>[] = [
+export const columns: ColumnDef<OrderTicket>[] = [
   {
     accessorKey: 'id',
+    header: () => {
+      return <></>
+    },
+    cell: ({ row }) => <EventCheckinButton ticketId={row.getValue('id')} />
+  },
+  {
+    accessorKey: 'name',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Id
+          Name
           <CaretSortIcon className="ml-2 h-4 w-4" />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="capitalize">{row.getValue('id')}</div>
+    cell: ({ row }) => <div className="capitalize">{row.getValue('name')}</div>
   },
   {
-    accessorKey: 'description',
+    accessorKey: 'email',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Description
+          Email
           <CaretSortIcon className="ml-2 h-4 w-4" />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="capitalize">{row.getValue('description')}</div>
+    cell: ({ row }) => <div className="lowercase">{row.getValue('email')}</div>
   },
   {
-    accessorKey: 'type',
+    accessorKey: 'phoneNumber',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Type
+          Phone Number
           <CaretSortIcon className="ml-2 h-4 w-4" />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="capitalize">{row.getValue('type')}</div>
+    cell: ({ row }) => <div className="capitalize">{row.getValue('phoneNumber')}</div>
   },
   {
-    accessorKey: 'title',
+    accessorKey: 'eventId',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Title
+          Event ID
           <CaretSortIcon className="ml-2 h-4 w-4" />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="capitalize">{row.getValue('title')}</div>
+    cell: ({ row }) => <div className="capitalize">{row.getValue('eventId')}</div>
   },
   {
-    accessorKey: 'sum',
+    accessorKey: 'price',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Sum
+          Price
           <CaretSortIcon className="ml-2 h-4 w-4" />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="capitalize">{row.getValue('sum')}</div>
+    cell: ({ row }) => <div className="capitalize">{row.getValue('price')}</div>
   },
   {
-    accessorKey: 'eventName',
+    accessorKey: 'isCheckIn',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Event
+          Check-In Status
           <CaretSortIcon className="ml-2 h-4 w-4" />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="capitalize">{row.getValue('eventName')}</div>
+    cell: ({ row }) => <div className="capitalize">{row.getValue('isCheckIn')}</div>
   },
   {
-    id: 'actions',
-    enableHiding: false,
-    cell: ({ row }) => {
-      //const payment = row.original
-      console.log(row)
+    accessorKey: 'ordersId',
+    header: ({ column }) => {
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <DotsHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-            //onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              View details
-            </DropdownMenuItem>
-            {/* <DropdownMenuSeparator /> */}
-            <DropdownMenuItem
-              onClick={() => {
-                const navigate = useNavigate()
-                navigate(`/dashboard/sponsorship/${row.getValue('id')}/edit`)
-              }}
-            >
-              Edit
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Order ID
+          <CaretSortIcon className="ml-2 h-4 w-4" />
+        </Button>
       )
-    }
+    },
+    cell: ({ row }) => <div className="capitalize">{row.getValue('ordersId')}</div>
   }
 ]
 
-const SponsorshipTable = ({ data }: Props) => {
+type Props = {
+  data: OrderTicket[]
+}
+
+const EventTicketTable = ({ data }: Props) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
-  const nav = useNavigate()
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
@@ -190,12 +175,10 @@ const SponsorshipTable = ({ data }: Props) => {
       rowSelection
     }
   })
-  console.log(table)
-  console.log('Table Data: ', data)
-  console.log(table.getRowModel().rows)
+
   return (
     <div className="w-full">
-      <div className="flex items-center pb-4">
+      <div className="flex items-center py-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -221,7 +204,7 @@ const SponsorshipTable = ({ data }: Props) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="min-h-96 rounded-md border">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -241,11 +224,7 @@ const SponsorshipTable = ({ data }: Props) => {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  onClick={() => nav(`/dashboard/sponsorship/${row.original.id}`)}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -268,27 +247,9 @@ const SponsorshipTable = ({ data }: Props) => {
           {table.getFilteredSelectedRowModel().rows.length} of{' '}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
       </div>
     </div>
   )
 }
 
-export default SponsorshipTable
+export default EventTicketTable

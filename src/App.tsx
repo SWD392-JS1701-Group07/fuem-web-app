@@ -32,6 +32,7 @@ import VisitorDashboardDetail from './pages/dashboard/Visitor/Component/VisitorD
 import SponsorDashboardDetail from './pages/dashboard/sponsor/component/SponsorDashboardDetail'
 import SponsorshipList from './pages/dashboard/sponsorship/SponsorshipList'
 import SponsorshipDashboardDetail from './pages/dashboard/sponsorship/component/SponsorshipDashboardDetail'
+import SponsorshipEdit from './pages/dashboard/sponsorship/component/SponsorshipEdit'
 
 function App() {
   //const { component: Component, path } = routes[3];
@@ -82,6 +83,7 @@ function App() {
             <Route path="sponsor/:id" element={<SponsorDashboardDetail />} />
             <Route path="sponsorship" element={<SponsorshipList />} />
             <Route path="sponsorship/:id" element={<SponsorshipDashboardDetail />} />
+            <Route path="sponsorship/:id/edit" element={<SponsorshipEdit />} />
             <Route path="operator" element={<OperatorList />} />
             <Route path="operator/:id" element={<OperatorDashboardDetail />} />
             <Route path="visitor" element={<VisitorList />} />
