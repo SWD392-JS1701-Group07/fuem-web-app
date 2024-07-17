@@ -109,7 +109,9 @@ export function CreateEventForm() {
 
     async function onSubmit(values: FormDetailValues) {
         console.log("submit")
-
+        if (Sponsorships.length == 0) {
+            setSponsorships([{ description: "", type: "", title: "", sum: 0, sponsor: { name: "", email: "", phoneNumber: "", accountId: null } }])
+        }
         const eventCreateModel: EventCreateModel = {
             name: values.name,
             place: "place",
@@ -185,7 +187,7 @@ export function CreateEventForm() {
                 console.log("Create event fail", error);
                 toast({
                     title: "Create fail",
-                    description: error.response.data,
+                    description: error.response ? error.response.data : null,
                     variant: "destructive",
                 })
             })
