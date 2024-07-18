@@ -42,6 +42,31 @@ export type OrderResponse = {
   errors: any | null
 }
 
+export type Order = {
+  id: string
+  orderDate: string
+  totalPrice: number
+  notes: string
+  orderStatus: string
+  email: string
+  phoneNumber: string
+  customerId: number
+}
+
+export type OrderTransaction = {
+  id: string;
+  refId: string;
+  transactionDate: string;
+  amount: number;
+  paymentStatus: string;
+  paymentMethod: string | null;
+  vnPayTransactioId: string;
+  responseCode: string;
+  responseMessage: string;
+  description: string;
+  orderId: string;
+};
+
 export type OrderTicket = {
   id: string
   name: string
@@ -53,3 +78,17 @@ export type OrderTicket = {
   isCheckIn: string
   orderId: string
 }
+
+export type OrderDetail = {
+  id: string;
+  orderDate: string;
+  totalPrice: number;
+  notes: string;
+  paymentMethod: string | null;
+  orderStatus: string;
+  email: string;
+  phoneNumber: string;
+  customerId: number;
+  tickets: OrderTicket[];
+  transactions: OrderTransaction[];
+};
