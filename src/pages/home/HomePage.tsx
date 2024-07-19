@@ -1,19 +1,31 @@
 import { getAll } from '@/api/eventApi'
 import { Button } from '@/components/ui/button'
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Event } from '@/constants/models/Event'
 import { formatDateTime, useFadeIn } from '@/lib/utils'
 import { motion } from 'framer-motion'
+import { Account } from '@/constants/models/Account'
 
 const HomePage = () => {
+  const [user, setUser] = useState<Account | null>(null)
   const [data, setData] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [randomIndexes, setRandomIndexes] = useState<number[]>([])
+  const nav = useNavigate();
 
   useEffect(() => {
     getEvents()
   }, [])
+  useEffect(() => {
+    const storedUser = localStorage.getItem('userProfile') || null
+    if (storedUser) {
+      setUser(JSON.parse(storedUser))
+    }
+  }, [localStorage.getItem('userProfile')])
+  useEffect(() => {
+    (user?.roleId === 1 || user?.roleId === 3 || user?.roleId === 4 || user?.roleId === 5) ? nav('/dashboard') : null
+  }, [user])
 
   const getEvents = async () => {
     try {
@@ -39,40 +51,40 @@ const HomePage = () => {
   const events =
     data.length > 0 && randomIndexes.length === 3
       ? [
-          {
-            id: data[randomIndexes[0]]?.id,
-            date: formatDateTime(data[randomIndexes[0]]?.startSellDate.toString(), 'date'),
-            title: data[randomIndexes[0]]?.name,
-            location: 'Địa điểm: ' + data[randomIndexes[0]]?.scheduleList[0].place,
-            price: data[randomIndexes[0]]?.price + 'đ/ticket',
-            backgroundImage:
-              'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-35.png)',
-            backgroundColor: 'bg-crayola',
-            textColor: 'text-black'
-          },
-          {
-            id: data[randomIndexes[1]]?.id,
-            date: formatDateTime(data[randomIndexes[1]]?.startSellDate.toString(), 'date'),
-            title: data[randomIndexes[1]]?.name,
-            location: 'Địa điểm: ' + data[randomIndexes[1]]?.scheduleList[0].place,
-            price: data[randomIndexes[1]]?.price + 'đ/ticket',
-            backgroundImage:
-              'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-33.png)',
-            backgroundColor: 'bg-electric-indigo',
-            textColor: 'text-white'
-          },
-          {
-            id: data[randomIndexes[2]]?.id,
-            date: formatDateTime(data[randomIndexes[2]]?.startSellDate.toString(), 'date'),
-            title: data[randomIndexes[2]]?.name,
-            location: 'Địa điểm: ' + data[randomIndexes[2]]?.scheduleList[0].place,
-            price: data[randomIndexes[2]]?.price + 'đ/ticket',
-            backgroundImage:
-              'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-34.png)',
-            backgroundColor: 'bg-yellow-sun',
-            textColor: 'text-black'
-          }
-        ]
+        {
+          id: data[randomIndexes[0]]?.id,
+          date: formatDateTime(data[randomIndexes[0]]?.startSellDate.toString(), 'date'),
+          title: data[randomIndexes[0]]?.name,
+          location: 'Địa điểm: ' + data[randomIndexes[0]]?.scheduleList[0].place,
+          price: data[randomIndexes[0]]?.price + 'đ/ticket',
+          backgroundImage:
+            'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-35.png)',
+          backgroundColor: 'bg-crayola',
+          textColor: 'text-black'
+        },
+        {
+          id: data[randomIndexes[1]]?.id,
+          date: formatDateTime(data[randomIndexes[1]]?.startSellDate.toString(), 'date'),
+          title: data[randomIndexes[1]]?.name,
+          location: 'Địa điểm: ' + data[randomIndexes[1]]?.scheduleList[0].place,
+          price: data[randomIndexes[1]]?.price + 'đ/ticket',
+          backgroundImage:
+            'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-33.png)',
+          backgroundColor: 'bg-electric-indigo',
+          textColor: 'text-white'
+        },
+        {
+          id: data[randomIndexes[2]]?.id,
+          date: formatDateTime(data[randomIndexes[2]]?.startSellDate.toString(), 'date'),
+          title: data[randomIndexes[2]]?.name,
+          location: 'Địa điểm: ' + data[randomIndexes[2]]?.scheduleList[0].place,
+          price: data[randomIndexes[2]]?.price + 'đ/ticket',
+          backgroundImage:
+            'url(http://ali.sandbox.etdevs.com/virtual-conference/wp-content/uploads/sites/21/2021/05/virtual-conference-34.png)',
+          backgroundColor: 'bg-yellow-sun',
+          textColor: 'text-black'
+        }
+      ]
       : []
 
   const fadeIn = useFadeIn()

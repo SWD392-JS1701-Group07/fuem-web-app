@@ -68,7 +68,9 @@ const MainNavBar = () => {
         >
           <div id="title-container">
             <h1 className="font-poppins text-3xl font-semibold">
-              <a href="/">Event Management</a>
+              {(user?.roleId === 1 || user?.roleId === 3 || user?.roleId === 4 || user?.roleId === 5) ?
+                <a href="/dashboard">Event Management</a> :
+                <a href="/">Event Management</a>}
             </h1>
           </div>
           <div id="nav">
