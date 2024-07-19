@@ -151,7 +151,7 @@ export const columns: ColumnDef<Event>[] = [
             )
         },
         cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("description")}</div>
+            <div className="capitalize overflow-hidden h-20">{row.getValue("description")}</div>
         ),
     },
     {
