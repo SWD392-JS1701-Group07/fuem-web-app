@@ -22,6 +22,8 @@ import {
   PaginationPrevious
 } from '@/components/ui/pagination'
 import { Calendar, List, WalletCards, Search } from 'lucide-react'
+import { Account } from '@/constants/models/Account'
+import { useNavigate } from 'react-router-dom'
 
 const EventList = () => {
   const cardsPerPage = 12
@@ -32,10 +34,21 @@ const EventList = () => {
   const [sortOrder, setSortOrder] = useState('Newest')
   const [selectedTab, setSelectedTab] = useState('card')
   const [searchQuery, setSearchQuery] = useState('')
+  const [user, setUser] = useState<Account | null>(null)
+  const nav = useNavigate()
 
   useEffect(() => {
     getEvents()
   }, [])
+  useEffect(() => {
+    const storedUser = localStorage.getItem('userProfile') || null
+    if (storedUser) {
+      setUser(JSON.parse(storedUser))
+    }
+  }, [localStorage.getItem('userProfile')])
+  useEffect(() => {
+    (user?.roleId === 1 || user?.roleId === 3 || user?.roleId === 4 || user?.roleId === 5) ? nav('/dashboard') : null
+  }, [user])
 
   const getEvents = async (searchParam = '') => {
     try {
