@@ -198,7 +198,7 @@ export const columns: ColumnDef<Collaborator>[] = [
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            {(collaborator.collabStatus === "Pending") ? (<>
+                            {(collaborator.collabStatus === "Registered") ? (<>
                                 <DropdownMenuItem
                                     onClick={() => { handleClick(1) }}
                                 >Approve</DropdownMenuItem>
