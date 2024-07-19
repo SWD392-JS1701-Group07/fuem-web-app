@@ -181,6 +181,12 @@ export function CreateEventForm() {
                         })
                         nav("/dashboard/event");
                     }
+                } else {
+                    toast({
+                        title: "Create success",
+                        description: "Event has been created",
+                    })
+                    nav("/dashboard/event");
                 }
             })
             .catch((error) => {
@@ -190,8 +196,6 @@ export function CreateEventForm() {
                     description: error.response.data ? error.response.data.message : "can not send request",
                     variant: "destructive",
                 })
-            })
-            .finally(() => {
             })
     }
 
@@ -542,46 +546,40 @@ export function CreateEventForm() {
                                         </div>
                                         <div className="mt-5">
                                             <span>Name*</span>
-                                            {(sponsorship.sponsor.name != "") ?
-                                                <Input required value={sponsorship.sponsor.name} /> :
-                                                <Input required value={sponsorship.sponsor.name} onChange={(e) => {
-                                                    setSponsorships(Sponsorships.map((sponsorship, index) => {
-                                                        if (index === id) {
-                                                            return { ...sponsorship, sponsor: { ...sponsorship.sponsor, name: e.target.value } }
-                                                        }
-                                                        return sponsorship
-                                                    }))
-                                                }
-                                                }
-                                                />}
+                                            <Input required value={sponsorship.sponsor.name} onChange={(e) => {
+                                                setSponsorships(Sponsorships.map((sponsorship, index) => {
+                                                    if (index === id) {
+                                                        return { ...sponsorship, sponsor: { ...sponsorship.sponsor, name: e.target.value } }
+                                                    }
+                                                    return sponsorship
+                                                }))
+                                            }
+                                            }
+                                            />
                                         </div>
                                         <div className="mt-5">
                                             <span>Email*</span>
-                                            {(sponsorship.sponsor.email != "") ?
-                                                <Input required value={sponsorship.sponsor.email} /> :
-                                                <Input required value={sponsorship.sponsor.email} onChange={(e) => {
-                                                    setSponsorships(Sponsorships.map((sponsorship, index) => {
-                                                        if (index === id) {
-                                                            return { ...sponsorship, sponsor: { ...sponsorship.sponsor, email: e.target.value } }
-                                                        }
-                                                        return sponsorship
-                                                    }))
-                                                }}
-                                                />}
+                                            <Input required value={sponsorship.sponsor.email} onChange={(e) => {
+                                                setSponsorships(Sponsorships.map((sponsorship, index) => {
+                                                    if (index === id) {
+                                                        return { ...sponsorship, sponsor: { ...sponsorship.sponsor, email: e.target.value } }
+                                                    }
+                                                    return sponsorship
+                                                }))
+                                            }}
+                                            />
                                         </div>
                                         <div className="mt-5">
                                             <span>Phone number*</span>
-                                            {(sponsorship.sponsor.phoneNumber != "") ?
-                                                <Input required value={sponsorship.sponsor.phoneNumber} /> :
-                                                <Input required value={sponsorship.sponsor.phoneNumber} onChange={(e) => {
-                                                    setSponsorships(Sponsorships.map((sponsorship, index) => {
-                                                        if (index === id) {
-                                                            return { ...sponsorship, sponsor: { ...sponsorship.sponsor, phoneNumber: e.target.value } }
-                                                        }
-                                                        return sponsorship
-                                                    }))
-                                                }}
-                                                />}
+                                            <Input required value={sponsorship.sponsor.phoneNumber} onChange={(e) => {
+                                                setSponsorships(Sponsorships.map((sponsorship, index) => {
+                                                    if (index === id) {
+                                                        return { ...sponsorship, sponsor: { ...sponsorship.sponsor, phoneNumber: e.target.value } }
+                                                    }
+                                                    return sponsorship
+                                                }))
+                                            }}
+                                            />
                                         </div>
                                         <div className="flex mt-5">
                                             <div className="w-full mr-10">
