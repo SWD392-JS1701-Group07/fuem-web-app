@@ -39,7 +39,7 @@ const EventList = () => {
 
   const getEvents = async (searchParam = '') => {
     try {
-      const response = await getAll(searchParam)
+      const response = await getAll(searchParam, true)
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-expect-error
       setData(response)
