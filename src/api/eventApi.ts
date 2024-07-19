@@ -19,11 +19,8 @@ export const create = async (data: EventCreateModel) => {
   return await axiosClient.post('/api/events', data)
 }
 
-export const updateStatus = async (id: number) => {
-  return await axiosClient.put(`/api/events/${id}`)
-}
-export const approveEvent = async (id: number) => {
-  return await axiosClient.put(`/api/events/events/${id}/approve`)
+export const updateStatus = async (id: number, status: string) => {
+  return await axiosClient.patch(`/api/events/events/${id}/${status}`)
 }
 
 export const getEventByCollaborator = async (id: number) => {
