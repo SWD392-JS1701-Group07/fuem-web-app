@@ -1,4 +1,4 @@
-import { approveEvent, getById } from '@/api/eventApi'
+import { getById, updateStatus } from '@/api/eventApi'
 import {
   Accordion,
   AccordionContent,
@@ -73,22 +73,31 @@ const EventDashboardDetail = () => {
     }
   }, [event])
 
-  const handleActive = () => {
-    approveEvent(Number(id))
-      .then(() => {
-        toast({
-          title: 'Active success',
-          description: 'Event is active',
-          variant: 'default'
-        })
+  const handleStatusChange = async (status: string) => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await updateStatus(parseInt(id as string), status).then((response: any) => {
+        if (response.isSuccess) {
+          toast({
+            title: 'Success',
+            description: `Event status successfully updated to ${status}`,
+            variant: 'default'
+          })
+          // Fetch the updated event data
+          getById(Number(id)).then((res) => {
+            setEvent(res.data)
+          })
+        }
       })
-      .catch(() => {
-        toast({
-          title: 'Active fail',
-          description: '',
-          variant: 'destructive'
-        })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error('Failed to change event status', error)
+      toast({
+        title: 'Failed to change status',
+        description: error.message,
+        variant: 'destructive'
       })
+    }
   }
 
   const handleSearch = () => {
@@ -101,6 +110,8 @@ const EventDashboardDetail = () => {
       handleSearch()
     }
   }
+
+  console.log('event: ', event)
 
   return (
     <div className="w-full">
@@ -124,13 +135,29 @@ const EventDashboardDetail = () => {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {localStorage.getItem('role') === '4' ? (
-            event?.eventStatus == 'Planning' || event?.eventStatus == 'Pending' ? (
-              <Button onClick={handleActive} className="m-2">
-                Active
-              </Button>
-            ) : null
-          ) : null}
+          {localStorage.getItem('role') === '4' &&
+            (event?.eventStatus === 'Rejected' ||
+              event?.eventStatus === 'Pending' ||
+              event?.eventStatus === 'Planning') && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button className="ml-2 rounded-md bg-white px-4 py-2 text-black hover:bg-blue-300">
+                    Change Status
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="rounded-md bg-white shadow-md">
+                  <DropdownMenuItem onSelect={() => handleStatusChange('approve')}>
+                    Approve
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => handleStatusChange('reject')}>
+                    Reject
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => handleStatusChange('complete')}>
+                    Complete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
         </div>
       </div>
       <Accordion type="multiple" defaultValue={['general']}>
@@ -206,7 +233,7 @@ const EventDashboardDetail = () => {
               event?.sponsorships.map((sponsorship) => (
                 <Card className="pt-2 text-lg" key={sponsorship.id}>
                   <CardContent>Name: {sponsorship.sponsor.name}</CardContent>
-                  <CardContent>EMail: {sponsorship.sponsor.email}</CardContent>
+                  <CardContent>Email: {sponsorship.sponsor.email}</CardContent>
                   <CardContent>PhoneNumber: {sponsorship.sponsor.phoneNumber}</CardContent>
                   <CardContent>Type: {sponsorship.type}</CardContent>
                   <CardContent>Sum: {sponsorship.sum} VND</CardContent>
