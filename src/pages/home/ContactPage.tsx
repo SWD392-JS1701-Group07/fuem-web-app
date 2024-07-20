@@ -1,22 +1,7 @@
 import { Button } from '@/components/ui/button'
-import { Account } from '@/constants/models/Account'
 import * as Form from '@radix-ui/react-form'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 const ContactPage = () => {
-  const [user, setUser] = useState<Account | null>(null)
-  const nav = useNavigate()
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem('userProfile') || null
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
-    }
-  }, [localStorage.getItem('userProfile')])
-  useEffect(() => {
-    (user?.roleId === 1 || user?.roleId === 3 || user?.roleId === 4 || user?.roleId === 5) ? nav('/dashboard') : null
-  }, [user])
   return (
     <div
       id="section"

@@ -1,31 +1,19 @@
 import { getAll } from '@/api/eventApi'
 import { Button } from '@/components/ui/button'
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Event } from '@/constants/models/Event'
 import { formatDateTime, useFadeIn } from '@/lib/utils'
 import { motion } from 'framer-motion'
-import { Account } from '@/constants/models/Account'
 
 const HomePage = () => {
-  const [user, setUser] = useState<Account | null>(null)
   const [data, setData] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [randomIndexes, setRandomIndexes] = useState<number[]>([])
-  const nav = useNavigate();
 
   useEffect(() => {
     getEvents()
   }, [])
-  useEffect(() => {
-    const storedUser = localStorage.getItem('userProfile') || null
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
-    }
-  }, [localStorage.getItem('userProfile')])
-  useEffect(() => {
-    (user?.roleId === 1 || user?.roleId === 3 || user?.roleId === 4 || user?.roleId === 5) ? nav('/dashboard') : null
-  }, [user])
 
   const getEvents = async () => {
     try {
