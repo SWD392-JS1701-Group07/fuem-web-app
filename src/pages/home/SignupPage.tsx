@@ -31,7 +31,7 @@ const SignupPage: React.FC = () => {
 
   const login = async (username: string, password: string) => {
     try {
-      const response = await axios.post('https://localhost:7297/api/auth/login', {
+      const response = await axios.post('https://fptevent.one/api/auth/login', {
         username,
         password
       })
