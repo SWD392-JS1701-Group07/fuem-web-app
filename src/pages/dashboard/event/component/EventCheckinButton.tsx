@@ -25,7 +25,8 @@ const TicketDetailPage: React.FC<TicketDetailProps> = ({ ticketId }) => {
   useEffect(() => {
     if (ticketId) {
       getTicketDetail(ticketId).then((response) => {
-        setTicket(response.data)
+        const ticketData = response.data
+        setTicket(ticketData)
       })
     }
   }, [ticketId])
@@ -34,6 +35,7 @@ const TicketDetailPage: React.FC<TicketDetailProps> = ({ ticketId }) => {
     checkinTicket(ticketId, status)
       .then(() => {
         setOpen(false)
+        setTicket((prevTicket) => prevTicket ? { ...prevTicket, isCheckIn: 'Yes' } : prevTicket)
         toast({
           title: 'Checkin Complete',
           description: `Checked in successfully for ${ticket?.name} (${ticket?.phoneNumber})`,
@@ -55,13 +57,19 @@ const TicketDetailPage: React.FC<TicketDetailProps> = ({ ticketId }) => {
 
   return (
     <>
-      <Button
-        className="border-2 border-black bg-indigo-300 text-black hover:bg-indigo-500"
-        onClick={() => setOpen(true)}
-      >
-        Check-in
-        <TicketIcon className="ml-2" />
-      </Button>
+      {ticket.isCheckIn === 'Yes' ? (
+        <Button className="border-2 border-black bg-gray-300 text-black cursor-not-allowed">
+          Checked In
+        </Button>
+      ) : (
+        <Button
+          className="border-2 border-black bg-indigo-300 text-black hover:bg-indigo-500"
+          onClick={() => setOpen(true)}
+        >
+          Check-in
+          <TicketIcon className="ml-2" />
+        </Button>
+      )}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="w-full max-w-3xl rounded-lg p-8">
           <DialogHeader>
