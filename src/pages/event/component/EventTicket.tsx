@@ -43,6 +43,21 @@ const EventTicket = ({ event }: { event: Event }) => {
   }, [accessToken])
 
   useEffect(() => {
+    const storedUser = localStorage.getItem('userProfile')
+    if (storedUser) {
+      setUser(JSON.parse(storedUser))
+    } else {
+      setAdditionalTickets([{
+        name: '',
+        email: '',
+        phoneNumber: '',
+        price: event.price,
+        eventId: event.id
+      }])
+    }
+  }, [accessToken, event.price, event.id])
+
+  useEffect(() => {
     const getEventDetail = async () => {
       try {
         const response = await getById(parseInt(id as string))
@@ -60,7 +75,7 @@ const EventTicket = ({ event }: { event: Event }) => {
     const remainingTickets = eventDetail?.remaining || 0
     const newQuantity = Math.max(1, Math.min(MAX_TICKETS, Math.min(value, remainingTickets)))
     setQuantity(newQuantity)
-
+  
     if (!user) {
       const newAdditionalTickets = Array.from({ length: newQuantity }, () => ({
         name: '',
@@ -70,7 +85,7 @@ const EventTicket = ({ event }: { event: Event }) => {
         eventId: event.id
       }))
       setAdditionalTickets(newAdditionalTickets)
-    } else
+    } else {
       setAdditionalTickets((prevTickets) => {
         if (newQuantity > 1) {
           const updatedTickets = [...prevTickets]
@@ -87,7 +102,8 @@ const EventTicket = ({ event }: { event: Event }) => {
         }
         return []
       })
-  }
+    }
+  }  
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -145,6 +161,44 @@ const EventTicket = ({ event }: { event: Event }) => {
     return true
   }
 
+  const checkPurchasable = () => {
+    const userProfileString = localStorage.getItem('userProfile')
+    let userProfile: Account | null = null
+    if (userProfileString) {
+      userProfile = JSON.parse(userProfileString)
+      try {
+        if (!userProfile || !userProfile.name || !userProfile.phoneNumber) {
+          toast({
+            title: 'Cannot purchase',
+            description: 'Please fill in your Full name and Phone number in Profile!',
+            variant: 'destructive'
+          })
+          return
+        }
+
+        if (!userProfile || !userProfile.name) {
+          toast({
+            title: 'Cannot purchase',
+            description: 'Please fill in your Full name in Profile!',
+            variant: 'destructive'
+          })
+          return
+        }
+
+        if (!userProfile || !userProfile.phoneNumber) {
+          toast({
+            title: 'Cannot purchase',
+            description: 'Please fill in your Phone number in Profile!',
+            variant: 'destructive'
+          })
+          return
+        }
+        return
+      } catch (error) {
+        console.error('Guest account', error)
+      }
+    } else return
+  }
   const handleAddToCart = () => {
     if (!validateTickets()) return
 
@@ -191,6 +245,14 @@ const EventTicket = ({ event }: { event: Event }) => {
   }
 
   const isUserInfoEmpty = !user?.name || !user?.email || !user?.phoneNumber
+  const buttonDisabled = (): boolean => {
+    if (user === null) {
+      return true
+    }
+    return !!user.name && !!user.phoneNumber
+  }
+
+  const isEnoughInformation = buttonDisabled()
 
   const renderUserInfo = () => (
     <div className="grid gap-2">
@@ -210,10 +272,10 @@ const EventTicket = ({ event }: { event: Event }) => {
             <p className="text-lg font-semibold text-white">{user?.phoneNumber}</p>
           </div>
         </div>
-        {quantity > 1 && renderAdditionalTickets()}
+        {quantity > 1 || !user ? renderAdditionalTickets() : null}
       </div>
     </div>
-  )
+  )  
 
   const renderAdditionalTickets = () => (
     <div className="flex flex-row space-x-2 pl-2">
@@ -246,7 +308,7 @@ const EventTicket = ({ event }: { event: Event }) => {
         </div>
       ))}
     </div>
-  )
+  )  
 
   const total = event.price * quantity
   const schedule = event.scheduleList
@@ -254,7 +316,13 @@ const EventTicket = ({ event }: { event: Event }) => {
 
   return (
     <Drawer
-      open={open && today >= startSellDate && today <= endSellDate && remaining! > 0}
+      open={
+        open &&
+        isEnoughInformation &&
+        today >= startSellDate &&
+        today <= endSellDate &&
+        remaining! > 0
+      }
       onOpenChange={setOpen}
     >
       <DrawerTrigger asChild>
@@ -263,6 +331,7 @@ const EventTicket = ({ event }: { event: Event }) => {
             <Button
               className="mt-4 h-14 rounded-none border border-yellow-sun bg-black px-8 text-xl text-yellow-sun hover:bg-yellow-sun hover:text-black"
               disabled={!(today >= startSellDate && today <= endSellDate) || remaining! <= 0}
+              onClick={checkPurchasable}
             >
               {(today >= startSellDate && today <= endSellDate) || remaining! > 0
                 ? 'Buy Ticket'
