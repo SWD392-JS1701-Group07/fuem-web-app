@@ -31,7 +31,7 @@ const SignupPage: React.FC = () => {
 
   const login = async (username: string, password: string) => {
     try {
-      const response = await axios.post('https://localhost:7297/api/auth/login', {
+      const response = await axios.post('https://fptevent.one/api/auth/login', {
         username,
         password
       })
@@ -86,7 +86,7 @@ const SignupPage: React.FC = () => {
           </p>
         </div>
         <img
-          src="src/assets/auth-bg.jpg"
+          src="auth-bg.jpg"
           className="-z-10 h-full w-full object-cover object-left"
           alt="Background"
         />
