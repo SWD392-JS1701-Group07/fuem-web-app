@@ -86,7 +86,7 @@ const SignupPage: React.FC = () => {
           </p>
         </div>
         <img
-          src="src/assets/auth-bg.jpg"
+          src="auth-bg.jpg"
           className="-z-10 h-full w-full object-cover object-left"
           alt="Background"
         />
