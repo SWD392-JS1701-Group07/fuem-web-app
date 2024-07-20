@@ -118,9 +118,9 @@ const ProfilePage: React.FC = () => {
     setFormValues((prevState) =>
       prevState
         ? {
-          ...prevState,
-          [name]: value
-        }
+            ...prevState,
+            [name]: value
+          }
         : null
     )
   }
@@ -278,6 +278,9 @@ const ProfilePage: React.FC = () => {
                         value={(formValues?.[key as ProfileFields] as any) || ''}
                         onChange={handleInputChange}
                       >
+                        <option value="" disabled>
+                          Select subject
+                        </option>
                         {subjects.map((subject) => (
                           <option key={subject.id} value={subject.id}>
                             {subject.name}
